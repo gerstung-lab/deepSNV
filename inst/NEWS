@@ -1,0 +1,47 @@
+deepSNV -- an R package for subclonal variant calling.
+
+0.99.2
+BioC rereresubmission (2012-01-20)
+* Changed plot to S3 method (to avoid warning in R-devel)
+
+0.99.1
+BioC reresubmission (2012-01-06).
+* Added small .bam example files test.bam, control.bam with 100 positions.
+* Modified man pages for bam2R()
+* Modified man page for coordinates()
+* Corrected example of consensusSequence()
+* Compressed .RData files with tools::resaveRdaFiles
+* Changed vignette to attach data, rather than load remotely.
+* Argument "regions" of deepSNV can be a GRanges object.
+
+0.99.0 
+BioC resubmission (2011-12-21).
+* Added BiocViews field
+* Added HIVmix data
+* Added new examples
+* Registered bam2R with R_registerRoutines
+* New accessor functions "test", "control", "p.val", and "coordinates"
+* Updated vignette
+
+
+0.9.5
+"summary" now reports additional columns from regions slot.
+Bugfixes drop=FALSE in subsetting and summary.
+
+0.9.4
+Directly link to static samtools library provided by Rsamtools
+Load example .bam files over http
+
+0.9.3
+Added beta-binomial model
+Extended documentation
+Use summary instead of significantSNV
+
+0.9.2
+Minor bugfixes
+
+0.9.1
+Minor bugfixes
+
+0.9.0
+Pre-release
