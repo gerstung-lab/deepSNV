@@ -1,0 +1,23 @@
+Package: deepSNV
+Imports: Rsamtools
+Maintainer: Moritz Gerstung <gemoritz@ethz.ch>
+License: GPL-3
+Title: Test for subclonal SNVs in deep sequencing experiments.
+BiocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
+LinkingTo: Rsamtools
+Type: Package
+LazyLoad: yes
+Author: Moritz Gerstung & Niko Beerenwinkel
+Description: This package provides provides a quantitative variant
+    caller for detecting subclonal mutations in ultra-deep (>=100x
+    coverage) sequencing experiments. It assumes a comparative setup
+    with a control experiment of the same loci and a beta-binomial
+    model to discriminate sequencing errors and subclonal SNVs.
+Version: 0.99.2
+URL: http://www.cbg.ethz.ch/software/deepSNV
+Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges,
+    Biostrings, VGAM, methods, graphics
+Collate: 'deepSNV-class.R' 'deepSNV-experimental.R'
+    'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
+    'deepSNV-misc.R' 'deepSNV-package.R'
+Packaged: 2012-01-20 17:03:53 UTC; gemoritz
