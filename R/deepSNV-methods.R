@@ -445,7 +445,7 @@ setMethod("control",
 		function(deepSNV, total = F) {
 			count <- slot(deepSNV, "control")
 			if(total)
-				count[,1:5] + count[,6:10]
+				matrix(count[,1:5] + count[,6:10], ncol=5, dimnames=list(NULL, deepSNV@nucleotides[1:5]))
 			else
 				count
 		}
@@ -473,7 +473,7 @@ setMethod("test",
 		function(deepSNV, total = F) {
 			count <- slot(deepSNV, "test")
 			if(total)
-				count[,1:5] + count[,6:10]
+				matrix(count[,1:5] + count[,6:10], ncol=5, dimnames=list(NULL, deepSNV@nucleotides[1:5]))
 			else
 				count
 		}

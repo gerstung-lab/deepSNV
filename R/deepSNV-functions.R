@@ -146,7 +146,7 @@
 #' RF(test(HIVmix), total=TRUE)[1:10,]
 RF <- function(freq, total = FALSE){
 	if(total){
-		freq <- freq[,1:5]+freq[,6:10]
+		freq <- matrix(freq[,1:5]+freq[,6:10], ncol=5, dimnames=list(NULL, colnames(freq)[1:5]))
 	}
 	if(ncol(freq)==10){
 		return(cbind(freq[,1:5]/rowSums(freq[,1:5]),freq[,6:10]/rowSums(freq[,6:10])))
@@ -204,7 +204,7 @@ RF <- function(freq, total = FALSE){
 	lengths = deepSNV@regions$stop-deepSNV@regions$start +1
 	beg = cumsum(c(1,lengths[-length(lengths)]))
 	end = cumsum(lengths)
-	reg_ix = sapply(cond.rows, function(i) which(end >= i)[1])
+	reg_ix = as.numeric(sapply(cond.rows, function(i) which(end >= i)[1]))
 	pos = deepSNV@regions$start[reg_ix] + cond.rows - beg[reg_ix]
 	
 	table <- data.frame(

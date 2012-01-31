@@ -13,11 +13,11 @@ Description: This package provides provides a quantitative variant
     coverage) sequencing experiments. It assumes a comparative setup
     with a control experiment of the same loci and a beta-binomial
     model to discriminate sequencing errors and subclonal SNVs.
-Version: 0.99.2
+Version: 0.99.3
 URL: http://www.cbg.ethz.ch/software/deepSNV
 Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges,
     Biostrings, VGAM, methods, graphics
 Collate: 'deepSNV-class.R' 'deepSNV-experimental.R'
     'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
     'deepSNV-misc.R' 'deepSNV-package.R'
-Packaged: 2012-01-20 17:03:53 UTC; gemoritz
+Packaged: 2012-01-31 09:33:35 UTC; gemoritz
