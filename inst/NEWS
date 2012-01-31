@@ -1,5 +1,10 @@
 deepSNV -- an R package for subclonal variant calling.
 
+0.99.3
+Bugfixes
+* Fixed error in summary() when there were no significant SNVs.
+* Some fixes if only a single column of the alignment is selected
+
 0.99.2
 BioC rereresubmission (2012-01-20)
 * Changed plot to S3 method (to avoid warning in R-devel)
