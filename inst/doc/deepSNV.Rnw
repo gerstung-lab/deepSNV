@@ -3,13 +3,18 @@
 \usepackage{a4wide}
 \usepackage{Sweave}
 \usepackage{amsmath, amssymb}
+\usepackage{charter}
+\renewcommand{\sfdefault}{phv}
+\usepackage[sf]{titlesec}
 
 \newcommand{\Dir}{\operatorname{Dir}}
 \newcommand{\B}{\operatorname{B}}
+\newcommand{\E}{\operatorname{E}}
 \newcommand{\Beta}{\operatorname{Beta}}
 \newcommand{\MAP}{\mathrm{MAP}}
 \newcommand{\Mult}{\operatorname{Mult}}
 \newcommand{\Bin}{\operatorname{Bin}}
+\renewcommand{\bold}{\textbf}
 
 %\VignetteIndexEntry{An R package for detecting low frequency variants in deep sequencing experiments}
 %\VignetteDepends{deepSNV}
@@ -27,25 +32,35 @@ The package uses a clonal control experiment for
 estimating the local error rate and tests whether the observed nucleotide frequencies differ between test and control. 
 The basic model is a binomial model for the counts $X_{i,j}$ and $Y_{i,j}$ of nucleotide $j$ at  position $i$, in the test and the control experiment, respectively:
 \begin{align}
-X_{i,j} &\sim \operatorname{Bin}(m_i; p_{i,j})\cr
-Y_{i,j} &\sim \operatorname{Bin}(n_i; q_{i,j}).
+X_{i,j} &\sim \operatorname{Bin}(n_i, p_{i,j})\cr
+Y_{i,j} &\sim \operatorname{Bin}(m_i, q_{i,j}).
 \end{align}
-Here $m_i$ and $n_i$ denote the coverage in the two experiments, and $p_{i,j}$ and $q_{i,j}$ are learned from the data.
+Here $n_i$ and $m_i$ denote the coverage in the two experiments, and $p_{i,j}$ and $q_{i,j}$ are learned from the data.
 The presence of an SNV in the test experiment amounts to testing the hypothesis $H_1: p_{i,j} > q_{i,j}$ against the null-hypothesis $H_0:  p_{i,j} = q_{i,j}$.
 The deepSNV algorithm uses likelihood ratio test with a $\chi^2_1$-distribtution. 
 
 As an alternative to the binomial distribution, a beta-binomial model can be used that has a global parameter of overdispersion: 
 \begin{align}
-X_{i,j} &\sim \operatorname{BB}(m_i; \alpha, \beta_{i,j}) \cr
-Y_{i,j} &\sim \operatorname{BB}(n_i; \alpha, \gamma_{i,j}).
+X_{i,j} &\sim \operatorname{BB}(n_i, \alpha, p_{i,j}) \cr
+Y_{i,j} &\sim \operatorname{BB}(m_i, \alpha, q_{i,j}).
 \end{align}
-The parameter $\alpha$ defines a parameter that quantifies the overdispersion of the model, shared across sites and nucleotides.
-All parameters are determined by a maximum likelihood criterion, where for $\beta_{i,j}$ (and similarly for $\gamma_{i,j}$) a methods-of-moments approximation 
-is used, $\alpha/(\alpha+\hat\beta_{i,j}) = X_{i,j}/m_i$.
+The parameter $\alpha$ defines a parameter that quantifies the overdispersion of the model, shared across sites and nucleotides. This parametrization is equivalent to 
+setting $\beta_{i,j} = \alpha (1-p_{i,j})/p_{i,j}$. For small $p_{i,j}$, one obtains a variance of $\E[X_{i,j}] \approx n_i p_{i,j} + (n_i p_{i,j})^2/\alpha$.
+
+All parameters are determined by a maximum likelihood criterion, where for $p_{i,j}$ (and similarly for $q_{i,j}$) a methods-of-moments approximation 
+is used, $\alpha/(\alpha+\hat\beta_{i,j}) = X_{i,j}/n_i$.
 The binomial model arises from the beta-binomial model in the limit $\alpha \rightarrow \infty$.
 
 To achieve a higher specifitiy the test is performed on both strands separately, and the resulting p-values are combined into a single one using either
-the product, average, or maximum as a statistic and their corresponding distributions under a uniform for computing a joint p-value.
+the product, average, or maximum as a statistic and their corresponding distributions under a uniform for computing a joint p-value. For more information and for citing
+the \texttt{deepSNV} package please use:
+\begin{itemize}
+\item
+<<echo=FALSE, results=tex>>=
+	print(citation("deepSNV"), "LaTeX")
+@
+\end{itemize}
+
 
 \section{Working example}
 In this example, we load some real world data. The data of length 1,512 nt were sequenced with a Roche 454 Junior sequencer at about 500x coverage. They consist of 
@@ -132,7 +147,7 @@ So \Sexpr{table(p.adjust(p.val(HIVmix), method="BH") < 0.05, trueSNVs)[4]} of \S
 \section{Normalization}
 We want to further assess the null model with experimental data from two homogeneous replicates. In particular we want to analyze whether the empirical distribution 
 of the p-values is uniform. The data we study comes from two phiX sequences sequenced on separate runs on a GAII$_x$.
-<<phiX>>=
+<<phiX, results=hide>>=
 	data(phiX, package="deepSNV")
 	jpeg("deepSNV-phiX.jpg", 2.5, 2.5, units="in", res=600, pointsize=7)
 	par(mar=c(4,4,1,1), bty="n")
@@ -141,7 +156,7 @@ of the p-values is uniform. The data we study comes from two phiX sequences sequ
 @
 (We use a jpg device to reduce the plot size.) From the plot in Figure~\ref{fig:phiX}A it appears that there is a systematic bias between the two experiments, likely because they were sequenced in different runs. 
 We therefore normalize with:
-<<phiN>>=
+<<phiN, results=hide>>=
     phiN <- normalize(phiX, round=TRUE)
 	jpeg("deepSNV-phiN.jpg", 2.5, 2.5, units="in", res=600, pointsize=7)
 	par(mar=c(4,4,1,1), bty="n")
@@ -181,9 +196,11 @@ An alternative model is the beta-binomial distribution that allows for a larger 
 
 We load a data-set from two deep sequencing experiments of four genes extracted from a metastatic renal cell carcinoma with sequenced on separate lanes
 of a GAII$_x$:
-<<RCC-bin>>=
+<<>>=
 	data("RCC", package="deepSNV")
 	show(RCC)
+@
+<<RCC-bin, results=hide>>=
 	jpeg("deepSNV-RCC-bin.jpg", 2.5, 2.5, units="in", res=600, pointsize=7)
 	par(mar=c(4,4,1,1), bty="n")
 	plot(RCC, cex.min=.5) 
@@ -201,8 +218,10 @@ A) & B) \cr
 
 We see that a binomial model was used to generate the data. An inspection of the plot in Figure \ref{fig:RCC}A, shows a long noise tail where apparently the dispersion is underestimated 
 causing some false positives. We use a beta-binomial model instead and conservatively estimate the dispersion factor on both sides with the argument \texttt{alternative="two.sided"}:
-<<RCC-bb>>=
-	RCC.bb = estimateDispersion(RCC, alternative="two.sided")
+<<>>=
+RCC.bb = estimateDispersion(RCC, alternative="two.sided")
+@
+<<RCC-bb, results=hide>>=
 	jpeg("deepSNV-RCC-bb.jpg", 2.5, 2.5, units="in", res=600, pointsize=7)
 	par(mar=c(4,4,1,1), bty="n")
 	plot(RCC.bb, cex.min=.5) 
@@ -235,5 +254,9 @@ The remaining variants have positive frequencies. The first is a deletion of \Se
 The second is a C>G conversion in the 5$'$-UTR of the \emph{VHL} gene at \Sexpr{paste(tab[2,1],":", tab[2,2], tab[2,3], sep="")} in \Sexpr{round(100*tab[2,6],2)}\% of the alleles. 
 The third variant is likely to be an alignment artifact resulting from imperfect alignments of the deletion of \Sexpr{paste(tab[1,1],":",tab[1,2],tab[1,3], sep="")}.
 
+\section{sessionInfo()}
+<<echo=FALSE, results=tex>>=
+    toLatex(sessionInfo())
+@
 
 \end{document}
