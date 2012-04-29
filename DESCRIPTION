@@ -3,7 +3,7 @@ Imports: Rsamtools
 Maintainer: Moritz Gerstung <gemoritz@ethz.ch>
 License: GPL-3
 Title: Test for subclonal SNVs in deep sequencing experiments.
-BiocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
+biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
 LinkingTo: Rsamtools
 Type: Package
 LazyLoad: yes
