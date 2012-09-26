@@ -1,6 +1,6 @@
 # Generic methods of the deepSNV package
 # 
-# Author: gemoritz
+# Author: Moritz Gerstung
 ###############################################################################
 
 
@@ -18,11 +18,10 @@
 #' @param pch The plotting symbol. Default = 16 (filled circle)
 #' @param ... Additional arguments passed to plot.
 #' @return NULL
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @export
 #' @method plot deepSNV
-#' @usage \method{plot}{deepSNV}(x, sig.level = NULL, col = NULL, col.null = "grey", cex.min = 0.2, ylab="Relative Frequency in Test", xlab="Relative Frequency in Control", pch = 16, ...) 
-#' @example deepSNV/inst/example/deepSNV-example.R
+#' @example inst/example/deepSNV-example.R
 plot.deepSNV <- function (x, sig.level = NULL, col = NULL, col.null = "grey", cex.min = 0.2, ylab="Relative Frequency in Test", xlab="Relative Frequency in Control", pch = 16, ...) 
 		{	
 			test = RF(test(x, total=T)+1)
@@ -84,10 +83,12 @@ plot.deepSNV <- function (x, sig.level = NULL, col = NULL, col.null = "grey", ce
 #' \item{n.ctrl.bw}{The variant counts in the control experiment, backward strand}
 #' \item{cov.ctrl.bw}{The coverage in the control experiment, backward strand}
 #' \item{raw.p.val}{The raw p-value}
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @exportMethod summary
-#' @example deepSNV/inst/example/deepSNV-example.R
-#' @name summary-methods
+#' @example inst/example/deepSNV-example.R
+#' @rdname summary-methods
+#' @docType methods
+#' @name summary
 if (!isGeneric("summary"))
 	setGeneric("summary", function(object, ...)
 				standardGeneric("summary"),
@@ -95,6 +96,8 @@ if (!isGeneric("summary"))
 
 #' Summary for deepSNV object
 #' @rdname summary-methods
+#' @docType methods
+#' @aliases summary,deepSNV-method
 setMethod("summary",
 		signature = signature(object = "deepSNV"),
 		function (object, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1) 
@@ -109,9 +112,12 @@ setMethod("summary",
 #' @param i Row indeces.
 #' @param j Column (nucleotide) indeces.
 #' @return A \code{\link{deepSNV-class}} object.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @exportMethod `[`
+#' @name Extract
+#' @docType methods
 #' @rdname Extract-methods
+#' @name `[`
 #' @aliases [,deepSNV,ANY,ANY-method
 #' @examples data(HIVmix)
 #' HIVmix[1:10,]
@@ -141,9 +147,11 @@ setMethod("[",
 #' Show method for deepSNV objects
 #' @param object A \code{\link{deepSNV-class}} object.
 #' @return NULL
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @exportMethod show
-#' @example deepSNV/inst/example/deepSNV-example.R
+#' @example inst/example/deepSNV-example.R
+#' @docType methods
+#' @aliases show,deepSNV-method
 setMethod("show",
 		signature = signature(object = "deepSNV"),
 		function (object) 

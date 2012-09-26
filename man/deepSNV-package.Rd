@@ -1,27 +1,25 @@
+\docType{package}
 \name{deepSNV-package}
 \alias{deepSNV-package}
-\alias{deepSNV-package}
-\title{Estimation of single nucleotide variants from paired deep sequencing experiments}
-\description{Estimation of single nucleotide variants from paired deep sequencing experiments}
-\details{\tabular{ll}{
-Package: \tab deepSNV\cr
-Type: \tab Package\cr
-Version: \tab 0.99.3\cr
-Date: \tab 2012-01-20\cr
-License: \tab GPL3\cr
-LazyLoad: \tab yes\cr
+\title{Detection of subclonal SNVs in deep sequencing experiments}
+\description{
+  Detection of subclonal SNVs in deep sequencing
+  experiments
 }
-
-This packages provides algorithms for estimating SNVs and their frequencies from matched ultra-deep sequencing experiments of heterogeneous samples. 
-It retrieves the nucleotide counts at each position and each strand and tests for differences between the two experiments with a likelihood ratio test using
-either a binomial or beta-binomial model. 
-The statistic can be tuned across genomic sites by a shared Dirichlet prior.}
-\docType{package}
-\author{Moritz Gerstung, ETH Zurich, D-BSSE \email{gemoritz@ethz.ch}}
-\references{See our upcoming paper ...}
-\keyword{package}
-\seealso{\code{\link{deepSNV}}}
-\examples{## Short example with 2 SNVs at frequency ~10%
+\details{
+  This packages provides algorithms for detecting subclonal
+  single nucleotide variants (SNVs) and their frequencies
+  from ultra-deep sequencing data. It retrieves the
+  nucleotide counts at each position and each strand from
+  two .bam files and tests for differences between the two
+  experiments with a likelihood ratio test using either a
+  binomial or and overdispersed beta-binomial model. The
+  statistic can be tuned across genomic sites by a shared
+  Dirichlet prior and there package provides procedures for
+  normalizing sequencing data from different runs.
+}
+\examples{
+## Short example with 2 SNVs at frequency ~10\%
 regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140)
 ex <- deepSNV(test = system.file("extdata", "test.bam", package="deepSNV"), control = system.file("extdata", "control.bam", package="deepSNV"), regions=regions, q=10)
 show(ex)   # show method
@@ -37,5 +35,22 @@ tail(control(ex, total=TRUE))
 data(HIVmix) # attach data instead..
 show(HIVmix)
 plot(HIVmix)
-head(summary(HIVmix))}
+head(summary(HIVmix))
+
+}
+\author{
+  Moritz Gerstung, Wellcome Trust Sanger Institute,
+  \email{moritz.gerstung@sanger.ac.uk}
+}
+\references{
+  Gerstung M, Beisel C, Rechsteiner M, Wild P, Schraml P,
+  Moch H, and Beerenwinkel N. Reliable detection of
+  subclonal single-nucleotide variants in tumour cell
+  populations. Nat Commun 3:811 (2012).
+  \href{http://dx.doi.org/10.1038/ncomms1814}{DOI:10.1038/ncomms1814}.
+}
+\seealso{
+  \code{\link{deepSNV}}
+}
+\keyword{package}
 

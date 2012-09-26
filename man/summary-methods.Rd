@@ -1,36 +1,49 @@
-\name{summary-methods}
-\alias{summary-methods}
-\title{Summary of a deepSNV object...}
-\description{Summary of a deepSNV object}
-\details{\code{summary-methods}: Tabularize significant SNVs by evalutating the p-values of the \code{\link{deepSNV}} test.
+\name{summary}
+\alias{summary}
+\alias{summary,deepSNV-method}
+\title{Summary of a deepSNV object}
+\arguments{
+  \item{object}{A \code{\link{deepSNV-class}} object.}
 
-}
-\value{\code{summary-methods}: A data.frame with the following columns:
-\item{chr}{The chromosome}
-\item{pos}{The position (1-based)}
-\item{ref}{The reference (consensus) nucleotide}
-\item{var}{The variant nucleotide}
-\item{p.val}{The (corrected) p-value}
-\item{freq.var}{The relative frequency of the SNV}
-\item{sigma2.freq.var}{The estimated variance of the frequency}
-\item{n.tst.fw}{The variant counts in the test experiment, forward strand}
-\item{cov.tst.fw}{The coverage in the test experiment, forward strand}
-\item{n.tst.bw}{The variant counts in the test experiment, backward strand}
-\item{cov.tst.bw}{The coverage in the test experiment, backward strand}
-\item{n.ctrl.fw}{The variant counts in the control experiment, forward strand}
-\item{cov.ctrl.fw}{The coverage in the control experiment, forward strand}
-\item{n.ctrl.bw}{The variant counts in the control experiment, backward strand}
-\item{cov.ctrl.bw}{The coverage in the control experiment, backward strand}
-\item{raw.p.val}{The raw p-value}
+  \item{sig.level}{The desired significance level.}
 
+  \item{adjust.method}{The adjustment method for multiple
+  testing corrections. See \code{\link{p.adjust}} for
+  details. Set to NULL, for no adjustment. Default
+  "bonferroni".}
+
+  \item{fold.change}{The minimal fold change required of
+  the relative frequency. Default 1.}
 }
-\author{gemoritz}
-\arguments{\item{object}{A \code{\link{deepSNV-class}} object.}
-\item{sig.level}{The desired significance level.}
-\item{adjust.method}{The adjustment method for multiple testing corrections. See \code{\link{p.adjust}} for details. Set to NULL, for no adjustment. Default "bonferroni".}
-\item{fold.change}{The minimal fold change required of the relative frequency. Default 1.}
+\value{
+  A data.frame with the following columns: \item{chr}{The
+  chromosome} \item{pos}{The position (1-based)}
+  \item{ref}{The reference (consensus) nucleotide}
+  \item{var}{The variant nucleotide} \item{p.val}{The
+  (corrected) p-value} \item{freq.var}{The relative
+  frequency of the SNV} \item{sigma2.freq.var}{The
+  estimated variance of the frequency} \item{n.tst.fw}{The
+  variant counts in the test experiment, forward strand}
+  \item{cov.tst.fw}{The coverage in the test experiment,
+  forward strand} \item{n.tst.bw}{The variant counts in the
+  test experiment, backward strand} \item{cov.tst.bw}{The
+  coverage in the test experiment, backward strand}
+  \item{n.ctrl.fw}{The variant counts in the control
+  experiment, forward strand} \item{cov.ctrl.fw}{The
+  coverage in the control experiment, forward strand}
+  \item{n.ctrl.bw}{The variant counts in the control
+  experiment, backward strand} \item{cov.ctrl.bw}{The
+  coverage in the control experiment, backward strand}
+  \item{raw.p.val}{The raw p-value}
 }
-\examples{## Short example with 2 SNVs at frequency ~10%
+\description{
+  Tabularize significant SNVs by evalutating the p-values
+  of the \code{\link{deepSNV}} test.
+
+  Summary for deepSNV object
+}
+\examples{
+## Short example with 2 SNVs at frequency ~10\%
 regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140)
 ex <- deepSNV(test = system.file("extdata", "test.bam", package="deepSNV"), control = system.file("extdata", "control.bam", package="deepSNV"), regions=regions, q=10)
 show(ex)   # show method
@@ -46,9 +59,10 @@ tail(control(ex, total=TRUE))
 data(HIVmix) # attach data instead..
 show(HIVmix)
 plot(HIVmix)
-head(summary(HIVmix))}
-\alias{summary,deepSNV-method}
-\alias{summary}
-\usage{\S4method{summary}{deepSNV}(object, sig.level=0.05, adjust.method="bonferroni", fold.change=1)
+head(summary(HIVmix))
+
+}
+\author{
+  Moritz Gerstung
 }
 

@@ -1,6 +1,6 @@
 # Special methods of the deepSNV package
 # 
-# Author: gemoritz
+# Author: Moritz Gerstung
 ###############################################################################
 
 
@@ -12,7 +12,6 @@
 #' and the alternative that the parameters differ. Because the difference in degrees of freedom is 1, the test statistic \eqn{D = -2 \log \max{L_0}/\max{L_1}}
 #' is asymptotically distributed as \eqn{\chi_1^2}. The statistic may be tuned by a nucleotide specific Dirichlet prior that is learned across all genomic sites, 
 #' see \code{\link{estimateDirichlet}}. If the model is beta-binomial, a global dispersion parameter is used for all sites. It can be learned with \code{\link{estimateDispersion}}.
-#' 
 #' @param test The test experiment. Either a .bam file, or a matrix with nucleotide counts, or  a \code{\link{deepSNV-class}} object.
 #' @param control The control experiment. Must be of the same type as test, or missing if test is  a \code{\link{deepSNV-class}} object.
 #' @param alternative The alternative to be tested. One of greater, less, or two.sided.
@@ -28,16 +27,19 @@
 #' @param head.clip The head.clip argument  passed to \code{\link{bam2R}} if the experiments are .bam files.
 #' @param ... Additional arguments.
 #' @return A \code{\linkS4class{deepSNV}} object
-#' @author gemoritz
-#' @example deepSNV/inst/example/deepSNV-example.R
+#' @author Moritz Gerstung
+#' @example inst/example/deepSNV-example.R
 #' @exportMethod deepSNV
+#' @rdname deepSNV-methods
+#' @docType methods
 setGeneric("deepSNV",
 		function(test, control, ...) {
 			standardGeneric("deepSNV")
 		})
 
-#' Method for signature matrix,matrix
 #' @rdname deepSNV-methods
+#' @aliases deepSNV,matrix,matrix-method
+#' @usage \S4method{deepSNV}{matrix,matrix}(test,control, alternative = c('greater', 'less', 'two.sided'), dirichlet.prior = NULL, pseudo.count=1, combine.method = c("fisher", "max", "average"), over.dispersion = 100, model = c("bin", "betabin"), ...)
 setMethod("deepSNV",
 		signature = signature(test="matrix", control="matrix"),
 		function(test,control, alternative = c('greater', 'less', 'two.sided'), dirichlet.prior = NULL, pseudo.count=1, combine.method = c("fisher", "max", "average"), over.dispersion = 100, model = c("bin", "betabin"), ...){
@@ -75,8 +77,9 @@ setMethod("deepSNV",
 		}
 )
 
-#' Method for signature deepSNV,missing
 #' @rdname deepSNV-methods
+#' @aliases deepSNV,deepSNV,missing-method
+#' @usage \S4method{deepSNV}{deepSNV,missing}(test, control, ...)
 setMethod("deepSNV",
 		signature = signature(test="deepSNV", control="missing"),
 		function(test, control, ...) {
@@ -96,8 +99,9 @@ setMethod("deepSNV",
 		}
 )
 
-#' Method for signature character,character
 #' @rdname deepSNV-methods
+#' @aliases deepSNV,character,character-method
+#' @usage \S4method{deepSNV}{character,character}(test, control, regions, q=25, s=2, head.clip=0, ...)
 setMethod("deepSNV",
 		signature = signature(test="character", control="character"),
 		function(test, control, regions, q=25, s=2, head.clip=0, ...) {
@@ -128,8 +132,9 @@ setMethod("deepSNV",
 			return(result)
 		})
 
-#' Method for signature matrix,character
 #' @rdname deepSNV-methods
+#' @aliases deepSNV,matrix,character-method
+#' @usage \S4method{deepSNV}{matrix,character}(test, control, regions, q=25, s=2, ...)
 setMethod("deepSNV",
 		signature = signature(test="matrix", control="character"),
 		function(test, control, regions, q=25, s=2, ...) {
@@ -158,8 +163,9 @@ setMethod("deepSNV",
 			return(result)
 		})
 
-#' Method for signature character,matrix
 #' @rdname deepSNV-methods
+#' @aliases deepSNV,character,matrix-method
+#' @usage \S4method{deepSNV}{character,matrix}(test, control, regions, q=25, s=2, ...)
 setMethod("deepSNV",
 		signature = signature(test="character", control="matrix"),
 		function(test, control, regions, q=25, s=2, ...) {
@@ -195,14 +201,16 @@ setMethod("deepSNV",
 #' the higher moments of the Dirichlet distributions. After having learned the prior the \code{\link{deepSNV-class}} test is recomputed.
 #' @param control Either a matrix with nucleotide counts or a \code{\link{deepSNV-class}} object.  
 #' @return An \code{\link{deepSNV-class}} object.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @exportMethod estimateDirichlet
+#' @rdname estimateDirichlet-methods
+#' @docType methods
 #' @examples data(phiX)
 #' estimateDirichlet(phiX)
-setGeneric("estimateDirichlet", function(control,...) standardGeneric("estimateDirichlet"))
+setGeneric("estimateDirichlet", function(control) standardGeneric("estimateDirichlet"))
 
-#' Method for signature matrix
 #' @rdname estimateDirichlet-methods
+#' @aliases estimateDirichlet,matrix-method
 setMethod("estimateDirichlet", 
 		signature = signature(control="matrix"),
 		function(control){
@@ -223,8 +231,8 @@ setMethod("estimateDirichlet",
 			return(prior)}
 )
 
-#' Method for signature deepSNV
 #' @rdname estimateDirichlet-methods
+#' @aliases estimateDirichlet,deepSNV-method
 setMethod("estimateDirichlet", 
 		signature = signature(control="deepSNV"),
 		function(control) {
@@ -242,13 +250,17 @@ setMethod("estimateDirichlet",
 #' @param flank Boolean. Indicates whether the sites adjacent to the repeat should also be masked.
 #' @param w Integer. The minimal length at which repeats should be masked. Default \code{w=0}.
 #' @return A boolean vector where TRUE indicates a non-homopolymeric region.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @exportMethod repeatMask
+#' @rdname repeatMask-methods
+#' @docType methods
 #' @examples data(HIVmix)
 #' which(repeatMask(HIVmix))
 setGeneric("repeatMask", function(x, ...) standardGeneric("repeatMask"))
 
 #' @rdname repeatMask-methods
+#' @aliases repeatMask,DNAString-method
+#' @usage \S4method{repeatMask}{DNAString}(x, w=5, flank=TRUE)
 setMethod("repeatMask",
 		signature = signature(x="DNAString"),
 		function(x, w=5, flank=TRUE){
@@ -267,6 +279,8 @@ setMethod("repeatMask",
 )
 
 #' @rdname repeatMask-methods
+#' @aliases repeatMask,deepSNV-method
+#' @usage \S4method{repeatMask}{deepSNV}(x, w=5, flank=TRUE)
 setMethod("repeatMask",
 		signature = signature(x="deepSNV"),
 		function(x, w=5, flank=TRUE) repeatMask(consensusSequence(control(x, total=TRUE)), w, flank)
@@ -279,9 +293,12 @@ setMethod("repeatMask",
 #' @param vector Boolean where TRUE indicates that a character vector should be returned.
 #' @param haploid Should the consensus be called for a haploid control? Otherwise, also all bases larger than het.cut are rerported. Default haploid = TRUE.
 #' @param het.cut Heterozygous cutoff. If haploid = FALSE, report all nucleotides with relative frequency larger than het.cut. Default = 0.333.
+#' @param ... Additional arguments passed to methods.
 #' @return A \code{\link{DNAString}} with the consensus sequence, or if vector = TRUE, a character vector.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @exportMethod consensusSequence
+#' @rdname consensusSequence-methods
+#' @docType methods
 #' @examples data(HIVmix)
 #' seq = consensusSequence(HIVmix)
 #' consensusSequence(HIVmix, vector=TRUE)[1:10]
@@ -289,6 +306,8 @@ setGeneric("consensusSequence",
 		function(x, ...) standardGeneric("consensusSequence"))
 
 #' @rdname consensusSequence-methods
+#' @aliases consensusSequence,matrix-method
+#' @usage \S4method{consensusSequence}{matrix}(x, vector=FALSE, haploid=TRUE, het.cut = .333)
 setMethod("consensusSequence", 
 		signature = signature(x="matrix"), 
 		function(x, vector=FALSE, haploid=TRUE, het.cut = .333){
@@ -306,6 +325,8 @@ setMethod("consensusSequence",
 		})
 
 #' @rdname consensusSequence-methods
+#' @aliases consensusSequence,deepSNV-method
+#' @usage \S4method{consensusSequence}{deepSNV}(x, vector=FALSE, haploid=TRUE, het.cut = .333)
 setMethod("consensusSequence", signature = signature(x="deepSNV"), function(x, vector=FALSE, haploid=TRUE, het.cut = .333) consensusSequence(control(x, total=TRUE), vector, haploid, het.cut))
 
 
@@ -321,16 +342,20 @@ setMethod("consensusSequence", signature = signature(x="deepSNV"), function(x, v
 #' if unspecified. 
 #' @param interval The interval to be screened for the overdispersion factor. Default (0,1000).
 #' @return A \code{\link{deepSNV-class}} object if the input was a deepSNV object. Otherwise the loglikelihood and the estimated parameter.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @examples data("RCC", package="deepSNV")
 #' plot(RCC)
 #' summary(RCC)[,1:6]
 #' RCC.bb = estimateDispersion(RCC, alternative = "two.sided")
 #' summary(RCC.bb)
 #' @exportMethod estimateDispersion
+#' @rdname estimateDispersion-methods
+#' @docType methods
 setGeneric("estimateDispersion", function(test, control, ...) standardGeneric("estimateDispersion"))
 
 #' @rdname estimateDispersion-methods
+#' @aliases estimateDispersion,deepSNV,missing-method
+#' @usage \S4method{estimateDispersion}{deepSNV,missing}(test, control, alternative = NULL, interval = c(0,1000))
 setMethod("estimateDispersion", 
 		signature = signature(test = "deepSNV", control = "missing"),
 		function(test, control, alternative = NULL, interval = c(0,1000)){
@@ -342,6 +367,8 @@ setMethod("estimateDispersion",
 )
 
 #' @rdname estimateDispersion-methods
+#' @aliases estimateDispersion,matrix,matrix-method
+#' @usage \S4method{estimateDispersion}{matrix,matrix}(test, control, alternative = NULL, interval = c(0,1000))
 setMethod("estimateDispersion", 
 		signature = signature(test = "matrix", control = "matrix"),
 		function(test,control, alternative = NULL, interval = c(0,1000)) .estimateDispersion(test=test, control=control, alternative=alternative, interval=interval)
@@ -352,16 +379,18 @@ setMethod("estimateDispersion",
 #' 
 #' This functions performs a \code{\link{loess}} normalization of the nucleotide. This experimental feature can 
 #' be used to compare experiments from different libraries or sequencing runs that may have differing noise characteristics.
+#' @note This feature is somewhat experimental and the results should be treated with care. Sometimes it can be better to leave the data unnormalized and use a model with greater dispersion instead.
 #' @param test Either an \code{\link{deepSNV-class}} object or a named matrix with nucleotide counts.
 #' @param control Missing if test is an \code{link{deepSNV-class}} object, otherwise a matrix with nucleotide counts.
-#' @param round Logical. Should normalized counts be round to integers? Default=TRUE 
+#' @param round Logical. Should normalized counts be rounded to integers? Default=TRUE 
 #' @param ... Parameters passed to \code{\link{loess}}.
 #' @return A \code{\link{deepSNV-class}} object.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @examples data(phiX, package = "deepSNV")
 #' plot(phiX)
 #' phiN <- normalize(phiX, round = TRUE)
 #' plot(phiN)
+#' @rdname normalize-methods
 #' @exportMethod normalize
 		setGeneric("normalize",
 				function(test, control, ...) {
@@ -370,6 +399,8 @@ setMethod("estimateDispersion",
 		
 #' Normalize nucleotide counts.
 #' @rdname normalize-methods
+#' @aliases normalize,matrix,matrix-method
+#' @usage \S4method{normalize}{matrix,matrix}(test, control, round=TRUE, ...)
 setMethod("normalize",
 		signature = signature(test="matrix", control="matrix"),
 		function(test, control, round=TRUE, ...) {
@@ -411,6 +442,8 @@ setMethod("normalize",
 		
 #' Normalize nucleotide counts.
 #' @rdname normalize-methods
+#' @aliases normalize,deepSNV,missing-method
+#' @usage \S4method{normalize}{deepSNV,missing}(test, control,  ...)
 setMethod("normalize",
 		signature = signature(test="deepSNV", control="missing"),
 		function(test,control,...){
@@ -433,16 +466,19 @@ setMethod("normalize",
 #' control(HIVmix)[1:10,]
 #' control(HIVmix, total=TRUE)[1:10,]
 #' @exportMethod control
+#' @rdname control-methods
+#' @docType methods
 setGeneric("control",
 		function(deepSNV, ...) {
 			standardGeneric("control")
 		})
 
-#' Get controls counts.
 #' @rdname control-methods
+#' @aliases control,deepSNV-method
+#' @usage \S4method{control}{deepSNV}(deepSNV, total = FALSE)
 setMethod("control",
 		signature = signature(deepSNV="deepSNV"),
-		function(deepSNV, total = F) {
+		function(deepSNV, total = FALSE) {
 			count <- slot(deepSNV, "control")
 			if(total)
 				matrix(count[,1:5] + count[,6:10], ncol=5, dimnames=list(NULL, deepSNV@nucleotides[1:5]))
@@ -461,16 +497,19 @@ setMethod("control",
 #' test(HIVmix)[1:10,]
 #' test(HIVmix, total=TRUE)[1:10,]
 #' @exportMethod test
+#' @rdname test-methods
+#' @docType methods
 setGeneric("test",
 		function(deepSNV, ...) {
 			standardGeneric("test")
 		})
 
-#' Get test counts.
 #' @rdname test-methods
+#' @aliases test,deepSNV-method
+#' @usage \S4method{test}{deepSNV}(deepSNV, total = FALSE)
 setMethod("test",
 		signature = signature(deepSNV="deepSNV"),
-		function(deepSNV, total = F) {
+		function(deepSNV, total = FALSE) {
 			count <- slot(deepSNV, "test")
 			if(total)
 				matrix(count[,1:5] + count[,6:10], ncol=5, dimnames=list(NULL, deepSNV@nucleotides[1:5]))
@@ -487,13 +526,16 @@ setMethod("test",
 #' @examples data(HIVmix)
 #' p.val(HIVmix)[1:10,]
 #' @exportMethod p.val
+#' @rdname p.val-methods
+#' @docType methods
 setGeneric("p.val",
 		function(deepSNV, ...) {
 			standardGeneric("p.val")
 		})
 
-#' Get p-values
 #' @rdname p.val-methods
+#' @aliases p.val,deepSNV-method
+#' @usage \S4method{p.val}{deepSNV}(deepSNV)
 setMethod("p.val",
 		signature = signature(deepSNV="deepSNV"),
 		function(deepSNV) {
@@ -509,13 +551,16 @@ setMethod("p.val",
 #' @examples data(HIVmix)
 #' coordinates(HIVmix)[1:10,]
 #' @exportMethod coordinates
+#' @rdname coordinates-methods
+#' @docType methods
 setGeneric("coordinates",
 		function(deepSNV, ...) {
 			standardGeneric("coordinates")
 		})
 
-#' Get coordinates
 #' @rdname coordinates-methods
+#' @aliases coordinates,deepSNV-method
+#' @usage \S4method{coordinates}{deepSNV}(deepSNV)
 setMethod("coordinates",
 		signature = signature(deepSNV="deepSNV"),
 		function(deepSNV) {
