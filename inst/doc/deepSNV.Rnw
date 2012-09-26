@@ -21,7 +21,7 @@
 
 \begin{document}
 
-\title{The \texttt{deepSNV} package}
+\title{Calling subclonal mutations with \texttt{deepSNV}}
 \author{Moritz Gerstung and Niko Beerenwinkel}
 
 \maketitle

@@ -1,5 +1,12 @@
 deepSNV -- an R package for subclonal variant calling.
 
+Changes in version 1.3.3 (2012-09-14)
+Updates
+* Changed CITATION
+* Updated documentation
+* Updated biocViews
+* Using roxygen2 for generating man pages
+
 Changes in version 1.3.2 (2012-04-10)
 Updates
 * New devel version, identical to release 1.2.3

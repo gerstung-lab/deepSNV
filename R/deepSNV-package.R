@@ -1,32 +1,22 @@
 # Package definitions for deepSNV
 # 
-# Author: gemoritz
+# Author: Moritz Gerstung
 ###############################################################################
 
-#' Estimation of single nucleotide variants from paired deep sequencing experiments
+#' Detection of subclonal SNVs in deep sequencing experiments
 #' 
-#' \tabular{ll}{
-#' Package: \tab deepSNV\cr
-#' Type: \tab Package\cr
-#' Version: \tab 0.99.3\cr
-#' Date: \tab 2012-01-20\cr
-#' License: \tab GPL3\cr
-#' LazyLoad: \tab yes\cr
-#' }
-#' 
-#' This packages provides algorithms for estimating SNVs and their frequencies from matched ultra-deep sequencing experiments of heterogeneous samples. 
-#' It retrieves the nucleotide counts at each position and each strand and tests for differences between the two experiments with a likelihood ratio test using
-#' either a binomial or beta-binomial model. 
-#' The statistic can be tuned across genomic sites by a shared Dirichlet prior.
+#' This packages provides algorithms for detecting subclonal single nucleotide variants (SNVs) and their frequencies from ultra-deep sequencing data. 
+#' It retrieves the nucleotide counts at each position and each strand from two .bam files and tests for differences between the two experiments with a likelihood ratio test using
+#' either a binomial or and overdispersed beta-binomial model. 
+#' The statistic can be tuned across genomic sites by a shared Dirichlet prior and there package provides procedures for normalizing sequencing data from different runs.
 #' @name deepSNV-package
 #' @docType package
-#' @title Estimation of single nucleotide variants from paired deep sequencing experiments
-#' @author Moritz Gerstung, ETH Zurich, D-BSSE \email{gemoritz@@ethz.ch}
-#' @references See our upcoming paper ...
+#' @title Detection of subclonal SNVs in deep sequencing experiments
+#' @author Moritz Gerstung, Wellcome Trust Sanger Institute, \email{moritz.gerstung@@sanger.ac.uk}
+#' @references Gerstung M, Beisel C, Rechsteiner M, Wild P, Schraml P, Moch H, and Beerenwinkel N. Reliable detection of subclonal single-nucleotide variants in tumour cell populations. Nat Commun 3:811 (2012). \href{http://dx.doi.org/10.1038/ncomms1814}{DOI:10.1038/ncomms1814}.
 #' @keywords package
 #' @seealso \code{\link{deepSNV}}
-#' 
-#' @example deepSNV/inst/example/deepSNV-example.R
+#' @example inst/example/deepSNV-example.R
 #' @import Rsamtools
 #' @import methods
 #' @import Biostrings

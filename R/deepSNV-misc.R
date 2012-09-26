@@ -1,10 +1,10 @@
 # TODO: Add comment
 # 
-# Author: gemoritz
+# Author: Moritz Gerstung
 ###############################################################################
 
 #' List of ambiguous base mappings
-#' @nord
+#' @noRd
 AMBIGUOUS = list()
 AMBIGUOUS[["R"]] = c("A","G")
 AMBIGUOUS[["Y"]] = c("C","T")
@@ -26,10 +26,10 @@ AMBIGUOUS[['-']] = '-'
 #' Nice colors
 #' 
 #' Colors from \code{\link{RColorBrewer}}.
-#' @nord
+#' @noRd
 nt.col <- matrix(c("#A6CEE3", "#B2DF8A", "#FB9A99", "#FDBF6F", "#CAB2D6", "#D9D9D9",  "#1F78B4", "#33A02C", "#E31A1C", "#FF7F00", "#6A3D9A", "#525252"), ncol=2)
 
 #' Complement nucleotide
-#' @nord
+#' @noRd
 COMPLEMENT <- c("A","T","C","G","-")
 names(COMPLEMENT) <- c("T","A","G","C","-")
