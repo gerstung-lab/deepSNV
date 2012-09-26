@@ -1,10 +1,10 @@
 # functions of the deepSNV package
 # 
-# Author: gemoritz
+# Author: Moritz Gerstung
 ###############################################################################
 
 #' The actual function for the deepSNV test
-#' @nord
+#' @noRd
 .deepSNV <- function(test, control, nucleotides, dirichlet.prior, alternative, model, over.dispersion, combine.method) {
 	if(length(nucleotides)==10)
 		CV <- consensusSequence(control[,1:5]+control[,6:10], vector=TRUE)
@@ -26,7 +26,7 @@
 }
 
 #' The actual workhorse for the deepSNV test
-#' @nord
+#' @noRd
 .deepSNVsingle <- function(test, control, dirichlet.prior, alternative, CV, strand=0, model, alpha=NULL) {	
 	sum.test <- rowSums(test)
 	sum.control <- rowSums(control)
@@ -90,8 +90,8 @@
 #' @param dirichlet.prior The prior.
 #' @param CV A vector of the consensus.
 #' @return alpha The parameter alpha of the beta-binomial model.
-#' @author gemoritz
-#' @nord
+#' @author Moritz Gerstung
+#' @noRd
 .estimateDispersion <- function(test, control, dirichlet.prior = NULL, CV=NULL, alternative = c("two.sided", "greater", "less"), interval=c(0,1000)) {
 	if(is.null(CV)) CV = consensusSequence(control[,1:5], vector=T)
 	if(is.null(dirichlet.prior)) dirichlet.prior = matrix(1, nrow=5, ncol=5, dimnames = list(colnames(control)[1:5], colnames(control)[1:5]))
@@ -139,7 +139,7 @@
 #' @param freq A matrix with nucleotide counts.
 #' @param total If the nucleotide counts have columns for forward and reverse direction, return each strand sepratatelu (FALSE), or add the two (TRUE). 
 #' @return A matrix with the relative frequencies.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @export
 #' @examples data(HIVmix)
 #' RF(test(HIVmix))[1:10,]
@@ -159,7 +159,7 @@ RF <- function(freq, total = FALSE){
 
 
 #' Minor allele sequence
-#' @nord
+#' @noRd
 .MASequence <- function(freq, vector=FALSE){
 	tfreq <- t(freq)
 	cons <- factor(apply(tfreq,2,function(x) order(x, decreasing=TRUE)[2]), levels=1:5)
@@ -169,7 +169,7 @@ RF <- function(freq, total = FALSE){
 }
 
 #' Base substitution matrix
-#' @nord
+#' @noRd
 .BSM <- function(freq, CV, complement=F){
 	bases <- c("A","T","C","G")
 	if(complement) {
@@ -182,7 +182,7 @@ RF <- function(freq, total = FALSE){
 
 
 #' Significant SNVs.
-#' @nord
+#' @noRd
 .significantSNV <- function(deepSNV, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1){
 	if(is.null(adjust.method)) q = deepSNV@p.val
 	else q = p.adjust(deepSNV@p.val, method=adjust.method)
@@ -248,7 +248,7 @@ RF <- function(freq, total = FALSE){
 #' @param x An \code{\link{deepSNV}} object.
 #' @param col An optional vector of colors for the nucleotides.
 #' @return NULL.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @export
 #' @examples data(HIVmix)
 #' manhattanPlot(HIVmix)
@@ -267,9 +267,9 @@ manhattanPlot <- function(x, col=nt.col){
 			title = "nt")
 }
 
-#' Read nucleotide counts
+#' Read nucleotide counts from a .bam file
 #' 
-#' This function reads the nucleotide counts on each position of a .bam alignment. The counts of both strands are reported separately 
+#' This function uses a C interface to read the nucleotide counts on each position of a .bam alignment. The counts of both strands are reported separately 
 #' and nucleotides below a quality cutoff are masked. It is called by \code{\link{deepSNV}} to parse the alignments of the test and control experiments,
 #' respectively. 
 #' 
@@ -281,10 +281,10 @@ manhattanPlot <- function(x, col=nt.col){
 #' @param s Optional choice of the strand. Defaults to s = 2 (both).
 #' @param head.clip Should n nucleotides from the head of reads be clipped? Default 0.
 #' @param max.depth The maximal depth for the pileup command. Default 1,000,000.
-#' @return A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and end at the given position, respectively, 
-#' and the sum of alignment (QUAL)ities. 
+#' @return A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and ends at the given position, respectively, 
+#' and the sum of alignment (QUAL)ities, which can be indicative of alignment problems. 
 #' Counts from matches on the reference strand (s=0) are uppercase, counts on the complement (s=1) are lowercase. The returned matrix has 11 * 2 (strands) = 22 columns and (stop - start + 1) rows.
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @export bam2R
 #' @examples ## Simple example:
 #' counts <- bam2R(file = system.file("extdata", "test.bam", package="deepSNV"), chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140, q = 10)
@@ -329,7 +329,7 @@ bam2R = function(file, chr, start, stop, q=25, s=2, head.clip = 0, max.depth=100
 #' p.max = p.combine(p1,p2, method="max")
 #' hist(p.max)
 #' pairs(data.frame(p1,p2,p.fish,p.max,p.avg))
-#' @author gemoritz
+#' @author Moritz Gerstung
 #' @export
 p.combine <- function(p1,p2, method=c("fisher", "max", "average", "prod")){
 	method <- match.arg(method)

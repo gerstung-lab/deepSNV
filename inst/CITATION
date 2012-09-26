@@ -10,7 +10,8 @@ bibentry("Article",
                            as.person("Niko Beerenwinkel")),
        journal = "Nat Commun",
        title = "Reliable detection of subclonal single-nucleotide variants in tumor cell populations",
-       volume = "in the press",
+       volume = "3",
+       pages = "811",
        year = "2012"
        )
        

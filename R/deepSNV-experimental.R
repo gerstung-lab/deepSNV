@@ -1,26 +1,26 @@
 # Experimental functions in deepSNV. Functions in this file are not guaranteed
 # to work! They are not exported from the namespace.
-# Author: gemoritz
+# Author: Moritz Gerstung
 ###############################################################################
 
 #' Test for PCR errors.
 #' 
-#' A test for PCR errors based on the Luria-Delbrück model of error propagation in exponentially growing populations. The test makes use of the fact that in the LD model
+#' A test for PCR errors based on the Luria-Delbruck model of error propagation in exponentially growing populations. The test makes use of the fact that in the LD model
 #' the variance scales as \eqn{\sigma^2 = 2 \mu T}, where \eqn{\mu} is the mutation rate and \eqn{T} the number of cycles. Moreover, if there are intially \eqn{N_0 \gg 1} molecules, 
 #' one may use a Normal approximation for the distribution of errors with mean \eqn{\mu} and variance \eqn{\sigma^2/N_0}. 
 #' @param test Either an \code{\link{deepSNV-class}} object or a named matrix with nucleotide counts.
 #' @param control Missing if test is an \code{link{deepSNV-class}} object, otherwise a matrix with nucleotide counts.
 #' @param alpha A parameter controlling the variance. Defined as the number of cycles tims the initial number of molecules. Default alpha = 33*1000.
 #' @return A matrix with p-values for test and control of class matrix, otherwise an deepSNV object.
-#' @author gemoritz
-#' @nord
+#' @author Moritz Gerstung
+#' @noRd
 setGeneric("PCRTest",
 		function(test, control, ...) {
 			standardGeneric("PCRTest")
 		})
 
 #' Test for PCR errors.
-#' @nord
+#' @noRd
 setMethod("PCRTest",
 		signature(test="matrix", control="matrix"),
 		function(test, control, alpha = 33*1000) {
@@ -32,7 +32,7 @@ setMethod("PCRTest",
 		})
 
 #' Test for PCR errors.
-#' @nord
+#' @noRd
 setMethod("PCRTest",
 		signature(test="deepSNV", control="missing"),
 		function(test, control, ...) {
@@ -54,15 +54,15 @@ setMethod("PCRTest",
 #' @param control Missing if test is an \code{link{deepSNV-class}} object, otherwise a matrix with nucleotide counts.
 #' @param weight Character string denoting how weights should be computed.
 #' @param ... Additinal arguments passed to \code{\link{deepSNV}}
-#' @author gemoritz
-#' @nord
+#' @author Moritz Gerstung
+#' @noRd
 setGeneric("overDispersion",
 		function(test, control, weight, ...) {
 			standardGeneric("overDispersion")
 		})
 
 #' Estimate overdispersion.
-#' @nord
+#' @noRd
 setMethod("overDispersion",
 		signature(test="matrix", control="matrix"),
 		function(test, control, weight = c("none","geometric"), ...) {
@@ -79,7 +79,7 @@ setMethod("overDispersion",
 		})
 
 #' Estimate overdispersion.
-#' @nord
+#' @noRd
 setMethod("overDispersion", 
 		signature(test="deepSNV", control="missing"),
 		function(test, control, weight = c("none","geometric"), ...){
