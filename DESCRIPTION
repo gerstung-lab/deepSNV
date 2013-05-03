@@ -8,15 +8,20 @@ LinkingTo: Rsamtools
 Type: Package
 LazyLoad: yes
 Author: Moritz Gerstung and Niko Beerenwinkel
-Description: This package provides provides a quantitative variant caller 
-    for detecting subclonal mutations in ultra-deep (>=100x coverage) 
-    sequencing experiments. It assumes a comparative setup with a control
-    experiment of the same loci and a beta-binomial model to discriminate 
-    sequencing errors and subclonal SNVs.
-Version: 1.3.3
+Description: This package provides provides a quantitative variant callers
+    for detecting subclonal mutations in ultra-deep (>=100x coverage)
+    sequencing experiments. The deepSNV algorithm assumes a comparative setup 
+    with a control experiment of the same loci and uses a beta-binomial model 
+    and a likelihood ratio test to discriminate sequencing errors and subclonal 
+    SNVs. The shearwater algorithm computes a Bayes classifier based on a beta-
+    binomial model for variant calling with prior knowledge, e.g. from variation
+    data bases such as COSMIC and multiple samples for precisely estimating
+    model parameters such as local error rates and dispersion.
+Version: 1.99.0
 URL: http://www.cbg.ethz.ch/software/deepSNV
-Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges, Biostrings, VGAM,
-    methods, graphics
+Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges,
+        Biostrings, VGAM, methods, graphics, VariantAnnotation (>= 1.5.0),
+        parallel
 Collate: 'deepSNV-class.R' 'deepSNV-experimental.R'
-    'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
-    'deepSNV-misc.R' 'deepSNV-package.R'
+        'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
+        'deepSNV-misc.R' 'deepSNV-package.R'

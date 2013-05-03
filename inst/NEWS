@@ -1,5 +1,10 @@
 deepSNV -- an R package for subclonal variant calling.
 
+Changes in version 1.99.0 (2013-04-30)
+Updates
+* Including shearwater algorithm
+* Including VCF output through summary(deepSNV, value="VCF")
+
 Changes in version 1.3.3 (2012-09-14)
 Updates
 * Changed CITATION

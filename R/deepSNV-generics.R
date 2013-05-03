@@ -61,12 +61,13 @@ plot.deepSNV <- function (x, sig.level = NULL, col = NULL, col.null = "grey", ce
 
 #' Summary of a deepSNV object
 #' 
-#' Tabularize significant SNVs by evalutating the p-values of the \code{\link{deepSNV}} test.
+#' Tabularize significant SNVs by evalutating the p-values of the \code{\link{deepSNV}} test. 
 #' @param object A \code{\link{deepSNV-class}} object.
 #' @param sig.level The desired significance level.
 #' @param adjust.method The adjustment method for multiple testing corrections. See \code{\link{p.adjust}} for details. Set to NULL, for no adjustment. Default "bonferroni".
 #' @param fold.change The minimal fold change required of the relative frequency. Default 1.
-#' @return A data.frame with the following columns:
+#' @param value String. The type of the returned object. Either "data.frame" for a \code{\link{data.frame}} (default) or "VCF" for an Extended\code{\link{VCF-class}} object.
+#' @return If value="data.frame", a \code{\link{data.frame}} with the following columns:
 #' \item{chr}{The chromosome}
 #' \item{pos}{The position (1-based)}
 #' \item{ref}{The reference (consensus) nucleotide}
@@ -83,6 +84,19 @@ plot.deepSNV <- function (x, sig.level = NULL, col = NULL, col.null = "grey", ce
 #' \item{n.ctrl.bw}{The variant counts in the control experiment, backward strand}
 #' \item{cov.ctrl.bw}{The coverage in the control experiment, backward strand}
 #' \item{raw.p.val}{The raw p-value}
+#' If value = "VCF", this functions returns a  \code{\link{VCF-class}} object with the following entries:
+#' FIXED:
+#' \item{REF}{Reference allele in control sample. Note that deletions in the test sample will be reported like insertions to the reference}
+#' \item{VAR}{Variant allele in test sample}
+#' \item{QUAL}{-10*log10(raw.p.val)}
+#' INFO:
+#' \item{VF}{Variant frequency}
+#' \item{VFV}{Variant frequency variance}
+#' GENO (one column for test and one column for control):
+#' \item{FW}{Forward allele count}
+#' \item{BW}{Backward allele count}
+#' \item{DFW}{Forward read depth}
+#' \item{DBW}{Backward read depth}
 #' @author Moritz Gerstung
 #' @exportMethod summary
 #' @example inst/example/deepSNV-example.R
@@ -100,7 +114,7 @@ if (!isGeneric("summary"))
 #' @aliases summary,deepSNV-method
 setMethod("summary",
 		signature = signature(object = "deepSNV"),
-		function (object, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1) 
+		function (object, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1, value=c("data.frame","vcf")) 
 		{
 			.significantSNV(object, sig.level, adjust.method, fold.change)
 		}

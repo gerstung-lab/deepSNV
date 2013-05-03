@@ -12,17 +12,19 @@
 		CV <- consensusSequence(control[,1:5], vector=TRUE)	
 	
 	res0 <- .deepSNVsingle(test = test[,1:5], control = control[,1:5], dirichlet.prior = dirichlet.prior, alternative = alternative, CV = CV, model=model, alpha=over.dispersion)
+	log.lik = res0$log.lik 
 	
 	#Combine P-values from both strands.
 	if(length(nucleotides) == 10){
 		res1 <- .deepSNVsingle(test = test[,6:10], control = control[,6:10], dirichlet.prior = dirichlet.prior[,COMPLEMENT[colnames(dirichlet.prior)]], alternative = alternative, CV = COMPLEMENT[CV], strand=1, model=model, alpha=over.dispersion)
 		p.val <- p.combine(res0$p.val, res1$p.val, method=combine.method)
+		log.lik = log.lik + res1$log.lik
 	}
 	else{
 		p.val <- res0$p.val
 	}
 	for (i in 1:nrow(p.val)) p.val[i, CV[i]] <- NA
-	return(list(p.val = p.val, log.lik = res0$log.lik + res1$log.lik))
+	return(list(p.val = p.val, log.lik = log.lik))
 }
 
 #' The actual workhorse for the deepSNV test
@@ -183,7 +185,8 @@ RF <- function(freq, total = FALSE){
 
 #' Significant SNVs.
 #' @noRd
-.significantSNV <- function(deepSNV, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1){
+.significantSNV <- function(deepSNV, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1, value=c("data.frame","VCF")){
+	value <- match.arg(value)
 	if(is.null(adjust.method)) q = deepSNV@p.val
 	else q = p.adjust(deepSNV@p.val, method=adjust.method)
 	CV.control <- consensusSequence(deepSNV, vector=TRUE)
@@ -236,10 +239,47 @@ RF <- function(freq, total = FALSE){
 	if(!is.null(adjust.method)){
 		table$raw.p.val <- deepSNV@p.val[cond]
 	}
-	o <- order(table$p.val)
-	table <- table[o,]
 	rownames(table) <- NULL
-	return(table)
+	
+	if(value == "data.frame"){
+		o <- order(table$chr, table$pos)
+		table <- table[o,]
+		return(table)
+	}
+	else{
+		isDel <- table$var == "-"
+		isIns <- table$ref == "-"
+		if(length(deepSNV@files)==2)
+			samples <- sub("/.+/","",deepSNV@files)
+		else
+			samples <- c("test","control")
+		v = VCF(
+				rowData=GRanges(table$chr, 
+						IRanges(table$pos - (isDel | isIns), width=1 + isDel), 
+				),
+				fixed = DataFrame(
+						REF = DNAStringSet(paste(ifelse(isDel | isIns, as.character(CV.control[cond.rows - 1]),""), sub("-", "", table$ref), sep="")),
+						ALT = DNAStringSet(paste(ifelse(isDel | isIns, as.character(CV.control[cond.rows - 1]),""), sub("-", "", table$var), sep="")),
+						QUAL = round(-10*log10(table$raw.p.val)),
+						FILTER = "PASS"
+				),
+				info = DataFrame(
+						VF = table$freq.var,
+						VFV = table$sigma2.freq.var),
+				geno = SimpleList(
+						FW = cbind(table$n.tst.fw, table$n.ctrl.fw),
+						BW = cbind(table$n.tst.fw, table$n.ctrl.bw),
+						DFW = cbind(table$cov.tst.fw, table$cov.ctrl.fw),
+						DBW = cbind(table$cov.tst.bw, table$cov.ctrl.bw)),
+				exptData = SimpleList(header = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))),
+				colData = DataFrame(samples=1:length(samples), row.names=samples),
+				collapsed=FALSE
+		)
+		exptData(v)$header@samples <- samples
+		exptData(v)$header@header$META["date",1] <- paste(Sys.time())
+		
+		return(sort(v))
+	}
 }
 
 #' Manhattan plot.
