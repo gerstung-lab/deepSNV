@@ -1,0 +1,77 @@
+\name{bbb}
+\alias{bbb}
+\alias{shearwater}
+\title{Bayesian beta-binomal test, codename shearwater}
+\usage{
+  bbb(counts, rho = NULL, alternative = "greater",
+    truncate = 0.1, rho.min = 1e-04, rho.max = 0.1,
+    pseudo = .Machine$double.eps, return.value = "BF",
+    model = c("OR", "AND"))
+}
+\arguments{
+  \item{counts}{An \code{\link{array}} of nucleotide counts
+  (samples x positions x 10 nucleotides in forward and
+  reverse orientation), typically from
+  \code{\link{loadAllData}}}
+
+  \item{truncate}{The model uses a compound control sample
+  which is the sum of all samples with a relative
+  nucleotide frequency below truncate at this locus.
+  Default = 0.1.}
+
+  \item{alternative}{The alternative. Currently only
+  "greater" is implemented.}
+
+  \item{rho}{Disperision factor. If NULL, estimated from
+  the data.}
+
+  \item{rho.min}{Lower bound for the method of moment
+  estimate of the dispersion factor rho.}
+
+  \item{rho.max}{Upper bound for the method of moment
+  estimate of the dispersion factor rho.}
+
+  \item{pseudo}{A pseudo count to be added to the counts to
+  avoid problems with zeros.}
+
+  \item{return.value}{Return value. Either "BF" for Bayes
+  Factor of "P0" for the posterior probability (assuming a
+  prior of 0.5).}
+
+  \item{model}{The null model to use. For "OR" it requires
+  the alternative model to be violated on either of the
+  strands, for "AND" the null is specified such that the
+  error rates of the sample of interest and the compound
+  control sample are identical on both strands. "AND"
+  typically yield many more calls. Default = "OR".}
+}
+\value{
+  An \code{\link{array}} of Bayes factors
+}
+\description{
+  This is the workhorse of the shearwater test. It computes
+  the Bayes factor for each sample, nucleotide and position
+  of the null-model vs. the alternative of a real variant.
+}
+\note{
+  Experimental code, subject to changes
+}
+\examples{
+## Load data from deepSNV example
+regions <- GRanges("B.FR.83.HXB2_LAI_IIIB_BRU_K034", IRanges(start = 3120, end=3140))
+files <- c(system.file("extdata", "test.bam", package="deepSNV"), system.file("extdata", "control.bam", package="deepSNV"))
+counts <- loadAllData(files, regions, q=10)
+
+## Run (bbb) computes the Bayes factor
+bf <- bbb(counts, model = "OR", rho=1e-4)
+vcf <- bf2Vcf(bf, counts, regions, samples = files, prior = 0.5, mvcf = TRUE) 
+
+## Compare to deepSNV
+bf <- bbb(counts, model = "AND", rho=1e-4)
+dpSNV <- deepSNV(test = files[1], control = files[2], regions=regions, q=10)
+plot(p.val(dpSNV), bf[1,,]/(1+bf[1,,]), log="xy")
+}
+\author{
+  mg14
+}
+

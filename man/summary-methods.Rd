@@ -1,3 +1,4 @@
+\docType{methods}
 \name{summary}
 \alias{summary}
 \alias{summary,deepSNV-method}
@@ -14,19 +15,25 @@
 
   \item{fold.change}{The minimal fold change required of
   the relative frequency. Default 1.}
+
+  \item{value}{String. The type of the returned object.
+  Either "data.frame" for a \code{\link{data.frame}}
+  (default) or "VCF" for an Extended\code{\link{VCF-class}}
+  object.}
 }
 \value{
-  A data.frame with the following columns: \item{chr}{The
-  chromosome} \item{pos}{The position (1-based)}
-  \item{ref}{The reference (consensus) nucleotide}
-  \item{var}{The variant nucleotide} \item{p.val}{The
-  (corrected) p-value} \item{freq.var}{The relative
-  frequency of the SNV} \item{sigma2.freq.var}{The
-  estimated variance of the frequency} \item{n.tst.fw}{The
-  variant counts in the test experiment, forward strand}
-  \item{cov.tst.fw}{The coverage in the test experiment,
-  forward strand} \item{n.tst.bw}{The variant counts in the
-  test experiment, backward strand} \item{cov.tst.bw}{The
+  If value="data.frame", a \code{\link{data.frame}} with
+  the following columns: \item{chr}{The chromosome}
+  \item{pos}{The position (1-based)} \item{ref}{The
+  reference (consensus) nucleotide} \item{var}{The variant
+  nucleotide} \item{p.val}{The (corrected) p-value}
+  \item{freq.var}{The relative frequency of the SNV}
+  \item{sigma2.freq.var}{The estimated variance of the
+  frequency} \item{n.tst.fw}{The variant counts in the test
+  experiment, forward strand} \item{cov.tst.fw}{The
+  coverage in the test experiment, forward strand}
+  \item{n.tst.bw}{The variant counts in the test
+  experiment, backward strand} \item{cov.tst.bw}{The
   coverage in the test experiment, backward strand}
   \item{n.ctrl.fw}{The variant counts in the control
   experiment, forward strand} \item{cov.ctrl.fw}{The
@@ -34,7 +41,18 @@
   \item{n.ctrl.bw}{The variant counts in the control
   experiment, backward strand} \item{cov.ctrl.bw}{The
   coverage in the control experiment, backward strand}
-  \item{raw.p.val}{The raw p-value}
+  \item{raw.p.val}{The raw p-value} If value = "VCF", this
+  functions returns a \code{\link{VCF-class}} object with
+  the following entries: FIXED: \item{REF}{Reference allele
+  in control sample. Note that deletions in the test sample
+  will be reported like insertions to the reference}
+  \item{VAR}{Variant allele in test sample}
+  \item{QUAL}{-10*log10(raw.p.val)} INFO: \item{VF}{Variant
+  frequency} \item{VFV}{Variant frequency variance} GENO
+  (one column for test and one column for control):
+  \item{FW}{Forward allele count} \item{BW}{Backward allele
+  count} \item{DFW}{Forward read depth} \item{DBW}{Backward
+  read depth}
 }
 \description{
   Tabularize significant SNVs by evalutating the p-values

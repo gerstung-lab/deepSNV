@@ -1,30 +1,12 @@
+\docType{methods}
 \name{deepSNV}
 \alias{deepSNV}
-\alias{deepSNV-methods}
 \alias{deepSNV,character,character-method}
 \alias{deepSNV,character,matrix-method}
 \alias{deepSNV,deepSNV,missing-method}
 \alias{deepSNV,matrix,character-method}
 \alias{deepSNV,matrix,matrix-method}
 \title{Test two matched deep sequencing experiments for low-frequency SNVs.}
-\usage{
-  \S4method{deepSNV}{matrix,matrix}(test,control,
-    alternative = c('greater', 'less', 'two.sided'),
-    dirichlet.prior = NULL, pseudo.count=1, combine.method
-    = c("fisher", "max", "average"), over.dispersion = 100,
-    model = c("bin", "betabin"), ...)
-
-  \S4method{deepSNV}{deepSNV,missing}(test, control, ...)
-
-  \S4method{deepSNV}{character,character}(test, control,
-    regions, q=25, s=2, head.clip=0, ...)
-
-  \S4method{deepSNV}{matrix,character}(test, control,
-    regions, q=25, s=2, ...)
-
-  \S4method{deepSNV}{character,matrix}(test, control,
-    regions, q=25, s=2, ...)
-}
 \arguments{
   \item{test}{The test experiment. Either a .bam file, or a
   matrix with nucleotide counts, or a

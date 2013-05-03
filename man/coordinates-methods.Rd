@@ -1,11 +1,8 @@
+\docType{methods}
 \name{coordinates}
 \alias{coordinates}
-\alias{coordinates-methods}
 \alias{coordinates,deepSNV-method}
 \title{Get coordinates}
-\usage{
-  \S4method{coordinates}{deepSNV}(deepSNV)
-}
 \arguments{
   \item{deepSNV}{a \code{\link{deepSNV-class}} object}
 }

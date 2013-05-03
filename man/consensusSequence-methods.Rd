@@ -1,16 +1,9 @@
+\docType{methods}
 \name{consensusSequence}
 \alias{consensusSequence}
-\alias{consensusSequence-methods}
 \alias{consensusSequence,deepSNV-method}
 \alias{consensusSequence,matrix-method}
 \title{Calculate the consensus sequence.}
-\usage{
-  \S4method{consensusSequence}{matrix}(x, vector=FALSE,
-    haploid=TRUE, het.cut = .333)
-
-  \S4method{consensusSequence}{deepSNV}(x, vector=FALSE,
-    haploid=TRUE, het.cut = .333)
-}
 \arguments{
   \item{x}{An object. Either an \code{\link{deepSNV-class}}
   object, or a named matrix with nucleotide counts.}

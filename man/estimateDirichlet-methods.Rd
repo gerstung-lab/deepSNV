@@ -1,14 +1,9 @@
+\docType{methods}
 \name{estimateDirichlet}
 \alias{estimateDirichlet}
-\alias{estimateDirichlet-methods}
 \alias{estimateDirichlet,deepSNV-method}
 \alias{estimateDirichlet,matrix-method}
 \title{Learn a base-specific Dirichlet prior.}
-\usage{
-  \S4method{estimateDirichlet}{matrix}(control)
-
-  \S4method{estimateDirichlet}{deepSNV}(control)
-}
 \arguments{
   \item{control}{Either a matrix with nucleotide counts or
   a \code{\link{deepSNV-class}} object.}

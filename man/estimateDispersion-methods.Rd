@@ -1,16 +1,9 @@
+\docType{methods}
 \name{estimateDispersion}
 \alias{estimateDispersion}
-\alias{estimateDispersion-methods}
 \alias{estimateDispersion,deepSNV,missing-method}
 \alias{estimateDispersion,matrix,matrix-method}
 \title{Estimate the Dispersion factor in a beta-binomial model.}
-\usage{
-  \S4method{estimateDispersion}{deepSNV,missing}(test,
-    control, alternative = NULL, interval = c(0,1000))
-
-  \S4method{estimateDispersion}{matrix,matrix}(test,
-    control, alternative = NULL, interval = c(0,1000))
-}
 \arguments{
   \item{test}{Either a deepSNV object, or a matrix with the
   test counts.}

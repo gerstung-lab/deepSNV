@@ -1,17 +1,8 @@
 \name{normalize}
 \alias{normalize}
-\alias{normalize-methods}
 \alias{normalize,deepSNV,missing-method}
 \alias{normalize,matrix,matrix-method}
 \title{Normalize nucleotide counts.}
-\usage{
-  normalize(test, control, ...)
-
-  \S4method{normalize}{matrix,matrix}(test, control,
-    round=TRUE, ...)
-
-  \S4method{normalize}{deepSNV,missing}(test, control, ...)
-}
 \arguments{
   \item{test}{Either an \code{\link{deepSNV-class}} object
   or a named matrix with nucleotide counts.}
