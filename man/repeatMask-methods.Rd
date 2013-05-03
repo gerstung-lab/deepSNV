@@ -1,14 +1,9 @@
+\docType{methods}
 \name{repeatMask}
 \alias{repeatMask}
-\alias{repeatMask-methods}
 \alias{repeatMask,deepSNV-method}
 \alias{repeatMask,DNAString-method}
 \title{Mask homopolymeric repeats.}
-\usage{
-  \S4method{repeatMask}{DNAString}(x, w=5, flank=TRUE)
-
-  \S4method{repeatMask}{deepSNV}(x, w=5, flank=TRUE)
-}
 \arguments{
   \item{x}{An object. Either a \code{\link{deepSNV-class}}
   object or a \code{\link{DNAString}} with the nucleotide

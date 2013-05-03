@@ -1,11 +1,8 @@
+\docType{methods}
 \name{p.val}
 \alias{p.val}
-\alias{p.val-methods}
 \alias{p.val,deepSNV-method}
 \title{Get p-values}
-\usage{
-  \S4method{p.val}{deepSNV}(deepSNV)
-}
 \arguments{
   \item{deepSNV}{a \code{\link{deepSNV-class}} object}
 }

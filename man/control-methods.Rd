@@ -1,11 +1,8 @@
+\docType{methods}
 \name{control}
 \alias{control}
-\alias{control-methods}
 \alias{control,deepSNV-method}
 \title{Get control counts}
-\usage{
-  \S4method{control}{deepSNV}(deepSNV, total = FALSE)
-}
 \arguments{
   \item{deepSNV}{a \code{\link{deepSNV-class}} object}
 

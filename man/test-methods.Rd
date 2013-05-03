@@ -1,11 +1,8 @@
+\docType{methods}
 \name{test}
 \alias{test}
-\alias{test-methods}
 \alias{test,deepSNV-method}
 \title{Get test counts}
-\usage{
-  \S4method{test}{deepSNV}(deepSNV, total = FALSE)
-}
 \arguments{
   \item{deepSNV}{a \code{\link{deepSNV-class}} object}
 

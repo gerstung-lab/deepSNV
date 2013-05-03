@@ -1,0 +1,10 @@
+##fileformat=VCFv4.1
+##source=shearwater variant caller
+##INFO=<ID=PD,Number=1,Type=String,Description="PDID of the sample">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total depth">
+##INFO=<ID=FW,Number=1,Type=Integer,Description="Forward variant allele count">
+##INFO=<ID=BW,Number=1,Type=Integer,Description="Backward variant allele count">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele frequency">
+##INFO=<ID=ER,Number=A,Type=Float,Description="Error rate">
+##INFO=<ID=BF,Number=A,Type=Float,Description="Bayes factor">
+##INFO=<ID=PI,Number=A,Type=Float,Description="Prior">

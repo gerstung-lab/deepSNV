@@ -1,0 +1,32 @@
+\name{mcChunk}
+\alias{mcChunk}
+\title{Little helper function to split the count objects into a smaller digestible chunks and run function FUN on each subset}
+\usage{
+  mcChunk(FUN, X, split = 250, mc.cores = 1, ...)
+}
+\arguments{
+  \item{FUN}{The function to call on each chunk}
+
+  \item{X}{The object to be subsetted using [,i,]}
+
+  \item{split}{The size of each chunk}
+
+  \item{mc.cores}{The number of cores to use}
+
+  \item{...}{Additional arguments passed to FUN}
+}
+\value{
+  The value of FUN
+}
+\description{
+  Little helper function to split the count objects into a
+  smaller digestible chunks and run function FUN on each
+  subset
+}
+\note{
+  Experimental code, subject to changes
+}
+\author{
+  mg14
+}
+
