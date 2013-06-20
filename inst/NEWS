@@ -1,5 +1,12 @@
 deepSNV -- an R package for subclonal variant calling.
 
+Changes in version 1.99.1
+Updates
+* Using knitr for pretty vignettes
+* Including shearwater vignette
+Bugfixes
+* makePrior() adds background on all sites
+
 Changes in version 1.99.0 (2013-04-30)
 Updates
 * Including shearwater algorithm
