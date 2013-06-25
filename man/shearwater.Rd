@@ -6,7 +6,8 @@
   bbb(counts, rho = NULL, alternative = "greater",
     truncate = 0.1, rho.min = 1e-04, rho.max = 0.1,
     pseudo = .Machine$double.eps, return.value = "BF",
-    model = c("OR", "AND"))
+    model = c("OR", "AND", "adaptive"), min.cov = NULL,
+    max.odds = 10)
 }
 \arguments{
   \item{counts}{An \code{\link{array}} of nucleotide counts
@@ -43,7 +44,17 @@
   strands, for "AND" the null is specified such that the
   error rates of the sample of interest and the compound
   control sample are identical on both strands. "AND"
-  typically yield many more calls. Default = "OR".}
+  typically yield many more calls. The most recent addition
+  is "adaptive", which switches from "OR" to "AND", if the
+  coverage is less than min.cov, or if the odds of forward
+  and reverse coverage is greater than max.odds. Default =
+  "OR".}
+
+  \item{min.cov}{Minimal coverage to swith from OR to AND,
+  if model is "adaptive"}
+
+  \item{max.odds}{Maximal odds before switching from OR to
+  AND if model is "adaptive" and min.cov=NULL.}
 }
 \value{
   An \code{\link{array}} of Bayes factors

@@ -25,8 +25,8 @@
   a true variant from a variation data base. It assumes a
   VCF file with a CNT slot for the count of a given base
   substitution. Such a VCF file can be downloaded at
-  ftp://ngs.sanger.ac.uk/production/cosmic/CosmicCodingMuts_v64_02042013_noLimit.vcf.gz.
-  The prior probability is simply defined as pi.mut *
+  ftp://ngs.sanger.ac.uk/production/cosmic/. The prior
+  probability is simply defined as pi.mut *
   CNT[i]/sum(CNT). On sites with no count, a background
   probability of pi0 is used.
 }

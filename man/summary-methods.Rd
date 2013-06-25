@@ -44,15 +44,25 @@
   \item{raw.p.val}{The raw p-value} If value = "VCF", this
   functions returns a \code{\link{VCF-class}} object with
   the following entries: FIXED: \item{REF}{Reference allele
-  in control sample. Note that deletions in the test sample
-  will be reported like insertions to the reference}
-  \item{VAR}{Variant allele in test sample}
-  \item{QUAL}{-10*log10(raw.p.val)} INFO: \item{VF}{Variant
-  frequency} \item{VFV}{Variant frequency variance} GENO
-  (one column for test and one column for control):
-  \item{FW}{Forward allele count} \item{BW}{Backward allele
-  count} \item{DFW}{Forward read depth} \item{DBW}{Backward
-  read depth}
+  in control sample. Note that deletions in the control
+  sample will be reported like insertions, e.g. if the
+  consensus of the control is A,- at positions 1 and 2
+  (relative to the reference) and the test was A,A, then
+  this would be denoted as REF="A" and VAR="AA" with
+  coordinate IRanges(1,2). This may cause ambiguities when
+  the VCF object is written to text with writeVcf(), which
+  discards the width of the coordinate, and this variant
+  remains indistinguishable from an insertion to the
+  _reference_ genome.} \item{VAR}{Variant allele in test
+  sample} \item{QUAL}{-10*log10(raw.p.val)} INFO:
+  \item{VF}{Variant frequency. Variant allele frequency in
+  the test minus variant allele frequency in the control.}
+  \item{VFV}{Variant frequency variance. Variance of the
+  variant frequency; can be thought of as confidence
+  interval.} GENO (one column for test and one column for
+  control): \item{FW}{Forward allele count}
+  \item{BW}{Backward allele count} \item{DFW}{Forward read
+  depth} \item{DBW}{Backward read depth}
 }
 \description{
   Tabularize significant SNVs by evalutating the p-values

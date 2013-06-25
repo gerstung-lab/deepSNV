@@ -185,8 +185,7 @@ RF <- function(freq, total = FALSE){
 
 #' Significant SNVs.
 #' @noRd
-.significantSNV <- function(deepSNV, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1, value=c("data.frame","VCF")){
-	value <- match.arg(value)
+.significantSNV <- function(deepSNV, sig.level = 0.05, adjust.method = "bonferroni", fold.change=1, value="data.frame"){
 	if(is.null(adjust.method)) q = deepSNV@p.val
 	else q = p.adjust(deepSNV@p.val, method=adjust.method)
 	CV.control <- consensusSequence(deepSNV, vector=TRUE)
@@ -255,11 +254,12 @@ RF <- function(freq, total = FALSE){
 			samples <- c("test","control")
 		v = VCF(
 				rowData=GRanges(table$chr, 
-						IRanges(table$pos - (isDel | isIns), width=1 + isDel), 
+						IRanges(table$pos - (isDel | isIns), width=1 + (isDel | isIns)), 
 				),
 				fixed = DataFrame(
 						REF = DNAStringSet(paste(ifelse(isDel | isIns, as.character(CV.control[cond.rows - 1]),""), sub("-", "", table$ref), sep="")),
-						ALT = DNAStringSet(paste(ifelse(isDel | isIns, as.character(CV.control[cond.rows - 1]),""), sub("-", "", table$var), sep="")),
+						#ALT = DNAStringSet(paste(ifelse(isDel | isIns, as.character(CV.control[cond.rows - 1]),""), sub("-", "", table$var), sep="")),
+						ALT = do.call(DNAStringSetList,as.list(paste(ifelse(isDel | isIns, as.character(CV.control[cond.rows - 1]),""), sub("-", "", table$var), sep=""))),
 						QUAL = round(-10*log10(table$raw.p.val)),
 						FILTER = "PASS"
 				),
@@ -273,7 +273,7 @@ RF <- function(freq, total = FALSE){
 						DBW = cbind(table$cov.tst.bw, table$cov.ctrl.bw)),
 				exptData = SimpleList(header = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))),
 				colData = DataFrame(samples=1:length(samples), row.names=samples),
-				collapsed=FALSE
+				collapsed=TRUE
 		)
 		exptData(v)$header@samples <- samples
 		exptData(v)$header@header$META["date",1] <- paste(Sys.time())
