@@ -78,7 +78,7 @@ mcChunk = function(FUN, X, split=250, mc.cores=1, ...){
 #' @param samples vector of samples names.
 #' @param cutoff Cutoff for the posterior artifact probability below which a variant is considered to be true (default = 0.05)
 #' @param prior matrix of prior probabilities for finding a true call, typically from \code{\link{makePrior}}. Alternatively a single fixed number.
-#' @param mvcf boolean flag, if TRUE compute a large VCF with as many genotype columns as samples. Default FALSE. Otherwise use duplicate rows and only one genotype column. Can be inefficient for large sample sizes.
+#' @param mvcf boolean flag, if TRUE compute a large VCF with as many genotype columns as samples. Default TRUE. Otherwise use duplicate rows and only one genotype column. The sample is then provided by the info:PD field. Can be inefficient for large sample sizes.
 #' @param err Optional matrix of error rates, otherwise recomputed from counts.
 #' @param mu Optional matrix of relative frequencies, otherwise recomputed from counts.
 #' @return A \code{\link{VCF}} object
@@ -86,11 +86,12 @@ mcChunk = function(FUN, X, split=250, mc.cores=1, ...){
 #' @author mg14
 #' @note Experimental code, subject to changes
 #' @export
-bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu = NULL, cutoff = 0.05, prior = 0.5, mvcf=FALSE){
+## TODO: check for cases with zero result
+bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu = NULL, cutoff = 0.05, prior = 0.5, mvcf=TRUE){
 	coordinates <- regions2Coordinates(regions)
 	prior = array(rep(prior, each = length(BF)/length(prior)), dim=dim(BF))
-	pi = prior/(1-prior)
-	posterior = BF / (BF + pi)
+	odds = prior/(1-prior)
+	posterior = BF / (BF + odds)
 	w = which(posterior < cutoff, arr.ind=TRUE)
 	w = w[order(w[,2], w[,3], w[,1]),]
 	
@@ -113,13 +114,13 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 #	alt = lapply(split(c("A","T","C","G","")[w[o,3]], m), paste, collapse="")
 	if(!mvcf){
 		v = VCF(
-				rowData=GRanges(coordinates$chr[1], 
-						IRanges(coordinates$pos[w[,2]] - (w[,2]==5), width=1 + (w[,2]==5)), 
+				rowData=GRanges(coordinates$chr[w[,2]], 
+						IRanges(coordinates$pos[w[,2]] - (w[,3]==5), width=1 + (w[,3]==5)), ## If del make one longer..
 				),
 				fixed = DataFrame(
 						REF = DNAStringSet(paste(ifelse(w[,3]==5,as.character(ref[w[,2]-1]),""), ref[w[,2]], sep="")),
-						#ALT = do.call(DNAStringSetList,as.list(paste(ifelse(w[,3]==5,as.character(ref[w[,2]-1]),""), c("A","T","C","G","")[w[,3]], sep=""))),
-						ALT = DNAStringSet(paste(ifelse(w[,3]==5,as.character(ref[w[,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep="")),
+						ALT = do.call(DNAStringSetList,as.list(paste(ifelse(w[,3]==5,as.character(ref[w[,2]-1]),""), c("A","T","C","G","")[w[,3]], sep=""))),
+						#ALT = DNAStringSet(paste(ifelse(w[,3]==5,as.character(ref[w[,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep="")),
 						QUAL = round(-10*log10(select(w,posterior))),
 						FILTER = "PASS"
 				),
@@ -153,26 +154,26 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 		
 		#rownames(w) = samples[w[,1]]
 		v = VCF(
-				rowData=GRanges(coordinates$chr[1], 
-						IRanges(coordinates$pos[w[u,2]] - (w[u,2]==5), width=1 + (w[u,2]==5)), 
+				rowData=GRanges(coordinates$chr[wu[,2]], 
+						IRanges(coordinates$pos[wu[,2]] - (wu[,3]==5), width=1 + (wu[,3]==5)), 
 				),
 				fixed = DataFrame(
-						REF = DNAStringSet(paste(ifelse(w[u,3]==5,as.character(ref[w[u,2]-1]),""), ref[w[u,2]], sep="")),
-						#ALT = do.call(DNAStringSetList,as.list(paste(ifelse(w[u,3]==5,as.character(ref[w[,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep=""))),
-						ALT = DNAStringSet(paste(ifelse(w[u,3]==5,as.character(ref[w[u,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep="")),
+						REF = DNAStringSet(paste(ifelse(wu[,3]==5,as.character(ref[wu[,2]-1]),""), ref[wu[,2]], sep="")), ##TODO: Warning if w[u,3][1]==5 & w[u,2]==1...
+						ALT = do.call(DNAStringSetList,as.list(paste(ifelse(wu[,3]==5,as.character(ref[wu[,2]-1]),""), c("A","T","C","G","")[wu[,3]], sep=""))),
+						#ALT = DNAStringSet(paste(ifelse(w[u,3]==5,as.character(ref[w[u,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep="")),
 						QUAL = 1,
 						FILTER = "PASS"
 				),
 				info = DataFrame(
 						#paramRangeID=NA,
-						ER = select(w[u,-1], err),
-						PI = select(w[u,], prior),
+						ER = select(wu[,-1], err),
+						PI = select(wu, prior),
 						AF = rowMeans(geno$GT),
 						LEN = 1),
 				geno = geno,
 				exptData = SimpleList(header = scanVcfHeader(system.file("extdata", "shearwater2.vcf", package="deepSNV"))),
 				colData = DataFrame(samples=1:length(samples), row.names=samples),
-				collapsed = FALSE
+				collapsed = TRUE
 		)
 		colnames(v) = samples
 	}
@@ -212,7 +213,7 @@ regions2Coordinates <- function(regions.GR) {
 #' 
 #' This function computes the prior probability of detecting a true variant from a variation data base. It assumes a
 #' VCF file with a CNT slot for the count of a given base substitution. Such a VCF file can be downloaded at 
-#' ftp://ngs.sanger.ac.uk/production/cosmic/CosmicCodingMuts_v64_02042013_noLimit.vcf.gz. The prior probability
+#' ftp://ngs.sanger.ac.uk/production/cosmic/. The prior probability
 #' is simply defined as pi.mut * CNT[i]/sum(CNT). On sites with no count, a background probability of pi0 is used.
 #' @param COSMIC A VCF object from COSMIC VCF export. 
 #' @param regions A GRanges object with the regions (gene) of interest.
@@ -238,8 +239,8 @@ makePrior = function(COSMIC, regions, pi.mut = 0.1, pi0 = 1e-4){
 	for(i in 1:nrow(c)){
 		prior[pos[i], var[i]] = cnt[i] + prior[pos[i], var[i]]
 	}
-	prior = prior/sum(prior) * pi.mut
-	prior[prior==0] = pi0
+	prior = prior/sum(prior) * pi.mut + pi0
+	prior[prior>=1] = 1 - .Machine$double.eps
 	return(prior)
 }
 
@@ -295,7 +296,10 @@ logbb <- function(x, n, mu, disp) {
 #' @param pseudo A pseudo count to be added to the counts to avoid problems with zeros.
 #' @param return.value Return value. Either "BF" for Bayes Factor of "P0" for the posterior probability (assuming a prior of 0.5).
 #' @param model The null model to use. For "OR" it requires the alternative model to be violated on either of the strands, for "AND" the null is specified such that the error rates of the sample 
-#' of interest and the compound control sample are identical on both strands. "AND" typically yield many more calls. Default = "OR". 
+#' of interest and the compound control sample are identical on both strands. "AND" typically yield many more calls. The most recent addition is "adaptive", which switches from "OR" to "AND", if the coverage 
+#' is less than min.cov, or if the odds of forward and reverse coverage is greater than max.odds. Default = "OR".
+#' @param min.cov Minimal coverage to swith from OR to AND, if model is "adaptive"
+#' @param max.odds Maximal odds before switching from OR to AND if model is "adaptive" and min.cov=NULL.
 #' @return An \code{\link{array}} of Bayes factors
 #' @example inst/example/shearwater-example.R
 #' 
@@ -304,8 +308,9 @@ logbb <- function(x, n, mu, disp) {
 #' @aliases shearwater
 #' @note Experimental code, subject to changes
 #' @export
-bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min = 1e-4, rho.max = 0.1, pseudo = .Machine$double.eps, return.value="BF", model=c("OR","AND")) {
-	mumax = 0.99999 ## make sure mu <= 1; should be solved by a pseudocount
+bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min = 1e-4, rho.max = 0.1, pseudo = .Machine$double.eps, return.value="BF", model=c("OR","AND", "adaptive"), min.cov=NULL, max.odds=10) {
+	mu.max = 1 - 1e-6 ## make sure mu <= 1; should be solved by a pseudocount
+	mu.min = 1e-6
 	pseudo.rho = .Machine$double.eps
 	## minum value for rho
 	
@@ -333,27 +338,39 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 	X =  colSums(x, dims=1)
 	#rm(x)
 	
+	bound = function(x, xmin, xmax){
+		x = pmax(x, xmin)
+		x = pmin(x, xmax)
+		return(x)
+	}
+	
 	disp = (1-rho)/rho 
 	rdisp <- rep(disp, each=nrow(counts))
 	mu = (x + pseudo) / (rep(n + ncol*pseudo, dim(x)[3]) ) ## sample rate forward+bwackward (true allele frequency)
-	mu = mu * rdisp * mumax
+	mu = bound(mu, mu.min, mu.max) * rdisp
 	tr.fw = x.fw * ix
 	
 	X.fw = rep(colSums(tr.fw, dims=1), each = nrow(counts)) - tr.fw ## control samples
 	N.fw = rep(colSums(n.fw * ix), each = nrow(counts)) - n.fw * ix
 	#nu0.fw <- array(rep((colSums(tr.fw) +pseudo) / (colSums(n.fw * ix) + ncol*pseudo) * disp, each = nrow(tr.fw)), dim = dim(tr.fw)) * mumax
-	nu0.fw <- (X.fw + x.fw + pseudo)/(N.fw + n.fw + ncol*pseudo) * rdisp * mumax
-	mu0.bw <- (x.bw+pseudo) / (n.bw + ncol*pseudo) * rdisp * mumax
-	nu.fw <- (X.fw+pseudo) / (N.fw + ncol*pseudo) * rdisp * mumax
+	nu0.fw <- (X.fw + x.fw + pseudo)/(N.fw + n.fw + ncol*pseudo)
+	nu0.fw <- bound(nu0.fw, mu.min, mu.max)* rdisp
+	mu0.bw <- (x.bw+pseudo) / (n.bw + ncol*pseudo) 
+	mu0.bw <- bound(mu0.bw, mu.min, mu.max) * rdisp
+	nu.fw <- (X.fw+pseudo) / (N.fw + ncol*pseudo)
+	nu.fw <- bound(nu.fw, mu.min, mu.max) * rdisp
 	rm(tr.fw)
 	
 	tr.bw = x.bw * ix
 	X.bw = rep(colSums(tr.bw, dims=1), each = nrow(counts)) - tr.bw 
 	N.bw = rep(colSums(n.bw * ix), each = nrow(counts)) - n.bw * ix
 	#nu0.bw <- array(rep((colSums(tr.bw) + pseudo) / (colSums(n.bw * ix) + ncol*pseudo) * disp, each = nrow(tr.bw)), dim = dim(tr.bw)) * mumax
-	nu0.bw <- (X.bw + x.bw + pseudo)/(N.bw + n.bw + ncol*pseudo) * rdisp * mumax
-	mu0.fw <- (x.fw+pseudo) / (n.fw +  ncol*pseudo) * rdisp * mumax
-	nu.bw <- (X.bw+pseudo) / (N.bw + ncol*pseudo) * rdisp * mumax
+	nu0.bw <- (X.bw + x.bw + pseudo)/(N.bw + n.bw + ncol*pseudo)
+	nu0.bw <- bound(nu0.bw, mu.min, mu.max) * rdisp
+	mu0.fw <- (x.fw+pseudo) / (n.fw +  ncol*pseudo)
+	mu0.fw <- bound(mu0.fw, mu.min, mu.max) * rdisp
+	nu.bw <- (X.bw+pseudo) / (N.bw + ncol*pseudo) 
+	nu.bw <- bound(nu.bw, mu.min, mu.max) * rdisp
 	rm(tr.bw)
 	
 	## Enforce mu > nu
@@ -363,7 +380,7 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 	mu0.fw = pmax(mu0.fw, nu0.fw)
 	mu0.bw = pmax(mu0.bw, nu0.bw)
 	
-	if(model=="OR"){
+	if(model %in% c("OR","adaptive")){
 		## Bayes factor forward
 		Bf.fw <- logbb(x.fw, n.fw, nu0.fw, rdisp) + logbb(x.bw, n.bw, mu0.bw, rdisp) + logbb(X.fw, N.fw, nu0.fw, rdisp) - logbb(x.fw, n.fw, mu, rdisp) - logbb(x.bw, n.bw, mu, rdisp) - logbb(X.fw, N.fw, nu.fw, rdisp)
 		Bf.fw = exp(Bf.fw)
@@ -391,6 +408,13 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 		Bf = exp(Bf.both)
 	}
 	
+	if(model=="adaptive"){
+		if(!is.null(min.cov))
+			ix <- n.fw < min.cov | n.bw < min.cov
+		else
+			ix <- na.omit(abs(log10(n.fw/n.bw)) > log10(max.odds))
+		Bf[ix] <- Bf.both[ix]
+	}
 	
 	#Bf[f.se.g] = Inf
 	## If smaller, take H0
@@ -403,4 +427,20 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 	}else{
 		return(Bf)
 	}
+}
+
+
+#' Get mutation IDs
+#' @param vcf 
+#' @return character
+#' @noRd
+#' 
+#' @author mg14
+mutID = function(vcf){
+	alt <- as.character(unlist(alt(vcf)))
+	ref <- as.character(ref(vcf))
+	isDel <- width(ref) > 1
+	ifelse(!isDel, 
+			paste(seqnames(vcf), start(vcf), alt, sep=":"),
+			paste(seqnames(vcf), start(vcf)+1, paste("del",substring(ref,2),sep=""), sep=":"))
 }

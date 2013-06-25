@@ -4,7 +4,7 @@
 \usage{
   bf2Vcf(BF, counts, regions, samples = 1:nrow(counts),
     err = NULL, mu = NULL, cutoff = 0.05, prior = 0.5,
-    mvcf = FALSE)
+    mvcf = TRUE)
 }
 \arguments{
   \item{BF}{array of Bayes factors from \code{\link{bbb}}.}
@@ -26,9 +26,10 @@
   Alternatively a single fixed number.}
 
   \item{mvcf}{boolean flag, if TRUE compute a large VCF
-  with as many genotype columns as samples. Default FALSE.
+  with as many genotype columns as samples. Default TRUE.
   Otherwise use duplicate rows and only one genotype
-  column. Can be inefficient for large sample sizes.}
+  column. The sample is then provided by the info:PD field.
+  Can be inefficient for large sample sizes.}
 
   \item{err}{Optional matrix of error rates, otherwise
   recomputed from counts.}
