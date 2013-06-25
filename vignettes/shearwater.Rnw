@@ -4,8 +4,23 @@
 
 \usepackage{amsmath, amssymb}
 \usepackage{charter}
+\usepackage[scaled=0.9]{helvet}
 \renewcommand{\sfdefault}{phv}
 \usepackage[sf]{titlesec}
+
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
 
 \newcommand{\Dir}{\operatorname{Dir}}
 \newcommand{\B}{\operatorname{B}}
@@ -17,24 +32,32 @@
 \newcommand{\Bin}{\operatorname{Bin}}
 \renewcommand{\bold}{\textbf}
 
-<<include=FALSE>>=
-opts_chunk$set(tidy=TRUE)
-opts_chunk$set(width=3,fig.height=3, pointsize=6)
-    options(width=60)
-	options(continue="  ")
+<<setup, include=FALSE, cache=FALSE>>=
+require(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='tmp/deepSNV-', fig.align='center', fig.show='hold', fig.width=4, fig.height=4, out.width='.4\\linewidth', dpi=150)
+options(replace.assign=TRUE,width=75)
+knit_hooks$set(nice = function(before, options, envir) {
+			if (before) par(mar = c(4, 4, .1, .1), mgp=c(2.5,1,0), bty="n")
+		})
 @
 
-%\VignetteIndexEntry{Subclonal variant calling with multiple samples and prior knowledge}
+%\VignetteIndexEntry{Subclonal variant calling with multiple samples and prior knowledge using shearwater}
 %\VignetteDepends{deepSNV}
-%\VignetteEngine{knitr}
+%\VignetteEngine{knitr::knitr}
 \begin{document}
 
-\title{Subclonal variant calling with multiple samples and prior knowledge}
+\title{Subclonal variant calling with multiple samples and prior knowledge
+using \texttt{shearwater}}
 \author{Moritz Gerstung}
 
 \maketitle
 
-\section{Definition of the model}
+\tableofcontents
+
+\section{The statistical model}
+
+\subsection{Definition}
 Suppose you have an experimental setup with multiple unrelated samples. Let the
 index $i$ denote the sample, $j$ the genomic position and $k$ a particular
 nucleotide. Let $X_{ijk}$ and $X_{ijk}'$ denote the counts of nucleotide $k$ in
@@ -100,22 +123,25 @@ Using these values, the Bayes factor is approximated by
 \label{eq:BayesFactor}
 \end{align}
 
-\subsection{Example}
+\paragraph{Example}
 The Bayes factors can be computed using the \texttt{bbb} command:
 
-<<fig.width=5, fig.height=5, pointsize=8>>=
+<<fig.width=5, fig.height=5, out.width='.6\\linewidth'>>=
 library(deepSNV)
 library(RColorBrewer)
-n <-  100
-n_samples <- 1000
-x <-  0:20
-y <-  cbind(rep(x, each = length(x)), rep(x, length(x)))
+n <-  100 ## Coverage
+n_samples <- 1000 ## Assume 1000 samples
+x <-  0:20 ## Nucleotide counts
+X <-  cbind(rep(x, each = length(x)), rep(x, length(x))) ## All combinations forward and reverse
 par(bty="n", mgp = c(2,.5,0), mar=c(3,3,2,2)+.1, las=1, tcl=-.33, mfrow=c(2,2))
-for(nu in 10^c(-4,-2)){
-	counts = aperm(array(c(rep(round(n_samples*n* c(nu,1-nu,nu,1-nu)), each=nrow(y)), cbind(n - y, y)[,c(3,1,4,2)]), 
-					dim=c(nrow(y) ,4,2)), c(3,1,2))
-	for(rho in c(1e-4, 1e-2)){
+for(nu in 10^c(-4,-2)){ ## Loop over error rates
+	## Create counts array with errors
+	counts = aperm(array(c(rep(round(n_samples*n* c(nu,1-nu,nu,1-nu)), each=nrow(X)), cbind(n - X, X)[,c(3,1,4,2)]), 
+					dim=c(nrow(X) ,4,2)), c(3,1,2))
+	for(rho in c(1e-4, 1e-2)){ ## Loop over dispersion factors
+		## Compute Bayes factors
 		BF = bbb(counts, rho=rho, model="OR", return="BF")
+		## Plot
 		image(z=log10(matrix(BF[2,,1], nrow=length(x))), 
 				x=x, 
 				y=x, 
@@ -125,7 +151,7 @@ for(nu in 10^c(-4,-2)){
 				ylab="Backward allele count", 
 				main = paste("rho =", format(rho, digits=2), "nu = ", format(nu, digits=2)), 
 				font.main=1)
-		text(y[,1],y[,2],ceiling(log10(matrix(BF[2,,1], nrow=length(x)))), cex=0.5)
+		text(X[,1],X[,2],ceiling(log10(matrix(BF[2,,1], nrow=length(x)))), cex=0.5)
 	}
 }
 @
@@ -154,25 +180,28 @@ In this case the Bayes factor is approximately
 \label{eq:BayesFactor}
 \end{align}
 
-\subsection{Example}
+\paragraph{Example}
 The behaviour of the AND model can be inspected by the following commands
-<<fig.width=5,fig.height=5, pointsize=8>>=
+<<fig.width=5,fig.height=5, out.width='.6\\linewidth'>>=
 par(bty="n", mgp = c(2,.5,0), mar=c(3,3,2,2)+.1, las=1, tcl=-.33, mfrow=c(2,2))
-for(nu in 10^c(-4,-2)){
-	counts = aperm(array(c(rep(round(n_samples*n* c(nu,1-nu,nu,1-nu)), each=nrow(y)), cbind(n - y, y)[,c(3,1,4,2)]), 
-					dim=c(nrow(y) ,4,2)), 
-			c(3,1,2))
-	for(rho in c(1e-4, 1e-2)){
+for(nu in 10^c(-4,-2)){ ## Loop over error rates
+	## Create counts array with errors
+	counts = aperm(array(c(rep(round(n_samples*n* c(nu,1-nu,nu,1-nu)), each=nrow(X)), cbind(n - X, X)[,c(3,1,4,2)]), 
+					dim=c(nrow(X) ,4,2)), c(3,1,2))
+	for(rho in c(1e-4, 1e-2)){ ## Loop over dispersion factors
+		## Compute Bayes factors, mode = "AND"
 		BF = bbb(counts, rho=rho, model="AND", return="BF")
+		## Plot
 		image(z=log10(matrix(BF[2,,1], nrow=length(x))), 
 				x=x, 
 				y=x, 
-				breaks=c(-100,-8:0), col=rev(brewer.pal(9,"Reds")), 
-				xlab = "Forward allele count", 
+				breaks=c(-100,-8:0), 
+				col=rev(brewer.pal(9,"Reds")), 
+				xlab = "Forward allele count",
 				ylab="Backward allele count", 
 				main = paste("rho =", format(rho, digits=2), "nu = ", format(nu, digits=2)), 
 				font.main=1)
-		text(y[,1],y[,2],ceiling(log10(matrix(BF[2,,1], nrow=length(x)))), cex=0.5)
+		text(X[,1],X[,2],ceiling(log10(matrix(BF[2,,1], nrow=length(x)))), cex=0.5)
 	}
 }
 @

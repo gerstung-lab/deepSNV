@@ -78,7 +78,7 @@ mcChunk = function(FUN, X, split=250, mc.cores=1, ...){
 #' @param samples vector of samples names.
 #' @param cutoff Cutoff for the posterior artifact probability below which a variant is considered to be true (default = 0.05)
 #' @param prior matrix of prior probabilities for finding a true call, typically from \code{\link{makePrior}}. Alternatively a single fixed number.
-#' @param mvcf boolean flag, if TRUE compute a large VCF with as many genotype columns as samples. Default FALSE. Otherwise use duplicate rows and only one genotype column. Can be inefficient for large sample sizes.
+#' @param mvcf boolean flag, if TRUE compute a large VCF with as many genotype columns as samples. Default TRUE. Otherwise use duplicate rows and only one genotype column. The sample is then provided by the info:PD field. Can be inefficient for large sample sizes.
 #' @param err Optional matrix of error rates, otherwise recomputed from counts.
 #' @param mu Optional matrix of relative frequencies, otherwise recomputed from counts.
 #' @return A \code{\link{VCF}} object
@@ -87,7 +87,7 @@ mcChunk = function(FUN, X, split=250, mc.cores=1, ...){
 #' @note Experimental code, subject to changes
 #' @export
 ## TODO: check for cases with zero result
-bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu = NULL, cutoff = 0.05, prior = 0.5, mvcf=FALSE){
+bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu = NULL, cutoff = 0.05, prior = 0.5, mvcf=TRUE){
 	coordinates <- regions2Coordinates(regions)
 	prior = array(rep(prior, each = length(BF)/length(prior)), dim=dim(BF))
 	odds = prior/(1-prior)
@@ -154,20 +154,20 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 		
 		#rownames(w) = samples[w[,1]]
 		v = VCF(
-				rowData=GRanges(coordinates$chr[w[u,2]], 
-						IRanges(coordinates$pos[w[u,2]] - (w[u,3]==5), width=1 + (w[u,3]==5)), 
+				rowData=GRanges(coordinates$chr[wu[,2]], 
+						IRanges(coordinates$pos[wu[,2]] - (wu[,3]==5), width=1 + (wu[,3]==5)), 
 				),
 				fixed = DataFrame(
-						REF = DNAStringSet(paste(ifelse(w[u,3]==5,as.character(ref[w[u,2]-1]),""), ref[w[u,2]], sep="")),
-						ALT = do.call(DNAStringSetList,as.list(paste(ifelse(w[u,3]==5,as.character(ref[w[,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep=""))),
+						REF = DNAStringSet(paste(ifelse(wu[,3]==5,as.character(ref[wu[,2]-1]),""), ref[wu[,2]], sep="")), ##TODO: Warning if w[u,3][1]==5 & w[u,2]==1...
+						ALT = do.call(DNAStringSetList,as.list(paste(ifelse(wu[,3]==5,as.character(ref[wu[,2]-1]),""), c("A","T","C","G","")[wu[,3]], sep=""))),
 						#ALT = DNAStringSet(paste(ifelse(w[u,3]==5,as.character(ref[w[u,2]-1]),""), c("A","T","C","G","")[w[u,3]], sep="")),
 						QUAL = 1,
 						FILTER = "PASS"
 				),
 				info = DataFrame(
 						#paramRangeID=NA,
-						ER = select(w[u,-1], err),
-						PI = select(w[u,], prior),
+						ER = select(wu[,-1], err),
+						PI = select(wu, prior),
 						AF = rowMeans(geno$GT),
 						LEN = 1),
 				geno = geno,
@@ -213,7 +213,7 @@ regions2Coordinates <- function(regions.GR) {
 #' 
 #' This function computes the prior probability of detecting a true variant from a variation data base. It assumes a
 #' VCF file with a CNT slot for the count of a given base substitution. Such a VCF file can be downloaded at 
-#' ftp://ngs.sanger.ac.uk/production/cosmic/CosmicCodingMuts_v64_02042013_noLimit.vcf.gz. The prior probability
+#' ftp://ngs.sanger.ac.uk/production/cosmic/. The prior probability
 #' is simply defined as pi.mut * CNT[i]/sum(CNT). On sites with no count, a background probability of pi0 is used.
 #' @param COSMIC A VCF object from COSMIC VCF export. 
 #' @param regions A GRanges object with the regions (gene) of interest.
@@ -296,7 +296,10 @@ logbb <- function(x, n, mu, disp) {
 #' @param pseudo A pseudo count to be added to the counts to avoid problems with zeros.
 #' @param return.value Return value. Either "BF" for Bayes Factor of "P0" for the posterior probability (assuming a prior of 0.5).
 #' @param model The null model to use. For "OR" it requires the alternative model to be violated on either of the strands, for "AND" the null is specified such that the error rates of the sample 
-#' of interest and the compound control sample are identical on both strands. "AND" typically yield many more calls. Default = "OR". 
+#' of interest and the compound control sample are identical on both strands. "AND" typically yield many more calls. The most recent addition is "adaptive", which switches from "OR" to "AND", if the coverage 
+#' is less than min.cov, or if the odds of forward and reverse coverage is greater than max.odds. Default = "OR".
+#' @param min.cov Minimal coverage to swith from OR to AND, if model is "adaptive"
+#' @param max.odds Maximal odds before switching from OR to AND if model is "adaptive" and min.cov=NULL.
 #' @return An \code{\link{array}} of Bayes factors
 #' @example inst/example/shearwater-example.R
 #' 
@@ -424,4 +427,20 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 	}else{
 		return(Bf)
 	}
+}
+
+
+#' Get mutation IDs
+#' @param vcf 
+#' @return character
+#' @noRd
+#' 
+#' @author mg14
+mutID = function(vcf){
+	alt <- as.character(unlist(alt(vcf)))
+	ref <- as.character(ref(vcf))
+	isDel <- width(ref) > 1
+	ifelse(!isDel, 
+			paste(seqnames(vcf), start(vcf), alt, sep=":"),
+			paste(seqnames(vcf), start(vcf)+1, paste("del",substring(ref,2),sep=""), sep=":"))
 }
