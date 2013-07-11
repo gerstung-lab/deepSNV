@@ -34,9 +34,11 @@ loadAllData = function(files, regions, ..., mc.cores=1){
 				for (j in 1:nrow(regions)){
 					test.matrix[beg[j]:end[j],] =  bam2R(f, regions$chr[j], regions$start[j], regions$stop[j], ...)[,nucleotides]
 				}
+				mode(test.matrix) <- "integer"
 				test.matrix
 			}, mc.cores=mc.cores)
 	counts = array(0, c(length(files), rows, length(nucleotides)))
+	mode(counts) <- "integer"
 	for(i in 1:length(files))
 		counts[i,,] = c[[i]]
 	return(counts)
@@ -139,7 +141,7 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 				collapsed = FALSE
 		)}else{
 		u = !duplicated(w[,-1])
-		wu = w[u,]
+		wu = w[u,,drop=FALSE]
 		pp = mapply(function(i,j){ posterior[,i,j]}, wu[,2],wu[,3])
 		
 		geno = SimpleList(
