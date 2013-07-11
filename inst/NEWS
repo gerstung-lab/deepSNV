@@ -1,6 +1,14 @@
 deepSNV -- an R package for subclonal variant calling.
 
-Changes in version 1.99.1
+Changes in version 1.99.2
+Updates
+* Updated CITATION
+* Added verbose option to bam2R to suppress output
+* Changed mode() to "integer" for value of loadAllData()
+Bugfixes
+* Fixed bug when only one variant is called in bf2Vcf()
+
+Changes in version 1.99.1 (2013-06-25)
 Updates
 * Using knitr for prettier vignettes
 * Including shearwater vignette
