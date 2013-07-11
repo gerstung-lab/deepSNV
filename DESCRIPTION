@@ -17,7 +17,7 @@ Description: This package provides provides a quantitative variant callers
     binomial model for variant calling with prior knowledge, e.g. from variation
     data bases such as COSMIC and multiple samples for precisely estimating
     model parameters such as local error rates and dispersion.
-Version: 1.99.1
+Version: 1.99.2
 URL: http://www.cbg.ethz.ch/software/deepSNV
 Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges,
         Biostrings, VGAM, methods, graphics, VariantAnnotation (>=
@@ -27,4 +27,4 @@ VignetteBuilder: knitr
 Collate: 'deepSNV-class.R' 'deepSNV-experimental.R'
         'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
         'deepSNV-misc.R' 'deepSNV-package.R' 'shearwater-functions.R'
-Packaged: 2013-06-25 11:04:50 UTC; mg14
+Packaged: 2013-07-11 17:56:57 UTC; mg14

@@ -80,7 +80,7 @@ static int pileup_func(uint32_t tid, uint32_t pos, int n, const bam_pileup1_t *p
 extern "C" {
 void bam_init_header_hash(bam_header_t *header);
 
-int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, int* s, int* head_clip, int* maxdepth)
+int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, int* s, int* head_clip, int* maxdepth, int* verbose)
 {
 	int c = 0;
 	nttable_t nttable;
@@ -121,7 +121,8 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 			Rf_error("Invalid sequence %s\n", *ref);
 			return 1;
 		}
-		Rprintf("Reading %s, %s:%i-%i\n", *bamfile, *ref, nttable.beg, nttable.end);
+		if(*verbose)
+			Rprintf("Reading %s, %s:%i-%i\n", *bamfile, *ref, nttable.beg, nttable.end);
 
 		buf = bam_plbuf_init(pileup_func, &nttable); // initialize pileup
 		bam_plp_set_maxcnt(buf->iter, *maxdepth);

@@ -3,7 +3,7 @@
 \title{Read nucleotide counts from a .bam file}
 \usage{
   bam2R(file, chr, start, stop, q = 25, s = 2,
-    head.clip = 0, max.depth = 1e+06)
+    head.clip = 0, max.depth = 1e+06, verbose = FALSE)
 }
 \arguments{
   \item{file}{The name of the .bam file as a string.}
@@ -26,6 +26,9 @@
 
   \item{max.depth}{The maximal depth for the pileup
   command. Default 1,000,000.}
+
+  \item{verbose}{Boolean. Set to TRUE if you want to get
+  additional output.}
 }
 \value{
   A named \code{\link{matrix}} with rows corresponding to
