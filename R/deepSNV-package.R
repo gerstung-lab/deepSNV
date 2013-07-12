@@ -74,3 +74,11 @@ NA
 #' plot(RCC.bb)
 NA
 
+#' Example prior
+#' 
+#' Prior from COSMIC v63 for the TP53 gene
+#' @docType data
+#' @name pi
+#' @examples data("pi", package="deepSNV")
+#' plot(pi[,1], type="h")
+NA
