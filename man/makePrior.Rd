@@ -2,7 +2,8 @@
 \alias{makePrior}
 \title{Compute a prior from a COSMIC VCF object}
 \usage{
-  makePrior(COSMIC, regions, pi.mut = 0.1, pi0 = 1e-04)
+  makePrior(COSMIC, regions, pi.gene = 0.1,
+    pi.backgr = 1e-04)
 }
 \arguments{
   \item{COSMIC}{A VCF object from COSMIC VCF export.}
@@ -10,9 +11,9 @@
   \item{regions}{A GRanges object with the regions (gene)
   of interest.}
 
-  \item{pi.mut}{Probability that a gene is mutated}
+  \item{pi.gene}{Probability that a gene is mutated}
 
-  \item{pi0}{Background probability of a locus being
+  \item{pi.backgr}{Background probability of a locus being
   mutated. Default 1e-4, corresponding to an expected value
   of 1 SNV per 1e4 bases.}
 }

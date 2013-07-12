@@ -95,7 +95,15 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 	odds = prior/(1-prior)
 	posterior = BF / (BF + odds)
 	w = which(posterior < cutoff, arr.ind=TRUE)
-	w = w[order(w[,2], w[,3], w[,1]),]
+	w = w[order(w[,2], w[,3], w[,1]),,drop=FALSE]
+	
+	## If no variants found, select first possible and set to NULL later (avoids a lot of errors in the following)
+	if(dim(w)[1]==0) {
+		w = matrix(1,ncol = 3)
+		isNull = TRUE
+	}else{
+		isNull = FALSE
+	}
 	
 	totCounts = counts[,,1:5] + counts[,,6:10]
 	
@@ -140,7 +148,7 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 				exptData = SimpleList(header = scanVcfHeader(system.file("extdata", "shearwater.vcf", package="deepSNV"))),
 				collapsed = FALSE
 		)}else{
-		u = !duplicated(w[,-1])
+		u = !duplicated(w[,-1, drop=FALSE])
 		wu = w[u,,drop=FALSE]
 		pp = mapply(function(i,j){ posterior[,i,j]}, wu[,2],wu[,3])
 		
@@ -181,6 +189,11 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 	}
 	exptData(v)$header@samples <- samples
 	exptData(v)$header@header$META["date",1] <- paste(Sys.time())
+	
+	## If no variants found set to zero..
+	if(isNull)
+		v <- v[NULL]
+	
 	return(v)
 }
 
@@ -219,8 +232,8 @@ regions2Coordinates <- function(regions.GR) {
 #' is simply defined as pi.mut * CNT[i]/sum(CNT). On sites with no count, a background probability of pi0 is used.
 #' @param COSMIC A VCF object from COSMIC VCF export. 
 #' @param regions A GRanges object with the regions (gene) of interest.
-#' @param pi.mut Probability that a gene is mutated
-#' @param pi0 Background probability of a locus being mutated. Default 1e-4, corresponding to an expected value of 1 SNV per 1e4 bases.
+#' @param pi.gene Probability that a gene is mutated
+#' @param pi.backgr Background probability of a locus being mutated. Default 1e-4, corresponding to an expected value of 1 SNV per 1e4 bases.
 #' @return A vector of prior values with length given by the length of the regions GRanges object.
 #' @examples ## Make prior (not run)
 #' #COSMIC <- readVcf("PATHTO/CosmicCodingMuts_v64_02042013_noLimit.vcf.gz", genome="GChr37")
@@ -230,7 +243,7 @@ regions2Coordinates <- function(regions.GR) {
 #' @author mg14
 #' @note Experimental code, subject to changes
 #' @export
-makePrior = function(COSMIC, regions, pi.mut = 0.1, pi0 = 1e-4){
+makePrior = function(COSMIC, regions, pi.gene = 0.1, pi.backgr = 1e-4){
 	c = COSMIC[width(COSMIC) == 1 & !grepl("ins", info(COSMIC)$CDS)]
 	cnt = info(c)$CNT
 	coordinates = regions2Coordinates(regions)
@@ -241,7 +254,7 @@ makePrior = function(COSMIC, regions, pi.mut = 0.1, pi0 = 1e-4){
 	for(i in 1:nrow(c)){
 		prior[pos[i], var[i]] = cnt[i] + prior[pos[i], var[i]]
 	}
-	prior = prior/sum(prior) * pi.mut + pi0
+	prior = prior/sum(prior) * pi.gene + pi.backgr
 	prior[prior>=1] = 1 - .Machine$double.eps
 	return(prior)
 }
