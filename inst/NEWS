@@ -1,6 +1,13 @@
 deepSNV -- an R package for subclonal variant calling.
 
-Changes in version 1.99.2
+Changes in version 1.99.3
+Updates
+* A few changes to shearwater vignette
+* Renamed arguments pi.gene and pi.backgr in makePrior()
+Bugfixes
+* Fixed bug in bf2Vcf() when no variant is called
+
+Changes in version 1.99.2 (2013-07-11)
 Updates
 * Updated CITATION
 * Added verbose option to bam2R to suppress output

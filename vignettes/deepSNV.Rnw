@@ -85,7 +85,7 @@ the \texttt{deepSNV} package please use:
 \begin{itemize}
 \item
 <<echo=FALSE, results='asis'>>=
-	print(citation("deepSNV"), style="LaTeX")
+	print(citation("deepSNV")[1], style="LaTeX")
 @
 \end{itemize}
 
