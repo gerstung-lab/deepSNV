@@ -10,4 +10,5 @@
 ##FORMAT=<ID=VF,Number=1,Type=Float,Description="Variant frequency in sample">
 ##FORMAT=<ID=FW,Number=1,Type=Integer,Description="Forward variant read count">
 ##FORMAT=<ID=BW,Number=1,Type=Integer,Description="Backward variant read count">
-##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=FD,Number=1,Type=Integer,Description="Read Depth forward">
+##FORMAT=<ID=BD,Number=1,Type=Integer,Description="Read Depth backward">

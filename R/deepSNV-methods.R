@@ -57,7 +57,7 @@ setMethod("deepSNV",
 			}
 			
 			#Test
-			res = .deepSNV(test = test, control = control, nucleotides = nucleotides, dirichlet.prior = dirichlet.prior, alternative = alternative, model = model, over.dispersion = over.dispersion, combine.method = combine.method)
+			res = .deepSNV(test = test, control = control, nucleotides = nucleotides, dirichlet.prior = dirichlet.prior, alternative = alternative, model = model, over.dispersion = over.dispersion, combine.method = combine.method, pseudo.count = pseudo.count)
 			
 			#Collate results
 			result = new("deepSNV", 
@@ -71,6 +71,7 @@ setMethod("deepSNV",
 					model = model,
 					over.dispersion=over.dispersion,
 					log.lik = res$log.lik,
+					pseudo.count = pseudo.count,
 					...	)
 			result@call = match.call()
 			return(result)
@@ -91,7 +92,8 @@ setMethod("deepSNV",
 					dirichlet.prior = newobject@dirichlet.prior, 
 					combine.method=newobject@combine.method, 
 					model=newobject@model, 
-					over.dispersion=newobject@over.dispersion)
+					over.dispersion=newobject@over.dispersion,
+					pseudo.count = newobject@pseudo.count)
 			newobject@p.val = res$p.val
 			newobject@log.lik = res$log.lik
 			newobject@call = match.call()

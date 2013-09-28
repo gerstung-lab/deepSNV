@@ -51,7 +51,7 @@ knit_hooks$set(nice = function(before, options, envir) {
 \begin{document}
 
 \title{Subclonal variant calling with multiple samples and prior knowledge
-using \texttt{shearwater}}
+using \texttt{shearwater} (beta)}
 \author{Moritz Gerstung}
 
 \maketitle

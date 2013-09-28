@@ -1,6 +1,11 @@
 deepSNV -- an R package for subclonal variant calling.
 
-Changes in version 1.99.3
+Changes in version 1.7.4 (2013-09-28)
+Updates
+* Only using the Dirichlet prior for control
+* Change back version numbers from 1.99.x to 1.7.x (2.0 not quite there :)
+
+Changes in version 1.99.3 (2013-07-25)
 Updates
 * A few changes to shearwater vignette
 * Renamed arguments pi.gene and pi.backgr in makePrior()

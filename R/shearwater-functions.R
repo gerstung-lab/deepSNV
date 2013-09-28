@@ -159,7 +159,9 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 				VF = signif(t(mapply(function(i,j){ mu[,i,j]}, wu[,2],wu[,3])),3),
 				FW = t(mapply(function(i,j){ counts[,i,j]}, wu[,2],wu[,3])),
 				BW = t(mapply(function(i,j){ counts[,i,j+5]}, wu[,2],wu[,3])),
-				DP = t(mapply(function(i,j){ rowSums(totCounts[,i,])}, wu[,2],wu[,3]))
+#				DP = t(mapply(function(i,j){ rowSums(totCounts[,i,])}, wu[,2],wu[,3]))
+				FD = t(mapply(function(i,j){ rowSums(counts[,i,1:5])}, wu[,2],wu[,3])),
+				BD = t(mapply(function(i,j){ rowSums(counts[,i,6:10])}, wu[,2],wu[,3]))
 		)
 		
 		#rownames(w) = samples[w[,1]]
@@ -308,6 +310,8 @@ logbb <- function(x, n, mu, disp) {
 #' @param rho Disperision factor. If NULL, estimated from the data.
 #' @param rho.min Lower bound for the method of moment estimate of the dispersion factor rho.
 #' @param rho.max Upper bound for the method of moment estimate of the dispersion factor rho.
+#' @param mu.min Minimum of the error rate mu.
+#' @param mu.max Maximal error rate mu.
 #' @param pseudo A pseudo count to be added to the counts to avoid problems with zeros.
 #' @param return.value Return value. Either "BF" for Bayes Factor of "P0" for the posterior probability (assuming a prior of 0.5).
 #' @param model The null model to use. For "OR" it requires the alternative model to be violated on either of the strands, for "AND" the null is specified such that the error rates of the sample 
@@ -323,9 +327,7 @@ logbb <- function(x, n, mu, disp) {
 #' @aliases shearwater
 #' @note Experimental code, subject to changes
 #' @export
-bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min = 1e-4, rho.max = 0.1, pseudo = .Machine$double.eps, return.value="BF", model=c("OR","AND", "adaptive"), min.cov=NULL, max.odds=10) {
-	mu.max = 1 - 1e-6 ## make sure mu <= 1; should be solved by a pseudocount
-	mu.min = 1e-6
+bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min = 1e-4, rho.max = 0.1, pseudo = .Machine$double.eps, return.value="BF", model=c("OR","AND", "adaptive"), min.cov=NULL, max.odds=10, mu.min = 1e-6, mu.max = 1 - mu.min) {
 	pseudo.rho = .Machine$double.eps
 	## minum value for rho
 	
