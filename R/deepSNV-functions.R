@@ -5,18 +5,18 @@
 
 #' The actual function for the deepSNV test
 #' @noRd
-.deepSNV <- function(test, control, nucleotides, dirichlet.prior, alternative, model, over.dispersion, combine.method) {
+.deepSNV <- function(test, control, nucleotides, dirichlet.prior, alternative, model, over.dispersion, combine.method, pseudo.count) {
 	if(length(nucleotides)==10)
 		CV <- consensusSequence(control[,1:5]+control[,6:10], vector=TRUE)
 	else
 		CV <- consensusSequence(control[,1:5], vector=TRUE)	
 	
-	res0 <- .deepSNVsingle(test = test[,1:5], control = control[,1:5], dirichlet.prior = dirichlet.prior, alternative = alternative, CV = CV, model=model, alpha=over.dispersion)
+	res0 <- .deepSNVsingle(test = test[,1:5], control = control[,1:5], dirichlet.prior = dirichlet.prior, alternative = alternative, CV = CV, model=model, alpha=over.dispersion, pseudo.count=pseudo.count)
 	log.lik = res0$log.lik 
 	
 	#Combine P-values from both strands.
 	if(length(nucleotides) == 10){
-		res1 <- .deepSNVsingle(test = test[,6:10], control = control[,6:10], dirichlet.prior = dirichlet.prior[,COMPLEMENT[colnames(dirichlet.prior)]], alternative = alternative, CV = COMPLEMENT[CV], strand=1, model=model, alpha=over.dispersion)
+		res1 <- .deepSNVsingle(test = test[,6:10], control = control[,6:10], dirichlet.prior = dirichlet.prior[,COMPLEMENT[colnames(dirichlet.prior)]], alternative = alternative, CV = COMPLEMENT[CV], strand=1, model=model, alpha=over.dispersion, pseudo.count = pseudo.count)
 		p.val <- p.combine(res0$p.val, res1$p.val, method=combine.method)
 		log.lik = log.lik + res1$log.lik
 	}
@@ -29,12 +29,12 @@
 
 #' The actual workhorse for the deepSNV test
 #' @noRd
-.deepSNVsingle <- function(test, control, dirichlet.prior, alternative, CV, strand=0, model, alpha=NULL) {	
+.deepSNVsingle <- function(test, control, dirichlet.prior, alternative, CV, strand=0, model, alpha=NULL, pseudo.count) {	
 	sum.test <- rowSums(test)
 	sum.control <- rowSums(control)
 	colnames(test) <- colnames(control) <- c("A","T","C","G","-")
 	
-	f.test <- RF(test[,1:5]+dirichlet.prior[CV,])
+	f.test <- RF(test[,1:5]+pseudo.count)
 	f.control <- RF(control[,1:5]+dirichlet.prior[CV,]) 
 	f.both <- RF(test[,1:5]+control[,1:5]+dirichlet.prior[CV,])
 	
@@ -63,6 +63,10 @@
 	log.choose <- lgamma(sum.test +1) - lgamma(test[,1:5] +1) - lgamma(sum.test-test[,1:5]+1) +lgamma(sum.control +1) - lgamma(control[,1:5] +1) - lgamma(sum.control-control[,1:5]+1) 
 	CV.ind <- rep(1:5, each=nrow(control)) == apply(control, 1, which.max)
 	log.lik <- sum(L0[!CV.ind] + log.choose[!CV.ind])
+	
+	## Without prior
+	f.test <- RF(test[,1:5])
+	f.control <- RF(control[,1:5]) 
 	
 	## If smaller, take H0
 	if (alternative == 'greater'){
@@ -189,8 +193,8 @@ RF <- function(freq, total = FALSE){
 	if(is.null(adjust.method)) q = deepSNV@p.val
 	else q = p.adjust(deepSNV@p.val, method=adjust.method)
 	CV.control <- consensusSequence(deepSNV, vector=TRUE)
-	f <- RF(deepSNV@test+.5, total=T)
-	g <- RF(deepSNV@control+.5, total=T)
+	f <- RF(deepSNV@test, total=T)
+	g <- RF(deepSNV@control, total=T)
 	d <- f - g
 	fc <- pmax(f,g)/pmin(f,g)
 	var.d <- f/rowSums(deepSNV@test) + g/rowSums(deepSNV@control)
