@@ -15,9 +15,10 @@
   \code{\link{data.frame}} with the genomic coordinates chr
   and pos, and other columns, if desired.}
   \item{dirichlet.prior}{A matrix with the
-  nucleotide-specific Dirichlet prior} \item{alternative}{A
-  string with the alternative used in the test.}
-  \item{nucleotides}{A character vector with the
+  nucleotide-specific Dirichlet prior}
+  \item{pseudo.count}{The pseudo count if used)}
+  \item{alternative}{A string with the alternative used in
+  the test.} \item{nucleotides}{A character vector with the
   nucleotides tested.} \item{regions}{A
   \code{\link{data.frame}} with columns chr, start, and
   stop.} \item{files}{A list with two entries test and

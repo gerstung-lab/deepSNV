@@ -7,7 +7,7 @@
     truncate = 0.1, rho.min = 1e-04, rho.max = 0.1,
     pseudo = .Machine$double.eps, return.value = "BF",
     model = c("OR", "AND", "adaptive"), min.cov = NULL,
-    max.odds = 10)
+    max.odds = 10, mu.min = 1e-06, mu.max = 1 - mu.min)
 }
 \arguments{
   \item{counts}{An \code{\link{array}} of nucleotide counts
@@ -31,6 +31,10 @@
 
   \item{rho.max}{Upper bound for the method of moment
   estimate of the dispersion factor rho.}
+
+  \item{mu.min}{Minimum of the error rate mu.}
+
+  \item{mu.max}{Maximal error rate mu.}
 
   \item{pseudo}{A pseudo count to be added to the counts to
   avoid problems with zeros.}
