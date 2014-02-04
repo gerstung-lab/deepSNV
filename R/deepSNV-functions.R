@@ -358,9 +358,13 @@ bam2R = function(file, chr, start, stop, q=25, s=2, head.clip = 0, max.depth=100
 
 #' Combine two p-values
 #' 
-#' This function combines two P-values into a single one using a statistic defined by method. "fisher" uses the product of the two, in this case the logarithm of the product is
-#' \eqn{\chi^2_4} distributed. If the method = "max", the resulting P-value is \eqn{\max\{P_1,P_2\}^2}. For method = "average" the mean is used, yielding a P-value of \eqn{2 x^2}{2 x^2} if \eqn{x=(P_1+P_2)/2 < .5}{x=(P_1+P_2)/2 < .5}
-#' and  \eqn{1-2 x^2}{1-2 x^2} otherwise.
+#' This function combines two P-values into a single one using a statistic defined by method. 
+#' "fisher" uses the product of the two, in this case the logarithm of the product is
+#' \eqn{\chi^2_4} distributed. If the method = "max", the resulting P-value is \eqn{\max\{P_1,P_2\}^2}. 
+#' For method = "average" the mean is used, yielding a P-value of \eqn{2 x^2}{2 x^2} if \eqn{x=(P_1+P_2)/2 < .5}{x=(P_1+P_2)/2 < .5}
+#' and  \eqn{1-2 x^2}{1-2 x^2} otherwise. "negfisher" is the negative of Fisher's method using $1-F(1-P_1, 1-P_2)$, where $F$ is the combination 
+#' function of Fisher's method; for small $P_1,P_2$, the result is very similar to method="average". Fisher's method behaves a bit like a logical AND
+#' of the joint null-hypothesis, whereas negative Fisher is like an OR.
 #' @param p1 P-value 1
 #' @param p2 P-value 2
 #' @param method One of "fisher" (default), "max" or "average"
@@ -377,12 +381,17 @@ bam2R = function(file, chr, start, stop, q=25, s=2, head.clip = 0, max.depth=100
 #' pairs(data.frame(p1,p2,p.fish,p.max,p.avg))
 #' @author Moritz Gerstung
 #' @export
-p.combine <- function(p1,p2, method=c("fisher", "max", "average", "prod")){
+p.combine <- function(p1,p2, method=c("fisher", "max", "average", "prod", "negfisher")){
 	method <- match.arg(method)
 	if(method == "prod")
 		p <- ifelse(p1*p2 !=0, pgamma(-log(p1 * p2), shape = 2,scale=1, lower.tail=F), 0)
 	if(method == "fisher")
 		p <- ifelse(p1*p2 !=0, p1 * p2 * (1 - log(p1 * p2)), 0)
+	if(method == "negfisher"){
+		p1 <- 1-p1
+		p2 <- 1-p2
+		p <- 1 - ifelse(p1*p2 !=0, p1 * p2 * (1 - log(p1 * p2)), 0)
+	}
 	if(method == "max")
 		p <- pmax(p1, p2)^2
 	if(method == "average"){
