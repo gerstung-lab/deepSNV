@@ -199,7 +199,12 @@ RF <- function(freq, total = FALSE){
 	fc <- pmax(f,g)/pmin(f,g)
 	var.d <- f/rowSums(deepSNV@test) + g/rowSums(deepSNV@control)
 	
-	cond = q <= sig.level & !is.na(q) & fc > fold.change
+	if(is.null(fold.change))
+		fccond <- TRUE
+	else
+		fccond <- fc > fold.change 
+		
+	cond = q <= sig.level & !is.na(q) & fccond 
 	cond.idx <- which(cond, arr.ind=TRUE)
 	cond.rows <- cond.idx[,1]
 	cond.cols <- cond.idx[,2]
