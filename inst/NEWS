@@ -1,0 +1,110 @@
+deepSNV -- an R package for subclonal variant calling.
+
+Changes in version 1.7.4 (2013-09-28)
+Updates
+* Only using the Dirichlet prior for control
+* Change back version numbers from 1.99.x to 1.7.x (2.0 not quite there :)
+
+Changes in version 1.99.3 (2013-07-25)
+Updates
+* A few changes to shearwater vignette
+* Renamed arguments pi.gene and pi.backgr in makePrior()
+Bugfixes
+* Fixed bug in bf2Vcf() when no variant is called
+
+Changes in version 1.99.2 (2013-07-11)
+Updates
+* Updated CITATION
+* Added verbose option to bam2R to suppress output
+* Changed mode() to "integer" for value of loadAllData()
+Bugfixes
+* Fixed bug when only one variant is called in bf2Vcf()
+
+Changes in version 1.99.1 (2013-06-25)
+Updates
+* Using knitr for prettier vignettes
+* Including shearwater vignette
+Bugfixes
+* fixed issues with deletions in bf2Vcf()
+* makePrior() adds background on all sites
+
+Changes in version 1.99.0 (2013-04-30)
+Updates
+* New shearwater algorithm
+* Including VCF output through summary(deepSNV, value="VCF")
+
+Changes in version 1.3.3 (2012-09-14)
+Updates
+* Changed CITATION
+* Updated documentation
+* Updated biocViews
+* Using roxygen2 for generating man pages
+
+Changes in version 1.3.2 (2012-04-10)
+Updates
+* New devel version, identical to release 1.2.3
+
+Changes in version 1.2.3 (2012-04-10)
+Bugfixes
+* Fixed Vignette
+* Jumped a few numbers due to automated bioc version numbering
+
+Changes in version 1.0.0 (2012-03-29)
+Updates
+* Added CITATION file
+* Made NEWS (this file) R-readable
+* Changed Vignette
+
+Changes in version 0.99.3
+Bugfixes
+* Fixed error in summary() when there were no significant SNVs.
+* Some fixes if only a single column of the alignment is selected
+
+Changes in version 0.99.2 (2012-01-20)
+Updates
+* Changed plot to S3 method (to avoid warning in R-devel)
+
+Changes in version 0.99.1 (2012-01-06)
+Updates
+* Added small .bam example files test.bam, control.bam with 100 positions.
+* Modified man pages for bam2R()
+* Modified man page for coordinates()
+* Corrected example of consensusSequence()
+* Compressed .RData files with tools::resaveRdaFiles
+* Changed vignette to attach data, rather than load remotely.
+* Argument "regions" of deepSNV can be a GRanges object.
+
+Changes in version 0.99.0 (2011-12-21)
+Updates
+* Added BiocViews field
+* Added HIVmix data
+* Added new examples
+* Registered bam2R with R_registerRoutines
+* New accessor functions "test", "control", "p.val", and "coordinates"
+* Updated vignette
+
+
+Changes in version 0.9.5
+Updates
+* "summary" now reports additional columns from regions slot.
+Bugfixes 
+* drop=FALSE in subsetting and summary.
+
+Changes in version 0.9.4
+Updates
+* Directly link to static samtools library provided by Rsamtools
+* Load example .bam files over http
+
+Changes in version 0.9.3
+* Added beta-binomial model
+* Extended documentation
+* Use summary instead of significantSNV
+
+Changes in version 0.9.2
+* Minor bugfixes
+
+Changes in version 0.9.1
+Minor bugfixes
+
+Changes in version 0.9.0
+Pre-release

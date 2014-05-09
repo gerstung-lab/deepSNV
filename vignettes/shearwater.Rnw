@@ -1,0 +1,412 @@
+%&pdflatex
+\documentclass[fleqn,a4paper]{article}
+\usepackage{a4wide}
+
+\setlength{\parindent}{0em}
+%\setlength{\parskip}{2mm plus1mm minus1mm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{charter}
+\usepackage[scaled=0.9]{helvet}
+\renewcommand{\sfdefault}{phv}
+\usepackage[sf]{titlesec}
+
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+
+\newcommand{\Dir}{\operatorname{Dir}}
+\newcommand{\B}{\operatorname{B}}
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\Beta}{\operatorname{Beta}}
+\newcommand{\BB}{\operatorname{BetaBin}}
+\newcommand{\MAP}{\mathrm{MAP}}
+\newcommand{\Mult}{\operatorname{Mult}}
+\newcommand{\Bin}{\operatorname{Bin}}
+\renewcommand{\bold}{\textbf}
+
+<<setup, include=FALSE, cache=FALSE>>=
+require(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='tmp/deepSNV-', fig.align='center', fig.show='hold', fig.width=4, fig.height=4, out.width='.4\\linewidth', dpi=150)
+options(replace.assign=TRUE,width=75)
+knit_hooks$set(nice = function(before, options, envir) {
+			if (before) par(mar = c(4, 4, .1, .1), mgp=c(2.5,1,0), bty="n")
+		})
+@
+
+%\VignetteIndexEntry{Subclonal variant calling with multiple samples and prior knowledge using shearwater}
+%\VignetteDepends{deepSNV}
+%\VignetteEngine{knitr::knitr}
+\begin{document}
+
+\title{Subclonal variant calling with multiple samples and prior knowledge
+using \texttt{shearwater} (beta)}
+\author{Moritz Gerstung}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+The \texttt{shearwater} algorithm was designed for calling subclonal variants in
+large ($N=10\ldots 1,000$) cohorts of deeply ($\sim$100x) sequenced
+unmatched samples. The large cohort allows for estimating a base-specific error profile on each
+position, which is modelled by a beta-binomial. A prior can be useded to
+selectively increase the power of calling variants on known mutational hotspots.
+The algorithm is similar to deepSNV, but uses a slightly different
+parametrization and a Bayes factors instead of a likelihood ratio test. 
+
+If you are using \texttt{shearwater}, please cite
+\begin{itemize}
+\item
+<<echo=FALSE, results='asis'>>=
+	print(citation("deepSNV")[2], style="LaTeX")
+@
+\end{itemize}
+
+
+\section{The statistical model}
+
+\subsection{Definition}
+Suppose you have an experimental setup with multiple unrelated samples. Let the
+index $i$ denote the sample, $j$ the genomic position and $k$ a particular
+nucleotide. Let $X_{ijk}$ and $X_{ijk}'$ denote the counts of nucleotide $k$ in
+sample $i$ on position $j$ in forward and reverse read orientation,
+respectively. We assume that
+\begin{align}
+X  &\sim  \BB(n, \mu, \rho) \cr
+X'  &\sim  \BB(n', \mu', \rho).
+\label{eq:sample}
+\end{align}
+are beta-binomially distributed. To test if there is a variant $k$ in sample
+$i$, we compare the counts to a compound reference $\boldmath{X}_{ijk} = \sum_{h
+\in H} X_{hjk}$ and $\boldmath{X}_{ijk}' = \sum_{h
+\in H} X_{hjk}'$.
+The subset of indeces $H$ is usually chosen such that $H =\{h:h\neq j\}$, that
+is the row sums $X_{ijk}$ and $X_{ijk}'$. To reduce the effect of true variants in other samples 
+entering the compound reference, one may also choose $H$ such that it only
+includes sample $h$ with variant allele frequencies below a user defined
+threshold, typically 10\%.
+
+We model the compound reference again as a beta-binomial,
+\begin{align}
+\mathbf{X} &\sim  \BB(\mathbf{n}, \nu, \rho) \cr
+\mathbf{X}' &\sim  \BB(\mathbf{n'}, \nu', \rho).
+\label{eq:control}
+\end{align}
+
+\subsection{Testing for variants}
+Testing for the presence of a variant can now be formulated as a model selection
+problem in which we specify a null model and an alternative. Here we consider
+two options, "OR" and "AND".
+
+\subsubsection{The OR model}
+
+The OR model is defined in the following way:
+\begin{align}
+ M_0 &: \quad \mu = \nu \quad \vee \quad \mu' = \nu' \cr
+ M_1 &: \quad \mu = \mu' > \nu, \nu'.
+ \label{eq:alternatives}
+\end{align}
+Under the null model $M_0$, the mean rates of the beta-binomials are identical
+in sample $i$ and the compound reference on at least one strand. Under the
+alternative model $M_1$, the mean rates $\mu,\mu'$ are identical on both strands
+and greater than the mean in the compound reference on both strands.
+
+Here we use the following point estimates for the parameters:
+\begin{align}
+\hat{\mu} &= (X+X')/(n+n') \cr
+\hat{\nu} & = \mathbf{X} / \mathbf{n} \cr
+\hat{\nu}' & = \mathbf{X'} / \mathbf{n'} \cr
+\hat{\nu}_0 &= (X + \mathbf{X}) / (n + \mathbf{n}) \cr
+\hat{\nu}_0' &= (X' + \mathbf{X}') / (n' + \mathbf{n}') \cr
+\hat{\mu}_0 &=  X/n \cr
+\hat{\mu}'_0 &=  X'/n'. 
+\label{eq:mu}
+\end{align}
+
+Using these values, the Bayes factor is approximated by
+\begin{align} 
+\frac{\Pr(D\mid M_0)}{ \Pr(D\mid M_1)} &= \frac{\Pr(X |\hat{\nu}_0) \Pr(X' | \hat{\mu}_0') \Pr(\mathbf{X} | \hat{\nu}_0) }{\Pr(X |\hat{\mu}) \Pr(X' | \hat{\mu}) \Pr(\mathbf{X} | \hat{\nu})} \cr
+& \quad +  \frac{\Pr(X |\hat{\mu}_0) \Pr(X' | \hat{\nu}_0') \Pr(\mathbf{X}' | \hat{\nu}_0') }{\Pr(X |\hat{\mu}) \Pr(X' | \hat{\mu}) \Pr(\mathbf{X}' | \hat{\nu}')} \cr
+& \quad -  \frac{\Pr(X |\hat{\nu}_0) \Pr(\mathbf{X} | \hat{\nu}_0) \Pr(X' | \hat{\nu}_0') \Pr(\mathbf{X}' | \hat{\nu}_0') } {\Pr(X |\hat{\mu}) \Pr(\mathbf{X} | \hat{\nu}) \Pr(X' | \hat{\mu}) \Pr(\mathbf{X}' | \hat{\nu}')}
+\label{eq:BayesFactor}
+\end{align}
+
+\paragraph{Example}
+The Bayes factors can be computed using the \texttt{bbb} command:
+
+<<fig.width=5, fig.height=5, out.width='.6\\linewidth'>>=
+library(deepSNV)
+library(RColorBrewer)
+n <-  100 ## Coverage
+n_samples <- 1000 ## Assume 1000 samples
+x <-  0:20 ## Nucleotide counts
+X <-  cbind(rep(x, each = length(x)), rep(x, length(x))) ## All combinations forward and reverse
+par(bty="n", mgp = c(2,.5,0), mar=c(3,3,2,2)+.1, las=1, tcl=-.33, mfrow=c(2,2))
+for(nu in 10^c(-4,-2)){ ## Loop over error rates
+	## Create counts array with errors
+	counts = aperm(array(c(rep(round(n_samples*n* c(nu,1-nu,nu,1-nu)), each=nrow(X)), cbind(n - X, X)[,c(3,1,4,2)]), 
+					dim=c(nrow(X) ,4,2)), c(3,1,2))
+	for(rho in c(1e-4, 1e-2)){ ## Loop over dispersion factors
+		## Compute Bayes factors
+		BF = bbb(counts, rho=rho, model="OR", return="BF")
+		## Plot
+		image(z=log10(matrix(BF[2,,1], nrow=length(x))), 
+				x=x, 
+				y=x, 
+				breaks=c(-100,-8:0), 
+				col=rev(brewer.pal(9,"Reds")), 
+				xlab = "Forward allele count",
+				ylab="Backward allele count", 
+				main = paste("rho =", format(rho, digits=2), "nu = ", format(nu, digits=2)), 
+				font.main=1)
+		text(X[,1],X[,2],ceiling(log10(matrix(BF[2,,1], nrow=length(x)))), cex=0.5)
+	}
+}
+@
+
+Here we have used a coverage of $n=100$ on both strands and computed the Bayes
+factors assuming 1,000 samples to estimate the error rate $\nu=\nu'$ from. Shown
+are results for fixed values of $rho=\{10^{-4},10^{-2}\}$.
+
+
+\subsubsection{The AND model}
+
+The AND model is defined in the following way:
+\begin{align}
+ M_0 &: \quad \mu = \nu \quad \wedge \quad \mu' = \nu' \cr
+ M_1 &: \quad \mu = \mu' > \nu, \nu'.
+ \label{eq:alternatives}
+\end{align}
+
+Here the null model states that the error rates $\nu=\mu$ and $\nu'=\mu'$ are
+identical on both strands, which is more restrictive and hence in favour of the
+alternative.
+
+In this case the Bayes factor is approximately
+\begin{align} 
+\frac{\Pr(D\mid M_0)}{ \Pr(D\mid M_1)} &= \frac{\Pr(X |\hat{\nu}_0) \Pr(\mathbf{X} | \hat{\nu}_0) \Pr(X' | \hat{\nu}_0') \Pr(\mathbf{X}' | \hat{\nu}_0') } {\Pr(X |\hat{\mu}) \Pr(\mathbf{X} | \hat{\nu}) \Pr(X' | \hat{\mu}) \Pr(\mathbf{X}' | \hat{\nu}')}
+\label{eq:BayesFactor}
+\end{align}
+
+\paragraph{Example}
+The behaviour of the AND model can be inspected by the following commands
+<<fig.width=5,fig.height=5, out.width='.6\\linewidth'>>=
+par(bty="n", mgp = c(2,.5,0), mar=c(3,3,2,2)+.1, las=1, tcl=-.33, mfrow=c(2,2))
+for(nu in 10^c(-4,-2)){ ## Loop over error rates
+	## Create counts array with errors
+	counts = aperm(array(c(rep(round(n_samples*n* c(nu,1-nu,nu,1-nu)), each=nrow(X)), cbind(n - X, X)[,c(3,1,4,2)]), 
+					dim=c(nrow(X) ,4,2)), c(3,1,2))
+	for(rho in c(1e-4, 1e-2)){ ## Loop over dispersion factors
+		## Compute Bayes factors, mode = "AND"
+		BF = bbb(counts, rho=rho, model="AND", return="BF")
+		## Plot
+		image(z=log10(matrix(BF[2,,1], nrow=length(x))), 
+				x=x, 
+				y=x, 
+				breaks=c(-100,-8:0), 
+				col=rev(brewer.pal(9,"Reds")), 
+				xlab = "Forward allele count",
+				ylab="Backward allele count", 
+				main = paste("rho =", format(rho, digits=2), "nu = ", format(nu, digits=2)), 
+				font.main=1)
+		text(X[,1],X[,2],ceiling(log10(matrix(BF[2,,1], nrow=length(x)))), cex=0.5)
+	}
+}
+@
+One realises that for small dispersion the Bayes factor depends mostly on the
+sum of the forward and reverse strands in the AND model.
+
+
+\subsection{Estimating $\rho$}
+
+If the dispersion parameter $\rho$ is not specified, it is estiated at each
+locus using the following method-of-moment estimator:
+
+\begin{align} 
+ \hat\rho &= \frac{N s^2/ (1-\hat\nu)/ \hat\nu - \sum_{i=1}^N 1/n_i }{N - \sum_{i=1}^N 1/n_i } \cr
+ s^2 &= \frac{N \sum_{i=1}^N n_i(\hat\nu - \hat\mu_i)^2}{(N-1) \sum_{i=1}^N n_i}.
+\end{align}
+
+This yields consistent estimates over a range of true values:
+
+<<rho, fig.width=4,fig.height=4, out.width="6cm", out.height="6cm">>=
+rho = 10^seq(-6,-1)
+rhoHat <- sapply(rho, function(r){
+			sapply(1:100, function(i){
+						n = 100
+						X = rbetabinom(1000, n, 0.01, rho=r)
+						X = cbind(X, n-X)
+						Y = array(X, dim=c(1000,1,2))
+						deepSNV:::estimateRho(Y, Y/n, Y < 1000)[1,1]})
+		})
+par(bty="n", mgp = c(2,.5,0), mar=c(3,4,1,1)+.1,  tcl=-.33)
+plot(rho, type="l", log="y", xaxt="n", xlab="rho", ylab="rhoHat", xlim=c(0.5,6.5), lty=3)
+boxplot(t(rhoHat+ 1e-7) ~ rho, add=TRUE, col="#FFFFFFAA", pch=16, cex=.5, lty=1, staplewex=0)
+points(colMeans(rhoHat), pch="*", col="red", cex=2)
+@
+
+\subsection{Using a prior}
+
+\texttt{shearwater} calls variants if the posterior probability that the null
+model $M_0$ is true falls below a certain threshold. Generally, the posterior
+odds is given by
+\begin{equation}
+\frac{\Pr(M_0\mid D)}{ \Pr(M_1 \mid D)} = \frac{1-\pi(M_1))}{\pi(M_1)} 
+\frac{\Pr(D\mid M_0)}{ \Pr(D\mid M_1)} 
+\end{equation}
+where $\pi = \pi(M_1)$ is the prior probability of that a variant exists. 
+These probabilities are not uniform and may be calculated from the distribution
+of observed somatic mutations. Such data can be found in the COSMIC data base
+\url{http://www.sanger.ac.uk/cosmic}.
+
+As of now, the amount of systematic, genome-wide screening data is still sparse,
+which makes it difficult to get good estimates of the mutation frequencies
+in each cancer type. However, a wealth of data exists for somatic mutations
+within a given gene. Assume we know how likely it is that a gene is mutated. We
+then model
+\begin{equation}
+\pi = \begin{cases} \pi_\text{gene} \times \frac{\text{\# Mutations at given position}}{\text{\# Mutations in gene}} & \text{if variant in COSMIC}\cr
+  \pi_\text{background} & \text{else}.
+  \end{cases}
+\end{equation}
+
+
+Suppose you have downloaded the COSMIC vcf
+\verb+"CosmicCodingMuts_v63_300113.vcf.gz"+ from
+\url{ftp://ngs.sanger.ac.uk/production/cosmic}.
+
+<<eval=FALSE>>=
+## Not run..
+## Load TxDb
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+seqlevels(txdb) <- sub("chr","",seqlevels(txdb))
+
+## Make prior
+regions <- reduce(exons(txdb, vals=list(gene_id='7157'))) ## TP53 exons
+cosmic <- readVcf("CosmicCodingMuts_v63_300113.vcf.gz", "hg19", param=ScanVcfParam(which=regions))
+pi <- makePrior(cosmic, regions, pi.gene = 1)
+@
+
+The resulting prior can be visualised:
+<<prior, fig.width=8,fig.height=4, out.width="12cm", out.height="6cm">>=
+## Load pi
+data(pi, package="deepSNV")
+
+## Plot
+par(bty="n", mgp = c(2,.5,0), mar=c(3,3,2,2)+.1, tcl=-.33)
+plot(pi[,1], type="h", xlab="Position", ylab="Prior", col=brewer.pal(5,"Set1")[1], ylim=c(0,0.075))
+for(j in 2:5)
+	lines(pi[,j], type="h", col=brewer.pal(5,"Set1")[j])
+legend("topleft", col=brewer.pal(5,"Set1"), lty=1, bty="n", c("A","T","C","G","del"))
+@
+
+The data shows that the distribution of somatic variants is highly non-uniform,
+with multiple mutation hotspots.
+
+
+\section{Using shearwater}
+
+To run shearwater you need a collection of .bam files and the set of regions you
+want to analyse as a GRanges() object. Additionally, you may calculate a prior
+from a VCF file that you can download from
+\url{ftp://ngs.sanger.ac.uk/production/cosmic}.
+
+\subsection{Minimal example}
+
+Here is a minimal example that uses two .bam files from the deepSNV package. The
+data is loaded into a large array using the \texttt{loadAllData()} function:
+
+<<>>=
+## Load data from deepSNV example
+regions <- GRanges("B.FR.83.HXB2_LAI_IIIB_BRU_K034", IRanges(start = 3120, end=3140))
+files <- c(system.file("extdata", "test.bam", package="deepSNV"), system.file("extdata", "control.bam", package="deepSNV"))
+counts <- loadAllData(files, regions, q=10)
+dim(counts)
+@
+The dimension of \texttt{counts} for $N$ samples, a total of $L$ positions is
+$N \times L \times 2|B|$, where $|B|=5$ is the size of the alphabet
+$B=\{A,T,C,G,-\}$ and the factor of 2 for the two strand orientations.
+
+The Bayes factors can be computed with the \texttt{bbb} function:
+<<>>=
+## Run (bbb) computes the Bayes factor
+bf <- bbb(counts, model = "OR", rho=1e-4)
+dim(bf)
+vcf <- bf2Vcf(bf, counts, regions, cutoff = 0.5, samples = files, prior = 0.5, mvcf = TRUE) 
+show(vcf)
+@
+The resulting Bayes factors were thresholded by a posterior \texttt{cutoff} for
+variant calling and converted into a \texttt{VCF} object by \texttt{bf2Vcf}.
+
+For two samples the Bayes factors are very similar to the p-values obtained by
+\texttt{deepSNV}:
+<<fig.width=4,fig.height=4>>=
+## Shearwater Bayes factor under AND model
+bf <- bbb(counts, model = "AND", rho=1e-4)
+## deepSNV P-value with combine.method="fisher" (product)
+dpSNV <- deepSNV(test = files[1], control = files[2], regions=regions, q=10, combine.method="fisher")
+## Plot
+par(bty="n", mgp = c(2,.5,0), mar=c(3,3,2,2)+.1, tcl=-.33)
+plot(p.val(dpSNV), bf[1,,]/(1+bf[1,,]), log="xy",
+		xlab = "P-value deepSNV",
+		ylab = "Posterior odds shearwater"
+		)
+@
+
+\subsection{More realistic example}
+
+Suppose the bam files are in folder \texttt{./bam} and the regions of interest
+are stored in a \texttt{GRanges()} object with metadata column \texttt{Gene},
+indicating which region (typically exons for a pulldown experiment) belongs to
+which gene. Also assume that we have a tabix indexed vcf file
+\verb+CosmicCodingMuts_v63_300113.vcf.gz+.
+
+The analysis can be parallelized by separately analysing each gene, which is the
+unit needed to compute the prior using \texttt{makePrior}.
+
+<<eval=FALSE>>=
+## Not run
+files <- dir("bam", pattern="*.bam$", full.names=TRUE)
+MC_CORES <- getOption("mc.cores", 2L)
+vcfList <- list()
+for(gene in levels(mcols(regions)$Gene)){
+	rgn <-  regions[mcols(regions)$Gene==gene]
+	counts <-  loadAllData(files, rgn, mc.cores=MC_CORES)
+	## Split into
+	BF <-  mcChunk("bbb", split = 200, counts, mc.cores=MC_CORES)
+	COSMIC <-  readVcf("CosmicCodingMuts_v63_300113.vcf.gz", "GRCh37", param=ScanVcfParam(which=rgn) )
+	prior <- makePrior(COSMIC, rgn, pi.mut = 0.5)
+	vcfList[[gene]] <- bf2Vcf(BF = BF, counts=counts, regions=rgn, samples = files, cutoff = 0.5, prior = prior)
+}
+## Collapse vcfList
+vcf <- do.call(rbind, vcfList)
+@
+
+The \texttt{mcChunk} function splits the \texttt{counts} objects into chunks of
+size split and processes these in parallel using \texttt{mclapply}.
+
+Instead of using a for loop one can also use a different mechanism, e.g.
+submitting this code to a computing cluster, etc.
+
+\section*{sessionInfo()}
+<<echo=FALSE, results='asis'>>=
+    toLatex(sessionInfo())
+@
+
+
+\end{document}
