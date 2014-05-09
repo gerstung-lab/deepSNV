@@ -1,0 +1,56 @@
+\docType{package}
+\name{deepSNV-package}
+\alias{deepSNV-package}
+\title{Detection of subclonal SNVs in deep sequencing experiments}
+\description{
+  Detection of subclonal SNVs in deep sequencing
+  experiments
+}
+\details{
+  This packages provides algorithms for detecting subclonal
+  single nucleotide variants (SNVs) and their frequencies
+  from ultra-deep sequencing data. It retrieves the
+  nucleotide counts at each position and each strand from
+  two .bam files and tests for differences between the two
+  experiments with a likelihood ratio test using either a
+  binomial or and overdispersed beta-binomial model. The
+  statistic can be tuned across genomic sites by a shared
+  Dirichlet prior and there package provides procedures for
+  normalizing sequencing data from different runs.
+}
+\examples{
+## Short example with 2 SNVs at frequency ~10\%
+regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140)
+ex <- deepSNV(test = system.file("extdata", "test.bam", package="deepSNV"), control = system.file("extdata", "control.bam", package="deepSNV"), regions=regions, q=10)
+show(ex)   # show method
+plot(ex)   # scatter plot
+summary(ex)   # summary with significant SNVs
+ex[1:3,]   # subsetting the first three genomic positions
+tail(test(ex, total=TRUE))   # retrieve the test counts on both strands
+tail(control(ex, total=TRUE))
+
+## Not run: Full example with ~ 100 SNVs. Requires an internet connection, but try yourself.
+# regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585)
+# HIVmix <- deepSNV(test = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", control = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/control.bam", regions=regions, q=10)
+data(HIVmix) # attach data instead..
+show(HIVmix)
+plot(HIVmix)
+head(summary(HIVmix))
+
+}
+\author{
+  Moritz Gerstung, Wellcome Trust Sanger Institute,
+  \email{moritz.gerstung@sanger.ac.uk}
+}
+\references{
+  Gerstung M, Beisel C, Rechsteiner M, Wild P, Schraml P,
+  Moch H, and Beerenwinkel N. Reliable detection of
+  subclonal single-nucleotide variants in tumour cell
+  populations. Nat Commun 3:811 (2012).
+  \href{http://dx.doi.org/10.1038/ncomms1814}{DOI:10.1038/ncomms1814}.
+}
+\seealso{
+  \code{\link{deepSNV}}
+}
+\keyword{package}
+
