@@ -1,15 +1,15 @@
 Package: deepSNV
 Imports:
     Rsamtools
-Maintainer: Moritz Gerstung <moritz.gerstung@sanger.ac.uk>
+Maintainer: Moritz Gerstung <m14@sanger.ac.uk>
 License: GPL-3
-Title: Detection of subclonal SNVs in deep sequencing experiments.
+Title: Detection of subclonal SNVs in deep sequencing data.
 biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
 LinkingTo: Rsamtools
 Type: Package
 LazyLoad: yes
 Author: Moritz Gerstung and Niko Beerenwinkel
-Description: This package provides provides a quantitative variant callers for
+Description: This package provides provides quantitative variant callers for
     detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
     experiments. The deepSNV algorithm is used for a comparative setup with a
     control experiment of the same loci and uses a beta-binomial model and a
