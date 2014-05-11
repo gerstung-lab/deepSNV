@@ -1,5 +1,6 @@
 Package: deepSNV
-Imports: Rsamtools
+Imports:
+    Rsamtools
 Maintainer: Moritz Gerstung <moritz.gerstung@sanger.ac.uk>
 License: GPL-3
 Title: Detection of subclonal SNVs in deep sequencing experiments.
@@ -8,7 +9,6 @@ LinkingTo: Rsamtools
 Type: Package
 LazyLoad: yes
 Author: Moritz Gerstung and Niko Beerenwinkel
-<<<<<<< HEAD:deepSNV/DESCRIPTION
 Description: This package provides provides a quantitative variant callers for
     detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
     experiments. The deepSNV algorithm is used for a comparative setup with a
@@ -20,25 +20,22 @@ Description: This package provides provides a quantitative variant callers for
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
 Version: 1.11.0
-=======
-Description: This package provides provides a quantitative variant callers
-    for detecting subclonal mutations in ultra-deep (>=100x coverage)
-    sequencing experiments. The deepSNV algorithm is used for a comparative setup 
-    with a control experiment of the same loci and uses a beta-binomial model 
-    and a likelihood ratio test to discriminate sequencing errors and subclonal 
-    SNVs. The new shearwater algorithm (beta) computes a Bayes classifier based on a beta-
-    binomial model for variant calling with multiple samples for precisely estimating
-    model parameters such as local error rates and dispersion and prior knowledge, 
-    e.g. from variation data bases such as COSMIC.
-Version: 1.7.4
->>>>>>> parent of a4ced28... Adding the cormorant algorithm for working with a precomputed error:DESCRIPTION
 URL: http://www.cbg.ethz.ch/software/deepSNV
-Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges,
-        Biostrings, VGAM, methods, graphics, VariantAnnotation (>= 1.5.0),
-        parallel
-Suggests: RColorBrewer, knitr
+Depends:
+    R (>= 2.13.0),
+    Rsamtools (>= 1.4.3),
+    GenomicRanges,
+    IRanges,
+    Biostrings,
+    VGAM,
+    methods,
+    graphics,
+    VariantAnnotation (>= 1.5.0),
+    parallel
+Suggests:
+    RColorBrewer,
+    knitr
 VignetteBuilder: knitr
-<<<<<<< HEAD:deepSNV/DESCRIPTION
 Collate:
     'deepSNV-class.R'
     'deepSNV-experimental.R'
@@ -47,11 +44,6 @@ Collate:
     'deepSNV-methods.R'
     'deepSNV-misc.R'
     'deepSNV-package.R'
-    'betabinom.R'
     'shearwater-functions.R'
+    'betabinom.R'
     'cormorant-functions.R'
-=======
-Collate: 'deepSNV-class.R' 'deepSNV-experimental.R'
-        'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
-        'deepSNV-misc.R' 'deepSNV-package.R'
->>>>>>> parent of a4ced28... Adding the cormorant algorithm for working with a precomputed error:DESCRIPTION
