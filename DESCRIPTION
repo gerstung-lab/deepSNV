@@ -44,6 +44,4 @@ Collate:
     'deepSNV-methods.R'
     'deepSNV-misc.R'
     'deepSNV-package.R'
-    'betabinom.R'
     'shearwater-functions.R'
-    'cormorant-functions.R'
