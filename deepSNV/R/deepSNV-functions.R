@@ -255,6 +255,8 @@ RF <- function(freq, total = FALSE){
 		return(table)
 	}
 	else{
+		if(nrow(table)==0)
+			return(NULL)
 		isDel <- table$var == "-"
 		isIns <- table$ref == "-"
 		if(length(deepSNV@files)==2)
@@ -277,7 +279,7 @@ RF <- function(freq, total = FALSE){
 						VFV = table$sigma2.freq.var),
 				geno = SimpleList(
 						FW = cbind(table$n.tst.fw, table$n.ctrl.fw),
-						BW = cbind(table$n.tst.fw, table$n.ctrl.bw),
+						BW = cbind(table$n.tst.bw, table$n.ctrl.bw),
 						DFW = cbind(table$cov.tst.fw, table$cov.ctrl.fw),
 						DBW = cbind(table$cov.tst.bw, table$cov.ctrl.bw)),
 				exptData = SimpleList(header = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))),

@@ -1,5 +1,9 @@
 deepSNV -- an R package for subclonal variant calling.
 
+Changes in version 1.11.1
+Bugfixes
+* Report correct table in summary(..., value="VCF"); Thanks to David Gacquer.
+
 Changes in version 1.7.4 (2013-09-28)
 Updates
 * Only using the Dirichlet prior for control

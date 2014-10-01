@@ -16,14 +16,14 @@ bibentry("Article",
        )
 
 bibentry("Article", 
-       key = "GerstungB2013",
+       key = "GerstungB2014",
        abstract = "",
        author = personList(as.person("Moritz Gerstung"), 
                            as.person("Elli Papaemmanuil"), 
                            as.person("Peter J Campbell")),
        journal = "in preparation",
        title = "Subclonal variant calling with multiple samples and prior knowledge",
-       volume = "",
-       pages = "",
-       year = "2013"
+       volume = "30",
+       pages = "1198-1204",
+       year = "2014"
        )
