@@ -1,15 +1,14 @@
 Package: deepSNV
-Imports:
-    Rsamtools
-Maintainer: Moritz Gerstung <moritz.gerstung@sanger.ac.uk>
+Imports: Rsamtools
+Maintainer: Moritz Gerstung <mg14@sanger.ac.uk>
 License: GPL-3
-Title: Detection of subclonal SNVs in deep sequencing experiments.
+Title: Detection of subclonal SNVs in deep sequencing data.
 biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
 LinkingTo: Rsamtools
 Type: Package
 LazyLoad: yes
 Author: Moritz Gerstung and Niko Beerenwinkel
-Description: This package provides provides a quantitative variant callers for
+Description: This package provides provides quantitative variant callers for
     detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
     experiments. The deepSNV algorithm is used for a comparative setup with a
     control experiment of the same loci and uses a beta-binomial model and a
@@ -19,29 +18,14 @@ Description: This package provides provides a quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.11.0
+Version: 1.11.1
 URL: http://www.cbg.ethz.ch/software/deepSNV
-Depends:
-    R (>= 2.13.0),
-    Rsamtools (>= 1.4.3),
-    GenomicRanges,
-    IRanges,
-    Biostrings,
-    VGAM,
-    methods,
-    graphics,
-    VariantAnnotation (>= 1.5.0),
-    parallel
-Suggests:
-    RColorBrewer,
-    knitr
+Depends: R (>= 2.13.0), Rsamtools (>= 1.4.3), GenomicRanges, IRanges,
+        Biostrings, VGAM, methods, graphics, VariantAnnotation (>=
+        1.5.0), parallel
+Suggests: RColorBrewer, knitr
 VignetteBuilder: knitr
-Collate:
-    'deepSNV-class.R'
-    'deepSNV-experimental.R'
-    'deepSNV-functions.R'
-    'deepSNV-generics.R'
-    'deepSNV-methods.R'
-    'deepSNV-misc.R'
-    'deepSNV-package.R'
-    'shearwater-functions.R'
+Collate: 'deepSNV-class.R' 'deepSNV-experimental.R'
+        'deepSNV-functions.R' 'deepSNV-generics.R' 'deepSNV-methods.R'
+        'deepSNV-misc.R' 'deepSNV-package.R' 'shearwater-functions.R'
+Packaged: 2014-10-01 15:55:29 UTC; mg14

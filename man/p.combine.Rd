@@ -3,7 +3,7 @@
 \title{Combine two p-values}
 \usage{
   p.combine(p1, p2,
-    method = c("fisher", "max", "average", "prod"))
+    method = c("fisher", "max", "average", "prod", "negfisher"))
 }
 \arguments{
   \item{p1}{P-value 1}
@@ -25,7 +25,12 @@
   For method = "average" the mean is used, yielding a
   P-value of \eqn{2 x^2}{2 x^2} if \eqn{x=(P_1+P_2)/2 <
   .5}{x=(P_1+P_2)/2 < .5} and \eqn{1-2 x^2}{1-2 x^2}
-  otherwise.
+  otherwise. "negfisher" is the negative of Fisher's method
+  using $1-F(1-P_1, 1-P_2)$, where $F$ is the combination
+  function of Fisher's method; for small $P_1,P_2$, the
+  result is very similar to method="average". Fisher's
+  method behaves a bit like a logical AND of the joint
+  null-hypothesis, whereas negative Fisher is like an OR.
 }
 \examples{
 p1 <- runif(1000)
