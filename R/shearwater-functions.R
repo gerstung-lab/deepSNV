@@ -327,16 +327,17 @@ logbb <- function(x, n, mu, disp) {
 #' @aliases shearwater
 #' @note Experimental code, subject to changes
 #' @export
-bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min = 1e-4, rho.max = 0.1, pseudo = .Machine$double.eps, return.value="BF", model=c("OR","AND", "adaptive"), min.cov=NULL, max.odds=10, mu.min = 1e-6, mu.max = 1 - mu.min) {
+bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min = 1e-4, rho.max = 0.1, pseudo = .Machine$double.eps, return.value=c("BF","P0", "err"), model=c("OR","AND", "adaptive"), min.cov=NULL, max.odds=10, mu.min = 1e-6, mu.max = 1 - mu.min) {
 	pseudo.rho = .Machine$double.eps
 	## minum value for rho
 	
 	model = match.arg(model)
+	return.value = match.arg(return.value)
 	
 	ncol = dim(counts)[3]/2
 	
-	x.fw = counts[,,1:ncol]
-	x.bw = counts[,,1:ncol + ncol]
+	x.fw = counts[,,1:ncol, drop=FALSE]
+	x.bw = counts[,,1:ncol + ncol, drop=FALSE]
 	
 	n.fw = rep(rowSums(x.fw, dims=2), dim(x.fw)[3])
 	n.bw = rep(rowSums(x.bw, dims=2), dim(x.bw)[3])
@@ -376,7 +377,6 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 	mu0.bw <- bound(mu0.bw, mu.min, mu.max) * rdisp
 	nu.fw <- (X.fw+pseudo) / (N.fw + ncol*pseudo)
 	nu.fw <- bound(nu.fw, mu.min, mu.max) * rdisp
-	rm(tr.fw)
 	
 	tr.bw = x.bw * ix
 	X.bw = rep(colSums(tr.bw, dims=1), each = nrow(counts)) - tr.bw 
@@ -388,6 +388,14 @@ bbb <- function(counts, rho = NULL, alternative="greater", truncate=0.1, rho.min
 	mu0.fw <- bound(mu0.fw, mu.min, mu.max) * rdisp
 	nu.bw <- (X.bw+pseudo) / (N.bw + ncol*pseudo) 
 	nu.bw <- bound(nu.bw, mu.min, mu.max) * rdisp
+	
+	## Return rates only
+	if(return.value == "err"){ 
+		nu0 <- (X.bw + tr.fw + X.fw + tr.bw+ pseudo)/(N.bw + n.bw +N.fw +n.fw+ ncol*pseudo)
+		nu0 <- bound(nu0, mu.min, mu.max)
+		return(list(nu = nu0[1,,], nu.fw=(nu0.fw/rdisp)[1,,], nu.bw=(nu0.bw/rdisp)[1,,], rho=rho))
+	}
+	rm(tr.fw)
 	rm(tr.bw)
 	
 	## Enforce mu > nu
@@ -461,3 +469,4 @@ mutID = function(vcf){
 			paste(seqnames(vcf), start(vcf), alt, sep=":"),
 			paste(seqnames(vcf), start(vcf)+1, paste("del",substring(ref,2),sep=""), sep=":"))
 }
+

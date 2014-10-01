@@ -136,7 +136,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 }
 
 R_CMethodDef cMethods[] = {
-   {"bam2R", (DL_FUNC) &bam2R, 9}
+   {"bam2R", (DL_FUNC) &bam2R, 10}
 };
 
 void R_init_bam2R(DllInfo *info) {
