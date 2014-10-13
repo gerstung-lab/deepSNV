@@ -1,0 +1,64 @@
+\name{plot.deepSNV}
+\alias{plot.deepSNV}
+\title{Scatter plot of relative nucleotide frequencies.}
+\usage{
+  \method{plot}{deepSNV} (x, sig.level = NULL, col = NULL,
+    col.null = "grey", cex.min = 0.2,
+    ylab = "Relative Frequency in Test",
+    xlab = "Relative Frequency in Control", pch = 16, ...)
+}
+\arguments{
+  \item{x}{A deep SNV object.}
+
+  \item{sig.level}{By default, p-values below sig.level are
+  drawn as filled circles.}
+
+  \item{col}{Color of the nucleotides.}
+
+  \item{col.null}{Color of insignificant nucleotides.}
+
+  \item{cex.min}{The minimal size of the points.}
+
+  \item{xlab}{The x-axis label.}
+
+  \item{ylab}{The y-axis label.}
+
+  \item{pch}{The plotting symbol. Default = 16 (filled
+  circle)}
+
+  \item{...}{Additional arguments passed to plot.}
+}
+\value{
+  NULL
+}
+\description{
+  This function plots the relative nucleotide frequencies
+  of the test against the control experiment on a
+  logarithmit scale. The color of the symbols denotes the
+  nucleotide, and the area of the circle is proportional to
+  the \eqn{- \log}{-log} of the p-value.
+}
+\examples{
+## Short example with 2 SNVs at frequency ~10\%
+regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140)
+ex <- deepSNV(test = system.file("extdata", "test.bam", package="deepSNV"), control = system.file("extdata", "control.bam", package="deepSNV"), regions=regions, q=10)
+show(ex)   # show method
+plot(ex)   # scatter plot
+summary(ex)   # summary with significant SNVs
+ex[1:3,]   # subsetting the first three genomic positions
+tail(test(ex, total=TRUE))   # retrieve the test counts on both strands
+tail(control(ex, total=TRUE))
+
+## Not run: Full example with ~ 100 SNVs. Requires an internet connection, but try yourself.
+# regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585)
+# HIVmix <- deepSNV(test = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", control = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/control.bam", regions=regions, q=10)
+data(HIVmix) # attach data instead..
+show(HIVmix)
+plot(HIVmix)
+head(summary(HIVmix))
+
+}
+\author{
+  Moritz Gerstung
+}
+

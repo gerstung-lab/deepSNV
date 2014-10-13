@@ -1,0 +1,9 @@
+##fileformat=VCFv4.1
+##source=deepSNV
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total depth">
+##FORMAT=<ID=FW,Number=1,Type=Integer,Description="Forward variant allele count">
+##FORMAT=<ID=BW,Number=1,Type=Integer,Description="Backward variant allele count">
+##FORMAT=<ID=DFW,Number=1,Type=Integer,Description="Forward read depth">
+##FORMAT=<ID=DBW,Number=1,Type=Integer,Description="Backward read depth">
+##INFO=<ID=VF,Number=A,Type=Float,Description="Variant frequency">
+##INFO=<ID=VFV,Number=A,Type=Float,Description="Variant frequency variance">
