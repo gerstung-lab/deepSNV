@@ -31,7 +31,7 @@ http://master.bioconductor.org/packages/devel/bioc/html/deepSNV.html
 ### The bad way
 You can use devtools::github_install() to install from this repository. For advanced users.
 
-	> library(devtools); install_github("mg14/mg14")
+	> library(devtools); install_github("mg14/deepSNV/deepSNV")
 
 ### The ugly way
 To install this development snapshot of deepSNV, check out the repository and run
