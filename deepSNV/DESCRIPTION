@@ -19,7 +19,7 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.11.1
+Version: 1.13.1
 URL: http://www.cbg.ethz.ch/software/deepSNV
 Depends:
     R (>= 2.13.0),
@@ -45,3 +45,4 @@ Collate:
     'deepSNV-misc.R'
     'deepSNV-package.R'
     'shearwater-functions.R'
+    'betabinom.R'

@@ -23,15 +23,20 @@ in the folder deepSNV. It is not guaranteed to work all times.
 Installation
 --------
 
-### The easy way
+### The good way
 For unexperienced users it is recommended to use package as provided in bioconductor.
 Please follow the instructions at:
 http://master.bioconductor.org/packages/devel/bioc/html/deepSNV.html
 
-### The hard way
+### The bad way
+You can use devtools::github_install() to install from this repository. For advanced users.
+
+	> library(devtools); install_github("mg14/mg14")
+
+### The ugly way
 To install this development snapshot of deepSNV, check out the repository and run
 
-> make install
+	$ make install
 
 Note that this will not install the necessary dependencies.
 

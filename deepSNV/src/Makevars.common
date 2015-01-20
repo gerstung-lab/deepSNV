@@ -1,5 +1,6 @@
 PKG_OBJECTS = \
-  bam2R.o
+  bam2R.o \
+  betabinom.o
 # these flags are for SAMTOOLS; -Dinline="" turns off inlining, which
 # is leads to undefined symbols for gcc -O0
 DFLAGS = -D_USE_KNETFILE -D_FILE_OFFSET_BITS=64
