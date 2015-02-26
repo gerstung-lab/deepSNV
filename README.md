@@ -1,6 +1,9 @@
 deepSNV
 =====
 
+[![Build Status](https://travis-ci.org/mg14/deepSNV.svg)](https://travis-ci.org/mg14/deepSNV)
+
+
 Description
 ---
 This package provides provides a quantitative variant callers for
@@ -40,5 +43,5 @@ To install this development snapshot of deepSNV, check out the repository and ru
 
 Note that this will not install the necessary dependencies.
 
-Previous (running) builds can be found in builds. These will also be mirrored to the
+Previous (running) builds can be found in `builds`. These will also be mirrored to the
 bioconductor development branch.
