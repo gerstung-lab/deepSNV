@@ -1,4 +1,14 @@
 #$(ZLIB_LIBS) -lws2_32
+
+SAMVARS=$(shell echo 'cat(system.file("usretc", .Platform[["r_arch"]],\
+    "Rsamtools.mk", package="Rsamtools", mustWork=TRUE))' |\
+    "${R_HOME}/bin/R" --vanilla --slave)
+$(info Found $(SAMVARS).)
+include $(SAMVARS)
+
+PKG_LIBS=$(SAMTOOLS_LIBS)
+PKG_CPPFLAGS=$(SAMTOOLS_CPPFLAGS)
+
 include Makevars.common
 OBJECTS = $(PKG_OBJECTS) 
 
