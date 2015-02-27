@@ -2,9 +2,3 @@ PKG_OBJECTS = \
   bam2R.o
 # these flags are for SAMTOOLS; -Dinline="" turns off inlining, which
 # is leads to undefined symbols for gcc -O0
-
-SAMVARS=$(shell echo 'cat(system.file("usretc", .Platform[["r_arch"]],\
-    "Rsamtools.mk", package="Rsamtools", mustWork=TRUE))' |\
-    "${R_HOME}/bin/R" --vanilla --slave)
-$(info Found $(SAMVARS).)
-include $(SAMVARS)
