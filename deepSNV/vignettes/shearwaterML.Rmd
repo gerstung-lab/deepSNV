@@ -1,13 +1,15 @@
 ---
 title: "Shearwater ML"
-author: "Inigo Martincorena"
+author: "Inigo Martincorena and Moritz Gerstung"
 date: "6 March 2015"
 output: html_document
 ---
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+ShearwaterML is a maximum-likelihood adaptation of the original Shearwater algorithm. Unlike the original algorithm, ShearwaterML does not use prior information and yields p-values, instead of Bayes factors, using a Likelihood-Ratio Test. This allows the use of standard multiple testing correction methods to obtain a list of significant variants with a controlled false discovery rate.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+For a detailed description of the algorith see:
+Martincorena I, Roshan A, Gerstung M, et al. (2015). High burden and pervasive positive selection of somatic mutations in normal human skin. _Science_ (Under consideration).
+
 
 ```{r, eval=FALSE}
 # Inigo Martincorena - 2014
