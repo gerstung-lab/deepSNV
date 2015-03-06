@@ -12,6 +12,7 @@
 #' @export
 #' @author Inigo Martincorena and Moritz Gerstung
 #' @references Gerstung M, Papaemmanuil E and Campbell PJ (2014). Subclonal variant calling with multiple samples and prior knowledge. _Bioinformatics_, *30*, pp. 1198-1204.
+
 betabinLRT = function (counts, rho = NULL, truncate = 0.01, rho.min = 1e-04, rho.max = 0.8) {
   
   snp_and_ref_filter = 0.1 # Sites where the current nt accounts for more than 30% of the reads are not tested for (reference nt or SNPs)
