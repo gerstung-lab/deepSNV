@@ -46,4 +46,4 @@ Collate:
     'deepSNV-package.R'
     'shearwater-functions.R'
     'betabinom.R'
-    'shearwater-ML.R'
+    'shearwaterML.R'

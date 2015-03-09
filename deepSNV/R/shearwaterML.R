@@ -6,10 +6,11 @@
 #' @param rho Use this variable to fix the dispersion parameter to a value of interest. Default: NULL, rho will be estimated from the data.
 #' @param truncate Samples with variant allele frequencies higher than "truncate" will be excluded from the background error model.
 #' @param rho.min If rho=NULL, rho will be estimated from the data in the interval [rho.min,rho.max].
-#' @return rho.max If rho=NULL, rho will be estimated from the data in the interval [rho.min,rho.max].
-#' @return maxvaf Sites with an average rate of mimatches higher than maxvaf will not be considered (e.g. SNPs or reference sites).
-#' @return mindepth Minimum coverage required to test a site.
-#' @return maxtruncate Maximum number of samples that can be excluded from the background error model by truncate for a site to be tested.
+#' @param rho.max If rho=NULL, rho will be estimated from the data in the interval [rho.min,rho.max].
+#' @param maxvaf Sites with an average rate of mimatches higher than maxvaf will not be considered (e.g. SNPs or reference sites).
+#' @param mindepth Minimum coverage required to test a site.
+#' @param maxtruncate Maximum number of samples that can be excluded from the background error model by truncate for a site to be tested.
+#' @return A list with two arrays for P- and Q-values.
 #' @examples
 #' # code to be added
 #' @export
