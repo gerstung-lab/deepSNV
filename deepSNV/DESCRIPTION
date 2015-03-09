@@ -8,7 +8,11 @@ biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
 LinkingTo: Rsamtools
 Type: Package
 LazyLoad: yes
-Author: Moritz Gerstung and Niko Beerenwinkel
+Authors@R: c(
+	person("Inigo", "Martincorena", role = "ctb"),
+	person("Niko","Beerenwinkel", role="ths"),
+	person("Moritz","Gerstung", email = "mg14@sanger.ac.uk", role= c("aut","cre"))	
+	)
 Description: This package provides provides quantitative variant callers for
     detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
     experiments. The deepSNV algorithm is used for a comparative setup with a
