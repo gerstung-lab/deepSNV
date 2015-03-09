@@ -189,7 +189,7 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 		)
 		colnames(v) = samples
 	}
-	exptData(v)$header@samples <- samples
+	exptData(v)$header@samples <- as.character(samples)
 	exptData(v)$header@header$META["date",1] <- paste(Sys.time())
 	
 	## If no variants found set to zero..
