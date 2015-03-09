@@ -7,3 +7,5 @@ deepSNV.Rproj
 deepSNV.Rcheck
 *.o
 *.so
+.*
+/autom4te.cache/
