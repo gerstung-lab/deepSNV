@@ -49,6 +49,7 @@ knit_hooks$set(nice = function(before, options, envir) {
 %\VignetteDepends{deepSNV}
 %\VignetteEngine{knitr::knitr}
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \title{Subclonal variant calling with multiple samples and prior knowledge
 using \texttt{shearwater}}

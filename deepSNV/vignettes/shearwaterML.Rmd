@@ -5,87 +5,27 @@ date: "6 March 2015"
 output: html_document
 ---
 
-ShearwaterML is a maximum-likelihood adaptation of the original Shearwater algorithm. Unlike the original algorithm, ShearwaterML does not use prior information and yields p-values, instead of Bayes factors, using a Likelihood-Ratio Test. This allows the use of standard multiple testing correction methods to obtain a list of significant variants with a controlled false discovery rate.
+ShearwaterML is a maximum-likelihood adaptation of the original Shearwater algorithm. Unlike the original algorithm, ShearwaterML does not use prior information and yields p-values, instead of Bayes factors, using a Likelihood-Ratio Test. This allows using standard multiple testing correction methods to obtain a list of significant variants with a controlled false discovery rate.
 
 For a detailed description of the algorith see:
+
 Martincorena I, Roshan A, Gerstung M, et al. (2015). High burden and pervasive positive selection of somatic mutations in normal human skin. _Science_ (Under consideration).
 
 
 ```{r, eval=FALSE}
-# Inigo Martincorena - 2014
-# Function to perform variant calling given a list of bam files and a list of regions
-#
-# Example:
-# bsub -G team78-grp -R 'select[mem>=10000] rusage[mem=10000]' -M10000 -o kk.txt /software/R-3.0.0/bin/Rscript run_variant_calling_LRTbetabin.R Environment_variant_calling.RData 1 2 ./BinomialLRT_variants_PD18003/mutations1.txt
+## Load data from deepSNV example
+regions <- GRanges("B.FR.83.HXB2_LAI_IIIB_BRU_K034", IRanges(start = 3120, end=3140))
+files <- c(system.file("extdata", "test.bam", package="deepSNV"), system.file("extdata", "control.bam", package="deepSNV"))
+counts <- loadAllData(files, regions, q=30)
 
+## ShearwaterML: "betabinLRT" calculates p-values for each possible mutation
+pvals <- betabinLRT(counts, rho=1e-4, maxtruncate = 1)$pvals
+qvals <- p.adjust(pvals, method="BH")
+dim(qvals) = dim(pvals)
+vcfML = qvals2Vcf(qvals, counts, regions, samples = files, mvcf = TRUE)
 
-# Input arguments
-args = commandArgs(TRUE)
-environment_file = args[1]
-bed_start = as.numeric(args[2])
-bed_end = as.numeric(args[3])
-outfile = args[4]
-maxpval = 0.01
+## Original Shearwater: "bbb" computes the original Bayes factors
+bf <- bbb(counts, model = "OR", rho=1e-4)
+vcfBF <- bf2Vcf(bf, counts, regions, samples = files, prior = 0.5, mvcf = TRUE)
 
-
-# Libraries
-library("GenomicRanges")
-library("deepSNV")
-library("Rsamtools")
-```
-
-You can also embed plots, for example:
-
-```{r, echo=FALSE, eval=FALSE}
-## 3. variant calling and annotation
-
-# Loading the environment
-load(environment_file)
-regions = bed[bed_start:bed_end]
-
-# Variant calling
-counts_obj = loadAllData(files=files, regions=regions, q=30)
-counts = counts_obj$counts
-pvals = pvals_betabinLRT(counts, rho=NULL, truncate=0.005) ################## DEFAULT PARAMETERS RESET
-interesting_tests = which(pvals<maxpval, arr.ind=T)
-
-
-# VAF: variant allele fraction
-cov = rep(apply(counts,c(1,2),sum),5); dim(cov) = dim(pvals)
-vaf = (counts[,,1:5]+counts[,,6:10])/cov
-
-
-# Annotating the reference nucleotide for mutated sites
-genomeFile = "/nfs/cancer_ref01/Homo_sapiens/37/genome.fa"
-chr = counts_obj$coordinates[,1][interesting_tests[,2]]
-pos = counts_obj$coordinates[,2][interesting_tests[,2]]
-ref_nt = scanFa(genomeFile, GRanges(chr, IRanges(pos, pos)))
-ref_nt = as.character(as.character(ref_nt))
-ref_trin = scanFa(genomeFile, GRanges(chr, IRanges(pos-1, pos+1)))
-ref_trin = as.character(as.character(ref_trin))
-
-# Annotating wild-type genotype
-nucleotides = c("A", "T", "C", "G", "-")
-counts_sum = apply(counts[,,1:4]+counts[,,6:9], c(2,3), sum)
-genotype = counts_sum/array(apply(counts_sum,1,sum), dim=dim(counts_sum)) > 0.3
-ref_nt_pred_all = apply(genotype,1, function(x) paste(nucleotides[which(x)],collapse="/"))
-ref_nt_pred = ref_nt_pred_all[interesting_tests[,2]]
-
-# Annotating significant mutations
-mutations = data.frame(sampleID=selected_sampleIDs[interesting_tests[,1]])
-mutations$chr = counts_obj$coordinates[,1][interesting_tests[,2]]
-mutations$pos = counts_obj$coordinates[,2][interesting_tests[,2]]
-mutations$ref_nt = ref_nt
-mutations$ref_nt_pred = ref_nt_pred
-mutations$mut_nt = nucleotides[interesting_tests[,3]]
-mutations$reads = (counts[,,1:5]+counts[,,6:10])[interesting_tests]
-mutations$reads_fw = counts[,,1:5][interesting_tests]
-mutations$reads_rv = counts[,,6:10][interesting_tests]
-mutations$cov = cov[interesting_tests]
-mutations$vaf = vaf[interesting_tests]
-mutations$pval = pvals[interesting_tests]
-mutations$trinuc = ref_trin
-
-write.table(mutations, outfile, quote=F, row.names=F, col.names=T, sep="\t")```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+plot(pvals[1,,], bf[1,,]/(1+bf[1,,]), log="xy")
