@@ -11,7 +11,7 @@ bioc_packages:
  - VGAM
  - VariantAnnotation
  
-before_install:
+before_script:
  - R -e 'devtools::install_url("http://master.bioconductor.org/packages/devel/bioc/src/contrib/Rhtslib_0.99.18.tar.gz")'
     
 
