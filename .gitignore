@@ -3,13 +3,12 @@
 .RData
 deepSNV.Rproj
 .DS_Store
-.gitignore
 deepSNV.Rcheck
 *.o
 *.so
 .project
 .cproject
 .settings
-.externalToolsBuilders
+.externalToolBuilders
 /autom4te.cache/
 *.tar.gz
