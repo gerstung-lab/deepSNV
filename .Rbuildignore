@@ -1,8 +1,0 @@
-Makefile
-^\.travis\.yml$
-.gitignore
-.externalToolBuilders
-.setting
-.project
-.cproject
-builds
