@@ -1,18 +1,18 @@
 Package: deepSNV
 Imports:
-    Rsamtools
+    Rhtslib
 Maintainer: Moritz Gerstung <mg14@sanger.ac.uk>
 License: GPL-3
 Title: Detection of subclonal SNVs in deep sequencing data.
 biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
-LinkingTo: Rsamtools
+LinkingTo: Rhtslib
 Type: Package
 LazyLoad: yes
-Authors@R: c(
-	person("Inigo", "Martincorena", role = "ctb"),
-	person("Niko","Beerenwinkel", role="ths"),
-	person("Moritz","Gerstung", email = "mg14@sanger.ac.uk", role= c("aut","cre"))	
-	)
+Authors@R: c( person("Inigo", "Martincorena", role = "ctb"),
+    person("David", "Jones", role = "ctb"),
+    person("Niko","Beerenwinkel", role="ths"),
+    person("Moritz","Gerstung",
+    email = "mg14@sanger.ac.uk", role= c("aut","cre")) )
 Description: This package provides provides quantitative variant callers for
     detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
     experiments. The deepSNV algorithm is used for a comparative setup with a
@@ -23,31 +23,20 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version:  1.13.7
+Version: 1.13.8
 URL: http://www.cbg.ethz.ch/software/deepSNV
 Depends:
     R (>= 2.13.0),
-    Rsamtools (>= 1.19.38),
+    Rhtslib,
     GenomicRanges,
     IRanges,
     Biostrings,
     VGAM,
     methods,
     graphics,
-    VariantAnnotation (>= 1.13.44),
+    VariantAnnotation (>= 1.5.0),
     parallel
 Suggests:
     RColorBrewer,
     knitr
 VignetteBuilder: knitr
-Collate:
-    'deepSNV-class.R'
-    'deepSNV-experimental.R'
-    'deepSNV-functions.R'
-    'deepSNV-generics.R'
-    'deepSNV-methods.R'
-    'deepSNV-misc.R'
-    'deepSNV-package.R'
-    'shearwater-functions.R'
-    'betabinom.R'
-    'shearwaterML.R'
