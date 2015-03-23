@@ -82,3 +82,13 @@ NA
 #' @examples data("pi", package="deepSNV")
 #' plot(pi[,1], type="h")
 NA
+
+#' Example count table
+#' 
+#' A table with counts of the HIVmix data set. Used for minimal unit testing.
+#' @docType data
+#' @name counts
+#' @examples data("counts", package="deepSNV")
+#' countsFromBam <- bam2R(file = system.file("extdata", "test.bam", package="deepSNV"), chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140, q = 10)
+#' all(counts == countsFromBam)
+NA
