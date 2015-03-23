@@ -3,7 +3,10 @@
 .RData
 deepSNV.Rproj
 .DS_Store
-.gitignore
 deepSNV.Rcheck
 *.o
 *.so
+.settings
+.project
+.externalToolsBuilders
+.cproject
