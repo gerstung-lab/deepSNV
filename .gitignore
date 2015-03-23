@@ -12,3 +12,4 @@ deepSNV.Rcheck
 .externalToolBuilders
 /autom4te.cache/
 *.tar.gz
+builds

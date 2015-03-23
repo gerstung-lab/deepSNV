@@ -1,5 +1,11 @@
 deepSNV -- an R package for subclonal variant calling.
 
+Changes in 1.13.8
+Updates
+* Shearwater ML (Inigo Marticorena)
+* Rhtslib support (David Jones)
+
+
 Changes in version 1.11.1
 Bugfixes
 * Report correct table in summary(..., value="VCF"); Thanks to David Gacquer.
