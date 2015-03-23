@@ -17,7 +17,7 @@
 #' @keywords package
 #' @seealso \code{\link{deepSNV}}
 #' @example inst/example/deepSNV-example.R
-#' @import Rsamtools
+#' @import Rhtslib
 #' @import methods
 #' @import Biostrings
 #' @importFrom graphics plot
