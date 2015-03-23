@@ -264,7 +264,7 @@ RF <- function(freq, total = FALSE){
 		else
 			samples <- c("test","control")
 		v = VCF(
-				rowData=GRanges(table$chr, 
+				rowRanges=GRanges(table$chr, 
 						IRanges(table$pos - (isDel | isIns), width=1 + (isDel | isIns)), 
 				),
 				fixed = DataFrame(

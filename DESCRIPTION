@@ -23,7 +23,7 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version:  1.13.6
+Version:  1.13.7
 URL: http://www.cbg.ethz.ch/software/deepSNV
 Depends:
     R (>= 2.13.0),
@@ -34,7 +34,7 @@ Depends:
     VGAM,
     methods,
     graphics,
-    VariantAnnotation (>= 1.5.0),
+    VariantAnnotation (>= 1.13.44),
     parallel
 Suggests:
     RColorBrewer,

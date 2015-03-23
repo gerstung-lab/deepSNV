@@ -142,7 +142,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
   #	alt = lapply(split(c("A","T","C","G","")[w[o,3]], m), paste, collapse="")
   if(!mvcf){
     v = VCF(
-      rowData=GRanges(coordinates$chr[w[,2]], 
+      rowRanges=GRanges(coordinates$chr[w[,2]], 
                       IRanges(coordinates$pos[w[,2]] - (w[,3]==5), width=1 + (w[,3]==5)), ## If del make one longer..
       ),
       fixed = DataFrame(
@@ -183,7 +183,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
       
       #rownames(w) = samples[w[,1]]
       v = VCF(
-        rowData=GRanges(coordinates$chr[wu[,2]], 
+        rowRanges=GRanges(coordinates$chr[wu[,2]], 
                         IRanges(coordinates$pos[wu[,2]] - (wu[,3]==5), width=1 + (wu[,3]==5)), 
         ),
         fixed = DataFrame(
