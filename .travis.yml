@@ -1,0 +1,16 @@
+language: r
+
+r_packages:
+ - VGAM
+
+bioc_packages:
+ - Rsamtools
+ - GenomicRanges
+ - IRanges
+ - Biostrings
+ - VGAM
+ - VariantAnnotation
+ 
+
+    
+
