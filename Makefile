@@ -4,6 +4,7 @@ roxygen: deepSNV
 	#R CMD roxygen -u deepSNV
 	find deepSNV/man  | xargs rm -rf
 	R -e 'library(roxygen2); roxygenize("deepSNV")'
+
 	#./patch.sh
 	patch --no-backup-if-mismatch deepSNV/NAMESPACE patches/NAMESPACE.patch
 	autoconf -o deepSNV/configure deepSNV/configure.ac
