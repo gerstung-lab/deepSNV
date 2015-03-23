@@ -7,5 +7,8 @@ deepSNV.Rproj
 deepSNV.Rcheck
 *.o
 *.so
-.*
+.project
+.cproject
+.settings
+.externalToolsBuilders
 /autom4te.cache/

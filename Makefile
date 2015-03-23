@@ -1,30 +1,29 @@
+VERSION := $(shell cat DESCRIPTION | awk '/Version/{print $$2}')
+
 all: roxygen build
 
-roxygen: deepSNV
+roxygen: 
 	#R CMD roxygen -u deepSNV
-	find deepSNV/man  | xargs rm -rf
-	R -e 'library(roxygen2); roxygenize("deepSNV")'
+	find man  | xargs rm -rf
+	R -e 'library(roxygen2); roxygenize(".")'
 
-	#./patch.sh
-	patch --no-backup-if-mismatch deepSNV/NAMESPACE patches/NAMESPACE.patch
-	autoconf -o deepSNV/configure deepSNV/configure.ac
+	patch --no-backup-if-mismatch NAMESPACE patches/NAMESPACE.patch
+	autoconf -o configure configure.ac
 	
-check: roxygen clean
-	R CMD check deepSNV
+check: build
+	R CMD check "deepSNV_$(VERSION).tar.gz"
 	
 build: roxygen clean
-	R CMD build --no-build-vignettes deepSNV
-	mv *.tar.gz builds
+	R CMD build --no-build-vignettes .
 	
-install: deepSNV
-	R CMD install deepSNV
+install: build
+	R CMD install "deepSNV_$(VERSION).tar.gz"
 	
-clean: deepSNV*
-	find deepSNV -name '.*' | xargs rm -rf
-	find deepSNV -name '*.o' | xargs rm -rf
-	find deepSNV -name '*.so' | xargs rm -rf
-	find deepSNV -name 'config.*' | xargs rm -rf
-	find deepSNV -name 'symbols.rds' | xargs rm -rf
+clean: 
+	find . -name '*.o' | xargs rm -rf
+	find . -name '*.so' | xargs rm -rf
+	find . -name 'config.*' | xargs rm -rf
+	find . -name 'symbols.rds' | xargs rm -rf
 	find . -name 'deepSNV.Rcheck' | xargs rm -rf
 	find . -name 'autom4te.cache' | xargs rm -rf
 	
