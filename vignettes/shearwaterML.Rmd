@@ -10,13 +10,19 @@ output: html_document
 %\VignetteDepends{deepSNV}
 -->
 
-ShearwaterML is a maximum-likelihood adaptation of the original Shearwater algorithm. Unlike the original algorithm, ShearwaterML does not use prior information and yields p-values, instead of Bayes factors, using a Likelihood-Ratio Test. This allows using standard multiple testing correction methods to obtain a list of significant variants with a controlled false discovery rate.
+# Shearwater ML
+#### Inigo Martincorena and Moritz Gerstung
+6 March 2015
 
-For a detailed description of the algorith see:
+ShearwaterML is a maximum-likelihood adaptation of the original Shearwater algorithm. Unlike the original algorithm, ShearwaterML does not use prior information 
+and yields p-values, instead of Bayes factors, using a Likelihood-Ratio Test. This allows using standard multiple testing correction 
+methods to obtain a list of significant variants with a controlled false discovery rate.
+
+For a detailed description of the algorithm see:
 
 Martincorena I, Roshan A, Gerstung M, et al. (2015). High burden and pervasive positive selection of somatic mutations in normal human skin. _Science_ (Under consideration).
 
-Load data from deepSNV example
+Load data from `deepSNV` example
 ```{r}
 library(deepSNV)
 regions <- GRanges("B.FR.83.HXB2_LAI_IIIB_BRU_K034", IRanges(start = 3120, end=3140))
