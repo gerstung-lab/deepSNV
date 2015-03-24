@@ -251,6 +251,7 @@ setMethod("estimateDirichlet",
 #' @param x An object. Either a \code{\link{deepSNV-class}} object or a \code{\link{DNAString}} with the nucleotide sequence.
 #' @param flank Boolean. Indicates whether the sites adjacent to the repeat should also be masked.
 #' @param w Integer. The minimal length at which repeats should be masked. Default \code{w=0}.
+#' @param ... Additional param passed to specific methods
 #' @return A boolean vector where TRUE indicates a non-homopolymeric region.
 #' @author Moritz Gerstung
 #' @exportMethod repeatMask
@@ -343,6 +344,7 @@ setMethod("consensusSequence", signature = signature(x="deepSNV"), function(x, v
 #' @param alternative The alternative to be tested. One of "greater", "less", "two-sided" (default). If test is a deepSNV object, automatically taken from the corresponding slot
 #' if unspecified. 
 #' @param interval The interval to be screened for the overdispersion factor. Default (0,1000).
+#' @param ... Additional param passed to specific methods
 #' @return A \code{\link{deepSNV-class}} object if the input was a deepSNV object. Otherwise the loglikelihood and the estimated parameter.
 #' @author Moritz Gerstung
 #' @examples data("RCC", package="deepSNV")
@@ -463,6 +465,7 @@ setMethod("normalize",
 #' Convenience function to obtain the control counts from a deepSNV object.
 #' @param deepSNV a \code{\link{deepSNV-class}} object
 #' @param total Logical. If true the sum of both strands is returned
+#' @param ... Additional param passed to specific methods
 #' @return A matrix with the absolute frequencies summed over both strands.
 #' @examples data(HIVmix)
 #' control(HIVmix)[1:10,]
@@ -494,6 +497,7 @@ setMethod("control",
 #' Convenience function to obtain the test counts from a deepSNV object.
 #' @param deepSNV a \code{\link{deepSNV-class}} object
 #' @param total Logical. If true the sum of both strands is returned
+#' @param ... Additional param passed to specific methods
 #' @return A matrix with the absolute frequencies summed over both strands.
 #' @examples data(HIVmix)
 #' test(HIVmix)[1:10,]
@@ -524,6 +528,7 @@ setMethod("test",
 #' 
 #' Convenience function to get the p-values from a deepSNV object.
 #' @param deepSNV a \code{\link{deepSNV-class}} object
+#' @param ... Additional param passed to specific methods
 #' @return A matrix with the p-values.
 #' @examples data(HIVmix)
 #' p.val(HIVmix)[1:10,]
@@ -549,6 +554,7 @@ setMethod("p.val",
 #' 
 #' Convenience function to get the coordinates from a deepSNV object.
 #' @param deepSNV a \code{\link{deepSNV-class}} object
+#' @param ... Additional param passed to specific methods
 #' @return A \code{\link{data.frame}} with columns "chrom(osome)" and "pos(ition)".
 #' @examples data(HIVmix)
 #' coordinates(HIVmix)[1:10,]

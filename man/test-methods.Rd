@@ -13,6 +13,8 @@ test(deepSNV, ...)
 \item{deepSNV}{a \code{\link{deepSNV-class}} object}
 
 \item{total}{Logical. If true the sum of both strands is returned}
+
+\item{...}{Additional param passed to specific methods}
 }
 \value{
 A matrix with the absolute frequencies summed over both strands.
