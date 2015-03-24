@@ -11,6 +11,8 @@ coordinates(deepSNV, ...)
 }
 \arguments{
 \item{deepSNV}{a \code{\link{deepSNV-class}} object}
+
+\item{...}{Additional param passed to specific methods}
 }
 \value{
 A \code{\link{data.frame}} with columns "chrom(osome)" and "pos(ition)".

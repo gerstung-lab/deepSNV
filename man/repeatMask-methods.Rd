@@ -18,6 +18,8 @@ repeatMask(x, ...)
 \item{flank}{Boolean. Indicates whether the sites adjacent to the repeat should also be masked.}
 
 \item{w}{Integer. The minimal length at which repeats should be masked. Default \code{w=0}.}
+
+\item{...}{Additional param passed to specific methods}
 }
 \value{
 A boolean vector where TRUE indicates a non-homopolymeric region.
