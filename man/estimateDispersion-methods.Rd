@@ -21,6 +21,8 @@ estimateDispersion(test, control, ...)
 if unspecified.}
 
 \item{interval}{The interval to be screened for the overdispersion factor. Default (0,1000).}
+
+\item{...}{Additional param passed to specific methods}
 }
 \value{
 A \code{\link{deepSNV-class}} object if the input was a deepSNV object. Otherwise the loglikelihood and the estimated parameter.
