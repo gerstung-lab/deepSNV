@@ -1,0 +1,256 @@
+%&pdflatex
+\documentclass[fleqn,a4paper]{article}
+\usepackage{a4wide}
+
+\usepackage{amsmath, amssymb}
+\usepackage{charter}
+\usepackage[scaled=0.9]{helvet}
+\renewcommand{\sfdefault}{phv}
+\usepackage[sf]{titlesec}
+
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+
+\newcommand{\Dir}{\operatorname{Dir}}
+\newcommand{\B}{\operatorname{B}}
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\Beta}{\operatorname{Beta}}
+\newcommand{\MAP}{\mathrm{MAP}}
+\newcommand{\Mult}{\operatorname{Mult}}
+\newcommand{\Bin}{\operatorname{Bin}}
+\renewcommand{\bold}{\textbf}
+
+%\VignetteIndexEntry{An R package for detecting low frequency variants in deep sequencing experiments}
+%\VignetteDepends{deepSNV}
+%\VignetteEngine{knitr::knitr}
+
+<<setup, include=FALSE, cache=FALSE>>=
+require(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='tmp/deepSNV-', fig.align='center', fig.show='hold', fig.width=4, fig.height=4, out.width='.4\\linewidth', dpi=150)
+options(replace.assign=TRUE,width=75)
+knit_hooks$set(nice = function(before, options, envir) {
+			if (before) par(mar = c(4, 4, .1, .1), mgp=c(2.5,1,0), bty="n")
+		})
+@
+
+\begin{document}
+
+\title{Calling subclonal mutations with \texttt{deepSNV}}
+\author{Moritz Gerstung and Niko Beerenwinkel}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+This package provides algorithms for calling single nucleotide variants in deep sequencing experiments of polyclonal samples. 
+The package uses a clonal control experiment for
+estimating the local error rate and tests whether the observed nucleotide frequencies differ between test and control. 
+The basic model is a binomial model for the counts $X_{i,j}$ and $Y_{i,j}$ of nucleotide $j$ at  position $i$, in the test and the control experiment, respectively:
+\begin{align}
+X_{i,j} &\sim \operatorname{Bin}(n_i, p_{i,j})\cr
+Y_{i,j} &\sim \operatorname{Bin}(m_i, q_{i,j}).
+\end{align}
+Here $n_i$ and $m_i$ denote the coverage in the two experiments, and $p_{i,j}$ and $q_{i,j}$ are learned from the data.
+The presence of an SNV in the test experiment amounts to testing the hypothesis $H_1: p_{i,j} > q_{i,j}$ against the null-hypothesis $H_0:  p_{i,j} = q_{i,j}$.
+The deepSNV algorithm uses likelihood ratio test with a $\chi^2_1$-distribtution. 
+
+As an alternative to the binomial distribution, a beta-binomial model can be used that has a global parameter of overdispersion: 
+\begin{align}
+X_{i,j} &\sim \operatorname{BB}(n_i, \alpha, p_{i,j}) \cr
+Y_{i,j} &\sim \operatorname{BB}(m_i, \alpha, q_{i,j}).
+\end{align}
+The parameter $\alpha$ defines a parameter that quantifies the overdispersion of the model, shared across sites and nucleotides. This parametrization is equivalent to 
+setting $\beta_{i,j} = \alpha (1-p_{i,j})/p_{i,j}$. For small $p_{i,j}$, one obtains a variance of $\E[X_{i,j}] \approx n_i p_{i,j} + (n_i p_{i,j})^2/\alpha$.
+
+All parameters are determined by a maximum likelihood criterion, where for $p_{i,j}$ (and similarly for $q_{i,j}$) a methods-of-moments approximation 
+is used, $\alpha/(\alpha+\hat\beta_{i,j}) = X_{i,j}/n_i$.
+The binomial model arises from the beta-binomial model in the limit $\alpha \rightarrow \infty$.
+
+To achieve a higher specifitiy the test is performed on both strands separately, and the resulting p-values are combined into a single one using either
+the product, average, or maximum as a statistic and their corresponding distributions under a uniform for computing a joint p-value. For more information and for citing
+the \texttt{deepSNV} package please use:
+\begin{itemize}
+\item
+<<echo=FALSE, results='asis'>>=
+	print(citation("deepSNV")[1], style="LaTeX")
+@
+\end{itemize}
+
+
+\section{Working example}
+In this example, we load some real world data. The data of length 1,512 nt were sequenced with a Roche 454 Junior sequencer at about 500x coverage. They consist of 
+a mixture of two HIV clones at 10\% and 90\%(test) and a clonal control. The data were aligned to the HXB2 reference genome with novoalign, and can be downloaded
+from the authors' website, or attached . We first load the package and define the genomic \texttt{region} of interest:
+<<>>=
+    library(deepSNV)
+	regions <- data.frame(chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585)
+@
+Now the data can be loaded from the remote .bam files with the \texttt{deepSNV} command (not run)
+<<>>=
+# HIVmix <- deepSNV(test = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", 
+#                   control = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/control.bam", 
+#                   regions=regions, q=10)
+@
+
+The \texttt{data.frame regions} contains the genomic region to be parsed from the two files by the method \texttt{deepSNV}. The additional parameter \texttt{q=10} specifies
+that only nucleotides with PHRED higher than 10 are counted. As this might fail in the absence of a running internet connection, we load the resulting object that comes along with the deepSNV package:
+<<>>=
+	data(HIVmix) # Attach the data instead, as it could fail in routine checks without internet connection.
+	show(HIVmix)
+@
+The counts are stored in the slots \texttt{test} and \texttt{control}:
+<<>>=
+	control(HIVmix)[100:110,]
+	test(HIVmix)[100:110,]
+@
+Uppercase nucleotides are from the reference strand, lowercase nucleotides from the reverse. Also note the strand bias. 
+
+A visual representation of the data can be obtained with the \texttt{plot} method:
+<<HIV, nice=TRUE>>=
+	plot(HIVmix)
+@
+
+One realizes that there are many variants nicely separated by the test at the topleft corner, althought the noise level
+also extends along the diagonal to similar frequencies. Grey dots have a $P$-values smaller than 0.05.
+
+Significant SNVs are tabularized with the \texttt{summary} command:
+
+<<>>=
+	SNVs <- summary(HIVmix, sig.level=0.05, adjust.method="BH")
+	head(SNVs)
+	nrow(SNVs)
+	min(SNVs$freq.var)
+@
+We chose a significance level of \texttt{sig.level=0.05} and Benjamini-Hochberg correction for multiple testing (\texttt{adjust.method="BH"}). The test selected \Sexpr{nrow(SNVs)} variants. 
+This compares to 
+<<>>=
+	sum(RF(test(HIVmix), total=T) > 0.01 & RF(test(HIVmix), total=T) < 0.95)
+@
+candidate variants with frequencies above 0.01! In this experiment we also know the truth from direct Sanger sequencing of the clones before pooling. Load the data
+and study the confusion matrix with:
+<<>>=
+	data(trueSNVs, package="deepSNV")
+	table(p.adjust(p.val(HIVmix), method="BH") < 0.05, trueSNVs)
+@
+So \Sexpr{table(p.adjust(p.val(HIVmix), method="BH") < 0.05, trueSNVs)[4]} of \Sexpr{sum(trueSNVs)} SNVs could be recovered by the experiments.
+
+%We may want to learn a Dirichlet prior, and see how many variants we obtain:
+%<<>>=
+%	experiment.prior <- estimateDirichlet(experiment)
+%	show(slot(experiment.prior,"dirichlet.prior"))
+%	SNVs.prior <- significantSNV(experiment.prior, adjust.method="BH")
+%	sum(apply(SNVs.prior[,c("pos","ref","SNV")],1,paste, collapse="") %in% apply(SNVs[,c("pos","ref","SNV")],1,paste, collapse=""))
+%	table(p.adjust(experiment.prior@p.val, method="BH") < 0.05, trueSNVs)
+%@
+
+%Now let's test the null model. To this and compute the test with \texttt{alternative="less"}:
+%<<>>=
+%	p.null <- deepSNV(experiment, alternative="less")@p.val
+%@
+%$P$-values of the consensus are set to \texttt{NA}. Now visualize the data
+%
+%<<p-val, fig=TRUE>>=
+%    n <- sum(!is.na(p.null))
+%    qqplot(p.null, seq(1/n,1, length.out=n), log="xy", pch=16, xlab="P-value", ylab="CDF")
+%    abline(0,1)
+%@
+%
+%The $P$-values are a bit too pessimistic, because many positions with count 0 have $P$-value of exactly 1, which causes the CDF to jump. But more 
+%importantly, the CDF returns to the diagonal for small values, therefore providing accurate measures here.
+
+\section{Normalization}
+We want to further assess the null model with experimental data from two homogeneous replicates. In particular we want to analyze whether the empirical distribution 
+of the p-values is uniform. The data we study comes from two phiX sequences sequenced on separate runs on a GAII$_x$.
+<<phiX, dev="jpeg", nice=TRUE>>=
+	## Load data (unnormalized)
+	data(phiX, package="deepSNV")
+	plot(phiX, cex.min=.5)
+	## Normalize data
+	phiN <- normalize(phiX, round=TRUE)
+	plot(phiN, cex.min=.5)
+@
+From the left plot it appears that there is a systematic bias between the two
+ experiments, likely because they were sequenced in different runs.
+The normalized data is shown in the second plot. Now the points now
+symmetrically scatter around the diagonal and all p-values are within the expected range:
+
+<<pval, nice=TRUE>>=
+	p.norm <- p.val(phiN)
+    n <- sum(!is.na(p.norm))
+    qqplot(p.norm, seq(1/n,1, length.out=n), log="xy", type="S", xlab="P-value", ylab="CDF")
+	p.val <- p.val(phiX) 
+    points(sort(p.val[!is.na(p.val)]), seq(1/n,1, length.out=n), pch=16, col="grey", type="S", lty=2)
+    legend("topleft", c("raw data", "normalized data"), pch=16, col=c("grey", "black"), bty="n", lty=3)
+    abline(0,1)
+@
+
+%\includegraphics[width=.6\linewidth]{pval}\\
+After normalization the cumulative distribution of the p-values is close to the diagonal, even for the smallest values. Hence the p-values accurately
+measure the probability of type-1 errors.
+
+\section{Overdispersion}
+
+In some situations, the variance of the binomial model is too small, for example for templates with long repeats or heavy PCR amplification for target selection. 
+An alternative model is the beta-binomial distribution that allows for a larger variance.
+
+We load a data-set from two deep sequencing experiments of four genes extracted from a metastatic renal cell carcinoma with sequenced on separate lanes
+of a GAII$_x$:
+<<dev="jpeg", nice=TRUE>>=
+	data("RCC", package="deepSNV")
+	show(RCC)
+	plot(RCC, cex.min=.5) 
+	RCC.bb = estimateDispersion(RCC, alternative="two.sided")
+	plot(RCC.bb, cex.min=.5) 
+@
+
+We see that a binomial model was used to generate the data. An inspection of the
+first plot shows a long noise tail where apparently the dispersion is
+underestimated causing some false positives. In the second plot we used a
+beta-binomial model instead and conservatively estimate the dispersion factor on
+both sides with the argument \texttt{alternative="two.sided"}.
+
+The log-likelihood of the two models are:
+<<>>=
+	RCC.bb@log.lik 
+	RCC@log.lik
+    RCC.bb@log.lik - RCC@log.lik
+	log(4*nrow(test(RCC)))
+@
+Note that the difference is larger than $\log(n)$, the difference in BIC of the two models.
+
+
+If we compare the number of called SNVs, we find
+<<>>=
+	summary(RCC, adjust.method="bonferroni")[,1:6]
+@
+
+compared to
+<<>>=
+	tab <- summary(RCC.bb, adjust.method="bonferroni")[,1:6]
+	tab
+@
+
+A closer inspection will show that the variants with a negative change in frequency are all known SNPs on chromosome 3, which drop in frequency due to loss of heterozygousity in the tumor. 
+The remaining variants have positive frequencies. The first is a deletion of \Sexpr{paste(tab[1,1],":",tab[1,2],tab[1,3], sep="")} on \Sexpr{round(100*tab[1,6],2)}\% of the alleles that truncates the VHL protein. 
+The second is a C>G conversion in the 5$'$-UTR of the \emph{VHL} gene at \Sexpr{paste(tab[2,1],":", tab[2,2], tab[2,3], sep="")} in \Sexpr{round(100*tab[2,6],2)}\% of the alleles. 
+The third variant is likely to be an alignment artifact resulting from imperfect alignments of the deletion of \Sexpr{paste(tab[1,1],":",tab[1,2],tab[1,3], sep="")}.
+
+\section{sessionInfo()}
+<<echo=FALSE, results='asis'>>=
+    toLatex(sessionInfo())
+@
+
+\end{document}
