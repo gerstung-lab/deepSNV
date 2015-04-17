@@ -8,11 +8,12 @@ biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
 LinkingTo: Rhtslib
 Type: Package
 LazyLoad: yes
-Authors@R: c( person("Inigo", "Martincorena", role = "ctb"),
+Authors@R: c( person("Moritz","Gerstung",
+    email = "mg14@sanger.ac.uk", role= c("aut","cre")),
+    person("Inigo", "Martincorena", role = "ctb"),
     person("David", "Jones", role = "ctb"),
-    person("Niko","Beerenwinkel", role="ths"),
-    person("Moritz","Gerstung",
-    email = "mg14@sanger.ac.uk", role= c("aut","cre")) )
+    person("Niko","Beerenwinkel", role="ths")
+    )
 Description: This package provides provides quantitative variant callers for
     detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
     experiments. The deepSNV algorithm is used for a comparative setup with a
@@ -23,8 +24,8 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.15.0
-URL: http://www.cbg.ethz.ch/software/deepSNV
+Version: 1.15.1
+URL: http://www.github.com/mg14/deepSNV
 Depends:
     R (>= 2.13.0),
     Rhtslib,
