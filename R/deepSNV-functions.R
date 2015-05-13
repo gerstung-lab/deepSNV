@@ -282,12 +282,12 @@ RF <- function(freq, total = FALSE){
 						BW = cbind(table$n.tst.bw, table$n.ctrl.bw),
 						DFW = cbind(table$cov.tst.fw, table$cov.ctrl.fw),
 						DBW = cbind(table$cov.tst.bw, table$cov.ctrl.bw)),
-				exptData = SimpleList(header = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))),
+				metadata = list(header = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))),
 				colData = DataFrame(samples=1:length(samples), row.names=samples),
 				collapsed=TRUE
 		)
-		exptData(v)$header@samples <- samples
-		exptData(v)$header@header$META["date",1] <- paste(Sys.time())
+		metadata(v)$header@samples <- samples
+		metadata(v)$header@header$META["date",1] <- paste(Sys.time())
 		
 		return(sort(v))
 	}
