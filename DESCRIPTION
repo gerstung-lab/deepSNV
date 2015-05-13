@@ -1,6 +1,4 @@
 Package: deepSNV
-Imports:
-    Rhtslib
 Maintainer: Moritz Gerstung <mg14@sanger.ac.uk>
 License: GPL-3
 Title: Detection of subclonal SNVs in deep sequencing data.
@@ -23,19 +21,22 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.15.0
+Version: 1.15.1
 URL: http://www.cbg.ethz.ch/software/deepSNV
 Depends:
     R (>= 2.13.0),
-    Rhtslib,
-    GenomicRanges,
-    IRanges,
-    Biostrings,
-    VGAM,
     methods,
     graphics,
+    parallel,
+    Rhtslib,
+    IRanges,
+    GenomicRanges,
+    SummarizedExperiment,
+    Biostrings,
+    VGAM,
     VariantAnnotation (>= 1.13.44),
-    parallel
+Imports:
+    Rhtslib
 Suggests:
     RColorBrewer,
     knitr
