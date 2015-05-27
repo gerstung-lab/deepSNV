@@ -6,9 +6,9 @@ biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
 LinkingTo: Rhtslib
 Type: Package
 LazyLoad: yes
-Authors@R: c( person("Inigo", "Martincorena", role = "ctb"),
+Authors@R: c( person("Niko","Beerenwinkel", role="ths"),
     person("David", "Jones", role = "ctb"),
-    person("Niko","Beerenwinkel", role="ths"),
+    person("Inigo", "Martincorena", role = "ctb"),
     person("Moritz","Gerstung",
     email = "mg14@sanger.ac.uk", role= c("aut","cre")) )
 Description: This package provides provides quantitative variant callers for
@@ -16,13 +16,13 @@ Description: This package provides provides quantitative variant callers for
     experiments. The deepSNV algorithm is used for a comparative setup with a
     control experiment of the same loci and uses a beta-binomial model and a
     likelihood ratio test to discriminate sequencing errors and subclonal SNVs.
-    The new shearwater algorithm (beta) computes a Bayes classifier based on a
-    beta- binomial model for variant calling with multiple samples for
+    The shearwater algorithm computes a Bayes classifier based on a
+    beta-binomial model for variant calling with multiple samples for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.15.1
-URL: http://www.cbg.ethz.ch/software/deepSNV
+Version: 1.15.2
+URL: http://github.com/mg14/deepSNV
 Depends:
     R (>= 2.13.0),
     methods,
