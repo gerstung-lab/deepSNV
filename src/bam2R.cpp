@@ -105,6 +105,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 
 			bam_plp_push(buf,b); //NB in your fetch you aren't doing the funky masking done in sampileup;
 		}
+		free(region);
 		sam_itr_destroy(iter);
 		hts_idx_destroy(idx);
 	}
