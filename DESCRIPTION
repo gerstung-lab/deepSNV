@@ -1,0 +1,43 @@
+Package: deepSNV
+Maintainer: Moritz Gerstung <mg14@sanger.ac.uk>
+License: GPL-3
+Title: Detection of subclonal SNVs in deep sequencing data.
+biocViews: GeneticVariability, SNP, Sequencing, Genetics, DataImport
+LinkingTo: Rhtslib
+Type: Package
+LazyLoad: yes
+Authors@R: c( person("Niko","Beerenwinkel", role="ths"),
+    person("David", "Jones", role = "ctb"),
+    person("Inigo", "Martincorena", role = "ctb"),
+    person("Moritz","Gerstung",
+    email = "mg14@sanger.ac.uk", role= c("aut","cre")) )
+Description: This package provides provides quantitative variant callers for
+    detecting subclonal mutations in ultra-deep (>=100x coverage) sequencing
+    experiments. The deepSNV algorithm is used for a comparative setup with a
+    control experiment of the same loci and uses a beta-binomial model and a
+    likelihood ratio test to discriminate sequencing errors and subclonal SNVs.
+    The shearwater algorithm computes a Bayes classifier based on a
+    beta-binomial model for variant calling with multiple samples for
+    precisely estimating model parameters such as local error rates and
+    dispersion and prior knowledge, e.g. from variation data bases such as
+    COSMIC.
+Version: 1.16.0
+URL: http://github.com/mg14/deepSNV
+Depends:
+    R (>= 2.13.0),
+    methods,
+    graphics,
+    parallel,
+    Rhtslib,
+    IRanges,
+    GenomicRanges,
+    SummarizedExperiment,
+    Biostrings,
+    VGAM,
+    VariantAnnotation (>= 1.13.44),
+Imports:
+    Rhtslib
+Suggests:
+    RColorBrewer,
+    knitr
+VignetteBuilder: knitr
