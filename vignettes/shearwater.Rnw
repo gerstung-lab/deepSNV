@@ -298,7 +298,7 @@ txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 seqlevels(txdb) <- sub("chr","",seqlevels(txdb))
 
 ## Make prior
-regions <- reduce(exons(txdb, vals=list(gene_id='7157'))) ## TP53 exons
+regions <- reduce(exons(txdb, filter=list(gene_id='7157'))) ## TP53 exons
 cosmic <- readVcf("CosmicCodingMuts_v63_300113.vcf.gz", "hg19", param=ScanVcfParam(which=regions))
 pi <- makePrior(cosmic, regions, pi.gene = 1)
 @
