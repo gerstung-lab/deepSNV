@@ -21,7 +21,7 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters such as local error rates and
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.18.1
+Version: 1.18.2
 URL: http://github.com/mg14/deepSNV
 Depends:
     R (>= 2.13.0),
