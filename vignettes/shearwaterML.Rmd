@@ -5,7 +5,7 @@ date: "6 March 2015"
 output: html_document
 ---
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{rmarkdown::render}
 %\VignetteIndexEntry{Shearwater ML}
 %\VignetteDepends{deepSNV}
 -->
