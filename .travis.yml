@@ -10,8 +10,8 @@ bioc_packages:
  - Biostrings
  - VGAM
  - VariantAnnotation
+ - zlibbioc
+ - Rhtslib
  
-before_install:
- - R -e 'chooseCRANmirror(ind=75); install.packages("devtools"); BiocInstaller::biocLite("zlibbioc"); devtools::install_url("http://master.bioconductor.org/packages/devel/bioc/src/contrib/Rhtslib_0.99.18.tar.gz")'
     
 
