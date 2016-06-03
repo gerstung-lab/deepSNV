@@ -13,5 +13,8 @@ bioc_packages:
  - zlibbioc
  - Rhtslib
  
-    
+addons:
+  apt:
+    packages:
+    - texlive-fonts-recommended 
 
