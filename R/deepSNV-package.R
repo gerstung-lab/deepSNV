@@ -18,7 +18,6 @@
 #' @seealso \code{\link{deepSNV}}
 #' @example inst/example/deepSNV-example.R
 #' @import Rhtslib
-#' @import zlibbioc
 #' @import methods
 #' @import Biostrings
 #' @importFrom graphics plot
