@@ -28,12 +28,45 @@ typedef struct {
 char NUCLEOTIDES[] = {'A','T','C','G','*','N','+','-','^','$','Q'};
 int N = 11;
 
-//
-static int pileup_function(void *data, bam1_t *b){
-	return 0;
-}
-
 extern "C" {
+
+int bam2R_pileup_function(bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
+{
+  int i, s;
+  int len = nttable.end - nttable.beg;
+  map<char, int> nt_freq;
+  if ((int)pos >= nttable.beg && (int)pos < nttable.end)
+  {
+    int* counts = nttable.counts + (int)pos - nttable.beg ;
+    for (i=0; i<n_plp; i++)
+    {
+      const bam_pileup1_t *p = pl + i;
+      s = bam_is_rev(p->b) * len * N;
+      {
+        if (p->is_tail) counts[s + len * nttable.nt_idx['$']]++;
+        else if (p->is_head) counts[s + len * nttable.nt_idx['^']]++;
+
+        if(p->qpos < nttable.head_clip || (bam_is_rev(p->b) && ((bam1_core_t)p->b->core).l_qseq - p->qpos < nttable.head_clip)){
+          counts[s + len * nttable.nt_idx['N']]++;
+        }else{
+          if (!p->is_del) {
+            int  c = seq_nt16_str[bam_seqi(bam_get_seq(p->b), p->qpos)];
+            if( bam_get_qual(p->b)[p->qpos] > nttable.q)
+              counts[s + len * nttable.nt_idx[char(c)]]++;
+            else
+              counts[s + len * nttable.nt_idx['N']]++;
+            if (p->indel > 0)
+              counts[s + len * nttable.nt_idx['+']]++;
+            else if (p->indel < 0)
+              counts[s + len * nttable.nt_idx['-']]++;
+          } else counts[s + len * nttable.nt_idx['*']]++;
+          counts[s + len * nttable.nt_idx['Q']] += p->b->core.qual;
+        }
+      }
+    }
+    nttable.i++;
+  }
+}
 
 int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, int* s, int* head_clip, int* maxdepth, int* verbose)
 {
@@ -63,12 +96,14 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		return 1;
 	}
 
-	buf = bam_plp_init(pileup_function,(void *)&nttable); // initialize pileup
+	buf = bam_plp_init(0,(void *)&nttable); // initialize pileup
 	bam_plp_set_maxcnt(buf,*maxdepth);
 	b = bam_init1();
 	//get header
 	head = sam_hdr_read(nttable.in);
 	int mask = BAM_FUNMAP | BAM_FSECONDARY | BAM_FQCFAIL | BAM_FDUP | BAM_FSUPPLEMENTARY;
+  int tid, pos, n_plp = -1;
+	const bam_pileup1_t *pl;
 
 	if (strcmp(*ref, "") == 0) { // if a region is not specified
 		//Replicate sampileup functionality (uses above mask without supplementary)
@@ -76,6 +111,9 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
 			if (b->core.flag & mask) b->core.flag |= BAM_FUNMAP;
 			bam_plp_push(buf, b);
+			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
+        bam2R_pileup_function(pl,pos,n_plp,nttable);
+			}
 		}
 	}
 	else {
@@ -104,6 +142,9 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
 
 			bam_plp_push(buf,b); //NB in your fetch you aren't doing the funky masking done in sampileup;
+			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
+        bam2R_pileup_function(pl,pos,n_plp,nttable);
+			}
 		}
 		free(region);
 		sam_itr_destroy(iter);
@@ -111,45 +152,10 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 	}
 
 	bam_plp_push(buf,0); // finalize pileup
-	int tid, pos, n_plp = -1;
-	const bam_pileup1_t *pl;
 
-	while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
-		int i, s;
-		int len = nttable.end - nttable.beg;
-		map<char, int> nt_freq;
-		if ((int)pos >= nttable.beg && (int)pos < nttable.end)
-		{
-			int* counts = nttable.counts + (int)pos - nttable.beg ;
-			for (i=0; i<n_plp; i++)
-			{
-				const bam_pileup1_t *p = pl + i;
-				s = bam_is_rev(p->b) * len * N;
-				{
-					if (p->is_tail) counts[s + len * nttable.nt_idx['$']]++;
-					else if (p->is_head) counts[s + len * nttable.nt_idx['^']]++;
-
-					if(p->qpos < nttable.head_clip || (bam_is_rev(p->b) && ((bam1_core_t)p->b->core).l_qseq - p->qpos < nttable.head_clip)){
-						counts[s + len * nttable.nt_idx['N']]++;
-					}else{
-						if (!p->is_del) {
-							int  c = seq_nt16_str[bam_seqi(bam_get_seq(p->b), p->qpos)];
-							if( bam_get_qual(p->b)[p->qpos] > nttable.q)
-								counts[s + len * nttable.nt_idx[char(c)]]++;
-							else
-								counts[s + len * nttable.nt_idx['N']]++;
-							if (p->indel > 0)
-								counts[s + len * nttable.nt_idx['+']]++;
-							else if (p->indel < 0)
-								counts[s + len * nttable.nt_idx['-']]++;
-						} else counts[s + len * nttable.nt_idx['*']]++;
-						counts[s + len * nttable.nt_idx['Q']] += p->b->core.qual;
-					}
-				}
-			}
-			nttable.i++;
-		}
-	}
+  while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
+    bam2R_pileup_function(pl,pos,n_plp,nttable);
+  }
 	bam_destroy1(b);
 	bam_hdr_destroy(head);
 	bam_plp_destroy(buf);
