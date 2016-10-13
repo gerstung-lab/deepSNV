@@ -30,7 +30,7 @@ int N = 11;
 
 extern "C" {
 
-int bam2R_pileup_function(bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
+int bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
 {
   int i, s;
   int len = nttable.end - nttable.beg;
