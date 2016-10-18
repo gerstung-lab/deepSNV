@@ -5,7 +5,7 @@ date: "6 March 2015"
 output: html_document
 ---
 <!--
-%\VignetteEngine{rmarkdown::render}
+%\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Shearwater ML}
 %\VignetteDepends{deepSNV}
 -->
@@ -20,7 +20,7 @@ methods to obtain a list of significant variants with a controlled false discove
 
 For a detailed description of the algorithm see:
 
-Martincorena I, Roshan A, Gerstung M, et al. (2015). High burden and pervasive positive selection of somatic mutations in normal human skin. _Science_ (Under consideration).
+Martincorena I, Roshan A, Gerstung M, et al. (2015). High burden and pervasive positive selection of somatic mutations in normal human skin. _Science_ (2015).
 
 Load data from `deepSNV` example
 ```{r}
