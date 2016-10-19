@@ -135,7 +135,7 @@ setMethod("summary",
 #' @docType methods
 #' @rdname Extract-methods
 #' @name `[`
-#' @aliases [,deepSNV,ANY,ANY-method
+#' @aliases [,deepSNV,ANY,ANY,ANY-method
 #' @examples data(HIVmix)
 #' HIVmix[1:10,]
 setMethod("[",
