@@ -109,7 +109,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		//Replicate sampileup functionality (uses above mask without supplementary)
 		int ret;
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
-			if (b->core.flag & mask) { bam_plp_push(buf, b) };
+			if (b->core.flag & mask) { bam_plp_push(buf, b); };
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
         bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
@@ -139,7 +139,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		hts_itr_t *iter = sam_itr_querys(idx, head, region);
 		int result;
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
-      if (b->core.flag & mask) { bam_plp_push(buf, b) };
+      if (b->core.flag & mask) { bam_plp_push(buf, b); };
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
         bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
