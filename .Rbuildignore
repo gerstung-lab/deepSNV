@@ -5,4 +5,6 @@ Makefile
 .setting
 .project
 .cproject
+.git
+.gz$
 builds
