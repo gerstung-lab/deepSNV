@@ -4,8 +4,8 @@
 \alias{bam2R}
 \title{Read nucleotide counts from a .bam file}
 \usage{
-bam2R(file, chr, start, stop, q = 25, s = 2, head.clip = 0,
-  max.depth = 1e+06, verbose = FALSE)
+bam2R(file, chr, start, stop, q = 25, mq = 0, s = 2, head.clip = 0,
+  max.depth = 1e+06, verbose = FALSE, mask = 0)
 }
 \arguments{
 \item{file}{The name of the .bam file as a string.}
@@ -17,6 +17,7 @@ bam2R(file, chr, start, stop, q = 25, s = 2, head.clip = 0,
 \item{stop}{The end position (1-indexed).}
 
 \item{q}{An optional cutoff for the nucleotide Phred quality. Default q = 25. Nucleotides with Q < q will be masked by 'N'.}
+\item{mq}{An optional cutoff for the read mapping quality. Default mq = 0 (no filter). reads with MQ < mq will be discarded.}
 
 \item{s}{Optional choice of the strand. Defaults to s = 2 (both).}
 
@@ -25,6 +26,8 @@ bam2R(file, chr, start, stop, q = 25, s = 2, head.clip = 0,
 \item{max.depth}{The maximal depth for the pileup command. Default 1,000,000.}
 
 \item{verbose}{Boolean. Set to TRUE if you want to get additional output.}
+
+\item{mask}{Integer indicating which flags to filter. Default 0 (no mask). Try 1769 (BAM_DEF_MASK).}
 }
 \value{
 A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and ends at the given position, respectively, 
