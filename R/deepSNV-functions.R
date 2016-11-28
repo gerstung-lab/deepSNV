@@ -329,10 +329,12 @@ manhattanPlot <- function(x, col=nt.col){
 #' @param start The start position (1-indexed).
 #' @param stop The end position (1-indexed).
 #' @param q An optional cutoff for the nucleotide Phred quality. Default q = 25. Nucleotides with Q < q will be masked by 'N'.
+#' @param mq An optional cutoff for the read mapping quality. Default mq = 0 (no filter). reads with MQ < mq will be discarded.
 #' @param s Optional choice of the strand. Defaults to s = 2 (both).
 #' @param head.clip Should n nucleotides from the head of reads be clipped? Default 0.
 #' @param max.depth The maximal depth for the pileup command. Default 1,000,000.
 #' @param verbose Boolean. Set to TRUE if you want to get additional output.
+#' @param mask Integer indicating which flags to filter. Default 0 (no mask). Try 1769 (BAM_DEF_MASK).
 #' @return A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and ends at the given position, respectively, 
 #' and the sum of alignment (QUAL)ities, which can be indicative of alignment problems. 
 #' Counts from matches on the reference strand (s=0) are uppercase, counts on the complement (s=1) are lowercase. The returned matrix has 11 * 2 (strands) = 22 columns and (stop - start + 1) rows.
@@ -344,7 +346,7 @@ manhattanPlot <- function(x, col=nt.col){
 #' ## Not run: Requires an internet connection, but try yourself.
 #' # bam <- bam2R(file = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585, q=10)
 #' # head(bam)
-bam2R = function(file, chr, start, stop, q=25, s=2, head.clip = 0, max.depth=1000000, verbose=FALSE){
+bam2R = function(file, chr, start, stop, q=25, mq=0, s=2, head.clip = 0, max.depth=1000000, verbose=FALSE, mask=0){
 	region = paste(chr,":",start,"-",stop, sep="")
 	result = .C("bam2R",
 			as.character(file),
@@ -353,10 +355,12 @@ bam2R = function(file, chr, start, stop, q=25, s=2, head.clip = 0, max.depth=100
 			as.integer(stop),
 			vector("integer",(stop-start+1)*11*2),
 			as.integer(q),
+			as.integer(mq),
 			as.integer(s),
 			as.integer(head.clip),
 			as.integer(max.depth),
 			as.integer(verbose),
+			as.integer(mask),
 			PACKAGE="deepSNV"
 	)[[5]]
 	return(matrix(result, nrow=stop-start+1, 
