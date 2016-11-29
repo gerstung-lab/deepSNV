@@ -1,7 +1,8 @@
 deepSNV
 =====
 
-[![Build Status](https://travis-ci.org/mg14/deepSNV.svg)](https://travis-ci.org/mg14/deepSNV)
+master: [![Build Status](https://travis-ci.org/gerstung-lab/deepSNV.svg?branch=master)](https://travis-ci.org/gerstung-lab/deepSNV)
+devel: [![Build Status](https://travis-ci.org/gerstung-lab/deepSNV.svg?branch=devel)](https://travis-ci.org/gerstung-lab/deepSNV)
 
 
 Description
