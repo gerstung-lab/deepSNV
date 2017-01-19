@@ -39,7 +39,6 @@ Imports:
     Rhtslib
 Suggests:
     RColorBrewer,
-    knitr,
-    rmarkdown
-VignetteBuilder: rmarkdown
+    knitr
+VignetteBuilder: knitr
 RoxygenNote: 5.0.1
