@@ -35,11 +35,11 @@ Depends:
     Biostrings,
     VGAM,
     VariantAnnotation (>= 1.13.44),
+    rmarkdown
 Imports:
     Rhtslib
 Suggests:
     RColorBrewer,
-    knitr,
-    rmarkdown
+    knitr
 VignetteBuilder: rmarkdown
 RoxygenNote: 5.0.1
