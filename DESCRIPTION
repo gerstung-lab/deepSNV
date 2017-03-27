@@ -22,7 +22,7 @@ Description: This package provides provides quantitative variant callers for
     dispersion and prior knowledge, e.g. from variation data bases such as
     COSMIC.
 Version: 1.21.3
-URL: http://github.com/mg14/deepSNV
+URL: http://github.com/gerstung-lab/deepSNV
 Depends:
     R (>= 2.13.0),
     methods,
