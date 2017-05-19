@@ -41,5 +41,9 @@ Imports:
 Suggests:
     RColorBrewer,
     knitr
+<<<<<<< HEAD
 VignetteBuilder: rmarkdown
+=======
+VignetteBuilder: knitr
+>>>>>>> gerstung-lab/devel
 RoxygenNote: 5.0.1
