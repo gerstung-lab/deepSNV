@@ -13,7 +13,9 @@ bbb(counts, rho = NULL, alternative = "greater", truncate = 0.1,
 \arguments{
 \item{counts}{An \code{\link{array}} of nucleotide counts (samples x positions x 10 nucleotides in forward and reverse orientation), typically from \code{\link{loadAllData}}}
 
-\item{rho}{Disperision factor. If NULL, estimated from the data.}
+\item{sample_structure}{An integer vector specifying related samples. Should consist of individual numbers for independent samples and same number for samples that should not be compared to each other. Default is \code{1:nrow(counts)}.}
+
+\item{rho}{Dispersion factor. If NULL, estimated from the data.}
 
 \item{alternative}{The alternative. Currently only "greater" is implemented.}
 
