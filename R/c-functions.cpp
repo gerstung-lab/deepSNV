@@ -5,7 +5,6 @@
 using namespace Rcpp;
 
 
-  // [[Rcpp::export]]
 #define CN 8
 static double cof[CN]={
   2.5066282746310005,

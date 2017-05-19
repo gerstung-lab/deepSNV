@@ -90,7 +90,7 @@ mcChunk = function(FUN, X, split=250, mc.cores=1, ...){
 ## TODO: check for cases with zero result
 bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu = NULL, cutoff = 0.05, prior = 0.5, mvcf=TRUE){
 	coordinates <- regions2Coordinates(regions)
-	prior = array(rep(prior, each = length(BF)/length(prior)), dim=dim(BF))
+	if (length(dim(prior)==2)) prior = array(rep(prior, each = length(BF)/length(prior)), dim=dim(BF))
 	odds = prior/(1-prior)
 	posterior = BF / (BF + odds)
 	w = which(posterior < cutoff, arr.ind=TRUE)
@@ -327,7 +327,7 @@ bound = function(x, xmin, xmax) {
 #' @author nvolkova
 #' @note Experimental code, subject to changes
 library(Rcpp)
-sourceCpp("c-functions.cpp")
+sourceCpp(paste0(dirname(sys.frame(1)$ofile),"/c-functions.cpp"))
 fast_logbb = function(x,n,mu,disp) {
   return(array(c_bayesian_factor_part(as.vector(x),
                                       as.vector(n),
@@ -468,7 +468,7 @@ bbb <- function(counts, # nucleotide counts, samples x positions x 10 nucleotide
       fast_logbb(X.bw, N.bw, nu.bw, rdisp)
     Bf.both = exp(Bf.both)
 
-    #f.se.g <- mu < 0.5*(nu0.fw + nu0.bw)	
+    #f.se.g <- mu < 0.5*(nu0.fw + nu0.bw)
 
     rm(nu0.fw,mu,nu0.bw,nu.bw,nu.fw,N.fw,N.bw,X.bw,X.fw,rdisp)
 
