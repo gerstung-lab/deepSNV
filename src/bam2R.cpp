@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "sam.h"
+#include "khash.h"
 #include <map>
 #define R_NO_REMAP
 #include <R.h>
@@ -14,6 +15,7 @@
 #include <R_ext/Rdynload.h>
 
 using namespace std;
+KHASH_MAP_INIT_STR(strh,uint8_t)
 
 //const char seq_nt16_str[] = "=ACMGRSVTWYHKDBN";
 
@@ -35,14 +37,31 @@ int bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t
   int i, s;
   int len = nttable.end - nttable.beg;
   map<char, int> nt_freq;
+	khash_t(strh) *h;
+	khiter_t k;
+	h = kh_init(strh);
   if ((int)pos >= nttable.beg && (int)pos < nttable.end)
   {
+
     int* counts = nttable.counts + (int)pos - nttable.beg ;
     for (i=0; i<n_plp; i++)
     {
       const bam_pileup1_t *p = pl + i;
       s = bam_is_rev(p->b) * len * N;
+			int absent;
+	    k = kh_put(strh, h, bam_get_qname(p->b), &absent);
+			uint8_t cbase = bam_seqi(bam_get_seq(p->b),p->qpos);
+			uint8_t pre_b;
+			if(!absent){ //Read already processed to get base processed (we only increment if base is different between overlapping read pairs)
+				k = kh_get(strh, h, bam_get_qname(p->b));
+				pre_b = kh_val(h,k);
+			}else{
+				//Add the value to the hash
+				kh_value(h, k) = cbase;
+			}
+
       {
+				if(!absent && pre_b == cbase) continue;
         if (p->is_tail) counts[s + len * nttable.nt_idx['$']]++;
         else if (p->is_head) counts[s + len * nttable.nt_idx['^']]++;
 
@@ -66,6 +85,7 @@ int bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t
     }
     nttable.i++;
   }
+	kh_destroy(strh, h);
 }
 
 int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, int* mq, int* s, int* head_clip, int* maxdepth, int* verbose, int* mask)
@@ -170,4 +190,3 @@ void R_init_bam2R(DllInfo *info) {
 }
 
 } // extern "C"
-
