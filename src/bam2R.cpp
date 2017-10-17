@@ -30,7 +30,7 @@ int N = 11;
 
 extern "C" {
 
-int bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
+void bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
 {
   int i, s;
   int len = nttable.end - nttable.beg;
@@ -162,7 +162,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 }
 
 R_CMethodDef cMethods[] = {
-		{"bam2R", (DL_FUNC) &bam2R, 10}
+		{"bam2R", (DL_FUNC) &bam2R, 12}
 };
 
 void R_init_bam2R(DllInfo *info) {
@@ -170,4 +170,3 @@ void R_init_bam2R(DllInfo *info) {
 }
 
 } // extern "C"
-
