@@ -1,6 +1,8 @@
-sudo: true
+sudo: false
 
 language: r
+
+cache: packages
 
 r_packages:
  - VGAM
@@ -16,8 +18,5 @@ bioc_packages:
  - zlibbioc
  - Rhtslib
  
-addons:
-  apt:
-    packages:
-    - texlive-fonts-recommended 
-
+before_install:
+  - tlmgr install collection-fontsrecommended
