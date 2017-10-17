@@ -4,6 +4,7 @@ language: r
 
 r_packages:
  - VGAM
+ - rmarkdown
 
 bioc_packages:
  - Rsamtools
