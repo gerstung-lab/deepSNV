@@ -26,4 +26,3 @@ Beta-binomial probability distribution
 \author{
 mg14
 }
-

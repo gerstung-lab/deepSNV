@@ -13,4 +13,3 @@ plot(phiX)
 phiN <- normalize(phiX, round=TRUE)
 plot(phiN)
 }
-

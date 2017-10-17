@@ -25,4 +25,3 @@ Convenience function to get the p-values from a deepSNV object.
 data(HIVmix)
 p.val(HIVmix)[1:10,]
 }
-

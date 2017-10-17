@@ -33,10 +33,9 @@ Maximum likelihood version of Shearwater producing p-values instead of Bayes fac
 \examples{
 # code to be added
 }
-\author{
-Inigo Martincorena and Moritz Gerstung
-}
 \references{
 Martincorena I, Roshan A, Gerstung M, et al. (2015). High burden and pervasive positive selection of somatic mutations in normal human skin. _Science_ (Under consideration).
 }
-
+\author{
+Inigo Martincorena and Moritz Gerstung
+}

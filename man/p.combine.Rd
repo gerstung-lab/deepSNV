@@ -40,4 +40,3 @@ pairs(data.frame(p1,p2,p.fish,p.max,p.avg))
 \author{
 Moritz Gerstung
 }
-

@@ -26,4 +26,3 @@ Cumulative beta-binomial probability distribution
 \author{
 mg14
 }
-

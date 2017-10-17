@@ -12,4 +12,3 @@ data("counts", package="deepSNV")
 countsFromBam <- bam2R(file = system.file("extdata", "test.bam", package="deepSNV"), chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140, q = 10)
 all(counts == countsFromBam)
 }
-

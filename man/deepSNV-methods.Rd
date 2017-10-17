@@ -3,11 +3,11 @@
 \docType{methods}
 \name{deepSNV}
 \alias{deepSNV}
-\alias{deepSNV,character,character-method}
-\alias{deepSNV,character,matrix-method}
-\alias{deepSNV,deepSNV,missing-method}
-\alias{deepSNV,matrix,character-method}
 \alias{deepSNV,matrix,matrix-method}
+\alias{deepSNV,deepSNV,missing-method}
+\alias{deepSNV,character,character-method}
+\alias{deepSNV,matrix,character-method}
+\alias{deepSNV,character,matrix-method}
 \title{Test two matched deep sequencing experiments for low-frequency SNVs.}
 \usage{
 deepSNV(test, control, ...)
@@ -84,4 +84,3 @@ head(summary(HIVmix))
 \author{
 Moritz Gerstung
 }
-

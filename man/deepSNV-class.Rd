@@ -45,10 +45,9 @@ plot(HIVmix)
 head(summary(HIVmix))
 
 }
-\author{
-Moritz Gerstung
-}
 \seealso{
 \code{\link{deepSNV}}
 }
-
+\author{
+Moritz Gerstung
+}

@@ -25,4 +25,3 @@ Convenience function to get the coordinates from a deepSNV object.
 data(HIVmix)
 coordinates(HIVmix)[1:10,]
 }
-

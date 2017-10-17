@@ -66,4 +66,3 @@ plot(p.val(dpSNV), bf[1,,]/(1+bf[1,,]), log="xy")
 \author{
 mg14
 }
-
