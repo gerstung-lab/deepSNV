@@ -1,7 +1,7 @@
 /**********************************************************************
  * bamcram2R.cpp An interface for R to count nucleotides in a .bam
  * or .cram alignment
- * Copyright (C) 2015 drjsanger@github
+ * Copyright (C) 2015-2018 drjsanger@github
  ***********************************************************************/
 
 #include <stdio.h>
@@ -15,7 +15,7 @@
 #include <R_ext/Rdynload.h>
 
 using namespace std;
-KHASH_MAP_INIT_STR(strh,uint8_t)
+KHASH_MAP_INIT_STR(strh,uint8_t) //readname -> readbase map used to prevent overlapping reads calls happening twice
 
 //const char seq_nt16_str[] = "=ACMGRSVTWYHKDBN";
 
