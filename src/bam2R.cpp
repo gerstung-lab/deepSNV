@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "sam.h"
+#include "htslib/sam.h"
 #include <map>
 #define R_NO_REMAP
 #include <R.h>
