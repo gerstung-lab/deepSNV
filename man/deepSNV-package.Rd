@@ -33,14 +33,13 @@ plot(HIVmix)
 head(summary(HIVmix))
 
 }
-\author{
-Moritz Gerstung, Wellcome Trust Sanger Institute, \email{moritz.gerstung@sanger.ac.uk}
-}
 \references{
 Gerstung M, Beisel C, Rechsteiner M, Wild P, Schraml P, Moch H, and Beerenwinkel N. Reliable detection of subclonal single-nucleotide variants in tumour cell populations. Nat Commun 3:811 (2012). \href{http://dx.doi.org/10.1038/ncomms1814}{DOI:10.1038/ncomms1814}.
 }
 \seealso{
 \code{\link{deepSNV}}
 }
+\author{
+Moritz Gerstung, Wellcome Trust Sanger Institute, \email{moritz.gerstung@sanger.ac.uk}
+}
 \keyword{package}
-

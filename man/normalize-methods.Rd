@@ -3,8 +3,8 @@
 \docType{methods}
 \name{normalize}
 \alias{normalize}
-\alias{normalize,deepSNV,missing-method}
 \alias{normalize,matrix,matrix-method}
+\alias{normalize,deepSNV,missing-method}
 \title{Normalize nucleotide counts.}
 \usage{
 normalize(test, control, ...)
@@ -45,4 +45,3 @@ plot(phiN)
 \author{
 Moritz Gerstung
 }
-

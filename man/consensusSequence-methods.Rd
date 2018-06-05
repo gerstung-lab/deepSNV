@@ -3,8 +3,8 @@
 \docType{methods}
 \name{consensusSequence}
 \alias{consensusSequence}
-\alias{consensusSequence,deepSNV-method}
 \alias{consensusSequence,matrix-method}
+\alias{consensusSequence,deepSNV-method}
 \title{Calculate the consensus sequence.}
 \usage{
 consensusSequence(x, ...)
@@ -38,4 +38,3 @@ consensusSequence(HIVmix, vector=TRUE)[1:10]
 \author{
 Moritz Gerstung
 }
-

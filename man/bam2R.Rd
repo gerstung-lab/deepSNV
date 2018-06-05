@@ -17,6 +17,7 @@ bam2R(file, chr, start, stop, q = 25, mq = 0, s = 2, head.clip = 0,
 \item{stop}{The end position (1-indexed).}
 
 \item{q}{An optional cutoff for the nucleotide Phred quality. Default q = 25. Nucleotides with Q < q will be masked by 'N'.}
+
 \item{mq}{An optional cutoff for the read mapping quality. Default mq = 0 (no filter). reads with MQ < mq will be discarded.}
 
 \item{s}{Optional choice of the strand. Defaults to s = 2 (both).}
@@ -50,4 +51,3 @@ show(counts)
 \author{
 Moritz Gerstung
 }
-

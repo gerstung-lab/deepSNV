@@ -28,4 +28,3 @@ data(HIVmix)
 control(HIVmix)[1:10,]
 control(HIVmix, total=TRUE)[1:10,]
 }
-

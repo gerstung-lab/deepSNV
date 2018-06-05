@@ -11,4 +11,3 @@ Prior from COSMIC v63 for the TP53 gene
 data("pi", package="deepSNV")
 plot(pi[,1], type="h")
 }
-

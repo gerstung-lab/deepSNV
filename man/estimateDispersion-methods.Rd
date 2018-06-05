@@ -44,4 +44,3 @@ summary(RCC.bb)
 \author{
 Moritz Gerstung
 }
-

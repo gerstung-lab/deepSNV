@@ -28,4 +28,3 @@ data(HIVmix)
 test(HIVmix)[1:10,]
 test(HIVmix, total=TRUE)[1:10,]
 }
-

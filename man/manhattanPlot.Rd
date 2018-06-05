@@ -24,4 +24,3 @@ manhattanPlot(HIVmix)
 \author{
 Moritz Gerstung
 }
-

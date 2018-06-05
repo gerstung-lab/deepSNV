@@ -1,7 +1,8 @@
 deepSNV
 =====
 
-[![Build Status](https://travis-ci.org/mg14/deepSNV.svg)](https://travis-ci.org/mg14/deepSNV)
+master: [![Build Status](https://travis-ci.org/gerstung-lab/deepSNV.svg?branch=master)](https://travis-ci.org/gerstung-lab/deepSNV)
+devel: [![Build Status](https://travis-ci.org/gerstung-lab/deepSNV.svg?branch=devel)](https://travis-ci.org/gerstung-lab/deepSNV)
 
 
 Description
@@ -34,7 +35,7 @@ http://master.bioconductor.org/packages/devel/bioc/html/deepSNV.html
 ### The bad way
 You can use devtools::github_install() to install from this repository. For advanced users.
 
-	> library(devtools); install_github("mg14/deepSNV")
+	> library(devtools); install_github("gerstung-lab/deepSNV")
 
 ### The ugly way
 To install this development snapshot of deepSNV, check out the repository and run

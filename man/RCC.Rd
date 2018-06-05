@@ -15,4 +15,3 @@ RCC.bb <- estimateDispersion(RCC, alternative="two.sided")
 summary(RCC.bb, adjust.method="bonferroni")[,1:6]
 plot(RCC.bb)
 }
-

@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "sam.h"
-#include "khash.h"
+#include "htslib/sam.h"
+#include "htslib/khash.h"
 #include <map>
 #define R_NO_REMAP
 #include <R.h>
@@ -32,7 +32,7 @@ int N = 11;
 
 extern "C" {
 
-int bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
+void bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_t nttable)
 {
   int i, s;
   int len = nttable.end - nttable.beg;
@@ -130,7 +130,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		int ret;
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
 			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq) { bam_plp_push(buf, b); };
-			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
+			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
         bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
 		}
@@ -160,7 +160,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		int result;
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
       if ((b->core.flag & *mask)==0 && b->core.qual >= *mq) { bam_plp_push(buf, b); };
-			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
+			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
         bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
 		}
@@ -171,7 +171,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 
 	bam_plp_push(buf,0); // finalize pileup
 
-  while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) > 0) {
+  while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
     bam2R_pileup_function(pl,pos,n_plp,nttable);
   }
 	bam_destroy1(b);
@@ -182,7 +182,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 }
 
 R_CMethodDef cMethods[] = {
-		{"bam2R", (DL_FUNC) &bam2R, 10}
+		{"bam2R", (DL_FUNC) &bam2R, 12}
 };
 
 void R_init_bam2R(DllInfo *info) {

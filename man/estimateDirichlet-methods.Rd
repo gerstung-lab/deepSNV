@@ -3,8 +3,8 @@
 \docType{methods}
 \name{estimateDirichlet}
 \alias{estimateDirichlet}
-\alias{estimateDirichlet,deepSNV-method}
 \alias{estimateDirichlet,matrix-method}
+\alias{estimateDirichlet,deepSNV-method}
 \title{Learn a base-specific Dirichlet prior.}
 \usage{
 estimateDirichlet(control)
@@ -31,4 +31,3 @@ estimateDirichlet(phiX)
 \author{
 Moritz Gerstung
 }
-
