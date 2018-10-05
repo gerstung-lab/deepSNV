@@ -162,7 +162,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
         DP = select(w[,-3], rowSums(totCounts, dims=2)),
         QV = select(w, qvals),
         LEN = 1),
-      metadata = list(header = scanVcfHeader(system.file("extdata", "shearwater.vcf", package="deepSNV"))),
+      expData = list(header = scanVcfHeader(system.file("extdata", "shearwater.vcf", package="deepSNV"))),
       collapsed = FALSE
     )}else{
       u = !duplicated(w[,-1, drop=FALSE])
@@ -199,14 +199,14 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
           AF = rowMeans(geno$GT),
           LEN = 1),
         geno = geno,
-        metadata = list(header = scanVcfHeader(system.file("extdata", "shearwaterML.vcf", package="deepSNV"))),
+		exptData = list(header = scanVcfHeader(system.file("extdata", "shearwaterML.vcf", package="deepSNV"))),
         colData = DataFrame(samples=1:length(samples), row.names=samples),
         collapsed = TRUE
       )
       colnames(v) = samples
     }
   metadata(v)$header@samples <- as.character(samples)
-  metadata(v)$header@header$META["date",1] <- paste(Sys.time())
+  meta(metadata(v)$header)[[1]]["date",1] <- paste(Sys.time())
   
   ## If no variants found set to zero..
   if(isNull)
