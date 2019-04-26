@@ -164,6 +164,10 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
         bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
 		}
+    if(result < -1){
+      Rf_error("Error code (%d) encountered reading sam iterator.\n", result);
+			return 1;
+    }
 		free(region);
 		sam_itr_destroy(iter);
 		hts_idx_destroy(idx);
