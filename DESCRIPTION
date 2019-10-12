@@ -21,7 +21,7 @@ Description: This package provides provides quantitative variant callers for
     precisely estimating model parameters - such as local error rates and
     dispersion - and prior knowledge, e.g. from variation data bases such as
     COSMIC.
-Version: 1.31.0
+Version: 1.31.1
 URL: http://github.com/gerstung-lab/deepSNV
 Depends:
     R (>= 2.13.0),
@@ -37,6 +37,7 @@ Depends:
     VariantAnnotation (>= 1.13.44),
 Imports:
     Rhtslib
+SystemRequirements: GNU make
 Suggests:
     RColorBrewer,
     knitr,
