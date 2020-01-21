@@ -8,3 +8,5 @@ Makefile
 .git
 .gz$
 builds
+^.*\.Rproj$
+^\.Rproj\.user$
