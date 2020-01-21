@@ -41,4 +41,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+SystemRequirements: GNU make
 RoxygenNote: 6.0.1
