@@ -335,7 +335,7 @@ manhattanPlot <- function(x, col=nt.col){
 #' @param max.depth The maximal depth for the pileup command. Default 1,000,000.
 #' @param verbose Boolean. Set to TRUE if you want to get additional output.
 #' @param mask Integer indicating which flags to filter. Default 0 (no mask). Try 1769 (BAM_DEF_MASK).
-#' @param mask Integer indicating which flags to keep. Default 0 (no mask). Try 3  (PAIRED|PROPERLY_PAIRED).
+#' @param keepflag Integer indicating which flags to keep. Default 0 (no mask). Try 3  (PAIRED|PROPERLY_PAIRED).
 #' @return A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and ends at the given position, respectively, 
 #' and the sum of alignment (QUAL)ities, which can be indicative of alignment problems. 
 #' Counts from matches on the reference strand (s=0) are uppercase, counts on the complement (s=1) are lowercase. The returned matrix has 11 * 2 (strands) = 22 columns and (stop - start + 1) rows.
