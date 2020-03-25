@@ -71,5 +71,6 @@ RUN mkdir -p $OPT
 COPY --from=builder $OPT $OPT
 
 WORKDIR /home/ubuntu
+USER ubuntu
 
 CMD ["/bin/bash"]
