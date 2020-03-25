@@ -34,11 +34,9 @@ ENV LANG en_US.UTF-8
 RUN mkdir -p $R_LIBS
 RUN mkdir -p $LD_LIBRARY_PATH
 
-# build tools from other repos
-ADD R/libInstall.R build/
+# Install deepSNV and all dependencies
 ADD . deepSNV/
-RUN Rscript build/libInstall.R
-
+RUN Rscript -e "library(devtools);devtools::install('/deepSNV')"
 
 FROM ubuntu:19.10
 
@@ -70,7 +68,10 @@ ENV LANG en_US.UTF-8
 RUN mkdir -p $OPT
 COPY --from=builder $OPT $OPT
 
-WORKDIR /home/ubuntu
+## USER CONFIGURATION
+RUN adduser --disabled-password --gecos '' ubuntu && chsh -s /bin/bash && mkdir -p /home/ubuntu
+
 USER ubuntu
+WORKDIR /home/ubuntu
 
 CMD ["/bin/bash"]
