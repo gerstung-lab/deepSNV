@@ -89,7 +89,7 @@ void bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_
 }
 
 int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, int* mq, int* s, 
-                                int* head_clip, int* maxdepth, int* verbose, int* mask, int *keepflag)
+          int* head_clip, int* maxdepth, int* verbose, int* mask, int *keepflag, int *maxmismatches )
 {
 
 	bam_plp_t buf = NULL;
@@ -130,7 +130,8 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		//Replicate sampileup functionality (uses above mask without supplementary)
 		int ret;
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
-			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag) { 
+			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag &&
+          bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ){ 
                 bam_plp_push(buf, b); 
             };
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
@@ -162,7 +163,8 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		hts_itr_t *iter = sam_itr_querys(idx, head, region);
 		int result;
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
-      if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag) { 
+      if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && 
+          bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ){
           bam_plp_push(buf, b); 
         };
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {

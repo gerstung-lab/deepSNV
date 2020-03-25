@@ -334,8 +334,9 @@ manhattanPlot <- function(x, col=nt.col){
 #' @param head.clip Should n nucleotides from the head of reads be clipped? Default 0.
 #' @param max.depth The maximal depth for the pileup command. Default 1,000,000.
 #' @param verbose Boolean. Set to TRUE if you want to get additional output.
-#' @param mask Integer indicating which flags to filter. Default 0 (no mask). Try 1769 (BAM_DEF_MASK).
+#' @param mask Integer indicating which flags to filter. Default 0 (no mask). Try 1796 (BAM_DEF_MASK).
 #' @param keepflag Integer indicating which flags to keep. Default 0 (no mask). Try 3  (PAIRED|PROPERLY_PAIRED).
+#' @param max.mismatches Integer indicating maximum MN value to allow in a read. Default 1000 (no filter).
 #' @return A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and ends at the given position, respectively, 
 #' and the sum of alignment (QUAL)ities, which can be indicative of alignment problems. 
 #' Counts from matches on the reference strand (s=0) are uppercase, counts on the complement (s=1) are lowercase. The returned matrix has 11 * 2 (strands) = 22 columns and (stop - start + 1) rows.
@@ -345,9 +346,9 @@ manhattanPlot <- function(x, col=nt.col){
 #' counts <- bam2R(file = system.file("extdata", "test.bam", package="deepSNV"), chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140, q = 10, mask = 1769, keepflag = 3)
 #' show(counts)
 #' ## Not run: Requires an internet connection, but try yourself.
-#' # bam <- bam2R(file = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585, q=10, mask = 1769, keepflag = 3)
+#' # bam <- bam2R(file = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585, q=10, mask = 1796, keepflag = 3)
 #' # head(bam)
-bam2R = function(file, chr, start, stop, q=25, mq=0, s=2, head.clip = 0, max.depth=1000000, verbose=FALSE, mask=0, keepflag=0){
+bam2R = function(file, chr, start, stop, q=25, mq=0, s=2, head.clip = 0, max.depth=1000000, verbose=FALSE, mask=0, keepflag=0, max.mismatches=1000){
 	region = paste(chr,":",start,"-",stop, sep="")
 	result = .C("bam2R",
 			as.character(file),
@@ -362,7 +363,8 @@ bam2R = function(file, chr, start, stop, q=25, mq=0, s=2, head.clip = 0, max.dep
 			as.integer(max.depth),
 			as.integer(verbose),
 			as.integer(mask),
-            as.integer(keepflag),
+      as.integer(keepflag),
+      as.integer(max.mismatches),
 			PACKAGE="deepSNV"
 	)[[5]]
 	return(matrix(result, nrow=stop-start+1, 
