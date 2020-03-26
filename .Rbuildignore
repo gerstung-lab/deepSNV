@@ -10,3 +10,4 @@ Makefile
 builds
 ^.*\.Rproj$
 ^\.Rproj\.user$
+Dockerfile
