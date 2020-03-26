@@ -126,9 +126,19 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
   int tid, pos, n_plp = -1;
 	const bam_pileup1_t *pl;
 
+  //get first read to check for NM tag
+  int ret;
+  ret = sam_read1(nttable.in, head, b);
+  hts_close(nttable.in);
+  nttable.in = hts_open(*bamfile, "r");
+  uint8_t *paux = bam_aux_get(b, "NM");
+  if ( ! paux ) {
+    Rf_error("BAM/CRAM is missing NM tag\n");
+    return 1;
+  }
+
 	if (strcmp(*ref, "") == 0) { // if a region is not specified
 		//Replicate sampileup functionality (uses above mask without supplementary)
-		int ret;
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
 			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag &&
           bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ){ 
