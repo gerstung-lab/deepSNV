@@ -5,10 +5,21 @@
 \alias{shearwater}
 \title{Bayesian beta-binomal test, codename shearwater}
 \usage{
-bbb(counts, rho = NULL, alternative = "greater", truncate = 0.1,
-  rho.min = 1e-04, rho.max = 0.1, pseudo = .Machine$double.eps,
-  return.value = c("BF", "P0", "err"), model = c("OR", "AND", "adaptive"),
-  min.cov = NULL, max.odds = 10, mu.min = 1e-06, mu.max = 1 - mu.min)
+bbb(
+  counts,
+  rho = NULL,
+  alternative = "greater",
+  truncate = 0.1,
+  rho.min = 1e-04,
+  rho.max = 0.1,
+  pseudo = .Machine$double.eps,
+  return.value = c("BF", "P0", "err"),
+  model = c("OR", "AND", "adaptive"),
+  min.cov = NULL,
+  max.odds = 10,
+  mu.min = 1e-06,
+  mu.max = 1 - mu.min
+)
 }
 \arguments{
 \item{counts}{An \code{\link{array}} of nucleotide counts (samples x positions x 10 nucleotides in forward and reverse orientation), typically from \code{\link{loadAllData}}}

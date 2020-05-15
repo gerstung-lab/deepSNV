@@ -4,9 +4,17 @@
 \alias{plot.deepSNV}
 \title{Scatter plot of relative nucleotide frequencies.}
 \usage{
-\method{plot}{deepSNV}(x, sig.level = NULL, col = NULL, col.null = "grey",
-  cex.min = 0.2, ylab = "Relative Frequency in Test",
-  xlab = "Relative Frequency in Control", pch = 16, ...)
+\method{plot}{deepSNV}(
+  x,
+  sig.level = NULL,
+  col = NULL,
+  col.null = "grey",
+  cex.min = 0.2,
+  ylab = "Relative Frequency in Test",
+  xlab = "Relative Frequency in Control",
+  pch = 16,
+  ...
+)
 }
 \arguments{
 \item{x}{A deep SNV object.}

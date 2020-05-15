@@ -6,9 +6,13 @@
 \alias{summary,deepSNV-method}
 \title{Summary of a deepSNV object}
 \usage{
-\S4method{summary}{deepSNV}(object, sig.level = 0.05,
-  adjust.method = "bonferroni", fold.change = 1, value = c("data.frame",
-  "VCF"))
+\S4method{summary}{deepSNV}(
+  object,
+  sig.level = 0.05,
+  adjust.method = "bonferroni",
+  fold.change = 1,
+  value = c("data.frame", "VCF")
+)
 }
 \arguments{
 \item{object}{A \code{\link{deepSNV-class}} object.}
@@ -57,8 +61,6 @@ GENO (one column for test and one column for control):
 }
 \description{
 Tabularize significant SNVs by evalutating the p-values of the \code{\link{deepSNV}} test.
-
-Summary for deepSNV object
 }
 \examples{
 ## Short example with 2 SNVs at frequency ~10\%
