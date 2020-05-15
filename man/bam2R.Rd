@@ -17,7 +17,7 @@ bam2R(
   verbose = FALSE,
   mask = 0,
   keepflag = 0,
-  max.mismatches = 1000
+  max.mismatches = NULL
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ bam2R(
 
 \item{keepflag}{Integer indicating which flags to keep. Default 0 (no mask). Try 3  (PAIRED|PROPERLY_PAIRED).}
 
-\item{max.mismatches}{Integer indicating maximum MN value to allow in a read. Default 1000 (no filter).}
+\item{max.mismatches}{Integer indicating maximum MN value to allow in a read. Default NULL (no filter).}
 }
 \value{
 A named \code{\link{matrix}} with rows corresponding to genomic positions and columns for the nucleotide counts (A, T, C, G, -), masked nucleotides (N), (INS)ertions, (DEL)etions, (HEAD)s and (TAIL)s that count how often a read begins and ends at the given position, respectively, 
@@ -59,10 +59,10 @@ respectively.
 }
 \examples{
 ## Simple example:
-counts <- bam2R(file = system.file("extdata", "test.bam", package="deepSNV"), chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140, q = 10, mask = 1769, keepflag = 3)
+counts <- bam2R(file = system.file("extdata", "test.bam", package="deepSNV"), chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 3120, stop=3140, q = 10, mask = 1769)
 show(counts)
 ## Not run: Requires an internet connection, but try yourself.
-# bam <- bam2R(file = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585, q=10, mask = 1796, keepflag = 3)
+# bam <- bam2R(file = "http://www.bsse.ethz.ch/cbg/software/deepSNV/data/test.bam", chr="B.FR.83.HXB2_LAI_IIIB_BRU_K034", start = 2074, stop=3585, q=10, mask = 1796)
 # head(bam)
 }
 \author{

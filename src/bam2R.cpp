@@ -132,20 +132,19 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
   hts_close(nttable.in);
   nttable.in = hts_open(*bamfile, "r");
   uint8_t *paux = bam_aux_get(b, "NM");
-  if ( ! paux ) {
-    Rf_error("BAM/CRAM is missing NM tag\n");
-    return 1;
+  if ( ! paux && *maxmismatches != -1 ) {
+    Rf_warning("BAM/CRAM is missing NM tag, ignoring max.mismatches argument.\n");
+    //return 1;
   }
 
 	if (strcmp(*ref, "") == 0) { // if a region is not specified
 		//Replicate sampileup functionality (uses above mask without supplementary)
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
-			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag &&
-          bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ){ 
-                bam_plp_push(buf, b); 
+			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && ((paux && bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ) || !paux || *maxmismatches == -1)){
+					bam_plp_push(buf, b);
             };
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
-        bam2R_pileup_function(pl,pos,n_plp,nttable);
+				bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
 		}
 	}
@@ -173,12 +172,11 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		hts_itr_t *iter = sam_itr_querys(idx, head, region);
 		int result;
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
-      if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && 
-          bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ){
-          bam_plp_push(buf, b); 
-        };
+			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && ((paux && bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ) || !paux || *maxmismatches == -1)){
+				bam_plp_push(buf, b);
+			};
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
-        bam2R_pileup_function(pl,pos,n_plp,nttable);
+				bam2R_pileup_function(pl,pos,n_plp,nttable);
 			}
 		}
     if(result < -1){

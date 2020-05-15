@@ -4,8 +4,17 @@
 \alias{bf2Vcf}
 \title{Function to create a \code{\link{VCF}} object with variant calls from an array of Bayes factors.}
 \usage{
-bf2Vcf(BF, counts, regions, samples = 1:nrow(counts), err = NULL,
-  mu = NULL, cutoff = 0.05, prior = 0.5, mvcf = TRUE)
+bf2Vcf(
+  BF,
+  counts,
+  regions,
+  samples = 1:nrow(counts),
+  err = NULL,
+  mu = NULL,
+  cutoff = 0.05,
+  prior = 0.5,
+  mvcf = TRUE
+)
 }
 \arguments{
 \item{BF}{array of Bayes factors from \code{\link{bbb}}.}

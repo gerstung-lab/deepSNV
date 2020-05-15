@@ -27,13 +27,13 @@
 NA
 
 .onLoad <- function(lib, pkg){
-	library.dynam("deepSNV", pkg, lib)
+	#library.dynam("deepSNV", pkg, lib)
 	#require(Biostrings)
 	#require(graphics, methods)
 }
 
 .onUnload <- function(libpath){
-	library.dynam.unload("deepSNV", libpath)
+	#library.dynam.unload("deepSNV", libpath)
 }
 
 #' Example .bam data and true SNVs.

@@ -4,8 +4,16 @@
 \alias{qvals2Vcf}
 \title{Function to create a \code{\link{VCF}} object with variant calls from an array of q-values.}
 \usage{
-qvals2Vcf(qvals, counts, regions, samples = 1:nrow(counts), err = NULL,
-  mu = NULL, cutoff = 0.05, mvcf = TRUE)
+qvals2Vcf(
+  qvals,
+  counts,
+  regions,
+  samples = 1:nrow(counts),
+  err = NULL,
+  mu = NULL,
+  cutoff = 0.05,
+  mvcf = TRUE
+)
 }
 \arguments{
 \item{qvals}{array of q-values from \code{\link{betabinLRT}}.}
