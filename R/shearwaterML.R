@@ -206,7 +206,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
       colnames(v) = samples
     }
   metadata(v)$header@samples <- as.character(samples)
-  meta(metadata(v)$header)[[1]]["date",1] <- paste(Sys.time())
+  meta(header(v)) <- append(meta(header(v)), DataFrame(date=paste(Sys.time())))
   
   ## If no variants found set to zero..
   if(isNull)

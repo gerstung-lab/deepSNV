@@ -287,7 +287,7 @@ RF <- function(freq, total = FALSE){
 				collapsed=TRUE
 		)
 		metadata(v)$header@samples <- samples
-		metadata(v)$header@header$META["date",1] <- paste(Sys.time())
+		meta(header(v)) <- append(meta(header(v)), DataFrame(date=paste(Sys.time())))
 		
 		return(sort(v))
 	}
