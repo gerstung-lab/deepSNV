@@ -263,6 +263,7 @@ RF <- function(freq, total = FALSE){
 			samples <- sub("/.+/","",deepSNV@files)
 		else
 			samples <- c("test","control")
+		headerTemplate = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))
 		v = VCF(
 				rowRanges=GRanges(table$chr, 
 						IRanges(table$pos - (isDel | isIns), width=1 + (isDel | isIns)), 
@@ -282,12 +283,13 @@ RF <- function(freq, total = FALSE){
 						BW = cbind(table$n.tst.bw, table$n.ctrl.bw),
 						DFW = cbind(table$cov.tst.fw, table$cov.ctrl.fw),
 						DBW = cbind(table$cov.tst.bw, table$cov.ctrl.bw)),
-				metadata = list(header = scanVcfHeader(system.file("extdata", "deepSNV.vcf", package="deepSNV"))),
+				exptData = list(header = VCFHeader(
+						reference = reference(headerTemplate),
+						samples = as.character(samples),
+						header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
 				colData = DataFrame(samples=1:length(samples), row.names=samples),
 				collapsed=TRUE
 		)
-		metadata(v)$header@samples <- samples
-		meta(header(v)) <- append(meta(header(v)), DataFrame(date=paste(Sys.time())))
 		
 		return(sort(v))
 	}

@@ -141,6 +141,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
   #	m = match(gr[o], rd)
   #	alt = lapply(split(c("A","T","C","G","")[w[o,3]], m), paste, collapse="")
   if(!mvcf){
+    headerTemplate = scanVcfHeader(system.file("extdata", "shearwater.vcf", package="deepSNV"))
     v = VCF(
       rowRanges=GRanges(coordinates$chr[w[,2]], 
                       IRanges(coordinates$pos[w[,2]] - (w[,3]==5), width=1 + (w[,3]==5)), ## If del make one longer..
@@ -162,7 +163,10 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
         DP = select(w[,-3], rowSums(totCounts, dims=2)),
         QV = select(w, qvals),
         LEN = 1),
-      expData = list(header = scanVcfHeader(system.file("extdata", "shearwater.vcf", package="deepSNV"))),
+      exptData = list(header = VCFHeader(
+        reference = reference(headerTemplate),
+        samples = as.character(samples),
+        header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
       collapsed = FALSE
     )}else{
       u = !duplicated(w[,-1, drop=FALSE])
@@ -180,7 +184,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
         FD = t(mapply(function(i,j){ rowSums(counts[,i,1:5])}, wu[,2],wu[,3])),
         BD = t(mapply(function(i,j){ rowSums(counts[,i,6:10])}, wu[,2],wu[,3]))
       )
-      
+      headerTemplate = scanVcfHeader(system.file("extdata", "shearwaterML.vcf", package="deepSNV"))
       #rownames(w) = samples[w[,1]]
       v = VCF(
         rowRanges=GRanges(coordinates$chr[wu[,2]], 
@@ -199,14 +203,15 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
           AF = rowMeans(geno$GT),
           LEN = 1),
         geno = geno,
-		exptData = list(header = scanVcfHeader(system.file("extdata", "shearwaterML.vcf", package="deepSNV"))),
+        exptData = list(header = VCFHeader(
+          reference = reference(headerTemplate),
+          samples = as.character(samples),
+          header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
         colData = DataFrame(samples=1:length(samples), row.names=samples),
         collapsed = TRUE
       )
       colnames(v) = samples
     }
-  metadata(v)$header@samples <- as.character(samples)
-  meta(header(v)) <- append(meta(header(v)), DataFrame(date=paste(Sys.time())))
   
   ## If no variants found set to zero..
   if(isNull)
