@@ -88,6 +88,17 @@ void bam2R_pileup_function(const bam_pileup1_t *pl, int pos, int n_plp, nttable_
 	kh_destroy(strh, h);
 }
 
+static inline int64_t getNM(const bam1_t *b, unsigned long long& count)
+{
+	const uint8_t *nm = bam_aux_get(b, "NM");
+	if (nm)
+		return bam_aux2i(nm);
+	else {
+		count++;
+		return 0;  // Dummy NM value that always passes the filter
+	}
+}
+
 int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, int* mq, int* s, 
           int* head_clip, int* maxdepth, int* verbose, int* mask, int *keepflag, int *maxmismatches )
 {
@@ -102,6 +113,9 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 	nttable.head_clip = *head_clip;
 	nttable.i = 0;
 	nttable.counts = counts;
+
+	int64_t maxNM = (*maxmismatches != -1)? *maxmismatches : INT64_MAX;
+	unsigned long long no_NM_count = 0;
 
 	int i;
 	for (i=0; i<N; i++)
@@ -124,21 +138,11 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
   int tid, pos, n_plp = -1;
 	const bam_pileup1_t *pl;
 
-  //get first read to check for NM tag
-  int ret;
-  ret = sam_read1(nttable.in, head, b);
-  hts_close(nttable.in);
-  nttable.in = hts_open(*bamfile, "r");
-  uint8_t *paux = bam_aux_get(b, "NM");
-  if ( ! paux && *maxmismatches != -1 ) {
-    Rf_warning("BAM/CRAM is missing NM tag, ignoring max.mismatches argument.\n");
-    //return 1;
-  }
-
 	if (strcmp(*ref, "") == 0) { // if a region is not specified
 		//Replicate sampileup functionality (uses above mask without supplementary)
+		int ret;
 		while((ret = sam_read1(nttable.in, head, b)) >= 0){
-			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && ((paux && bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ) || !paux || *maxmismatches == -1)){
+			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && getNM(b, no_NM_count) <= maxNM) {
 					bam_plp_push(buf, b);
             };
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
@@ -167,7 +171,7 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 		hts_itr_t *iter = sam_itr_queryi(idx, tid, nttable.beg, nttable.end);
 		int result;
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
-			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && ((paux && bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ) || !paux || *maxmismatches == -1)){
+			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && getNM(b, no_NM_count) <= maxNM) {
 				bam_plp_push(buf, b);
 			};
 			while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
@@ -187,6 +191,11 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
   while ( (pl=bam_plp_next(buf, &tid, &pos, &n_plp)) != 0) {
     bam2R_pileup_function(pl,pos,n_plp,nttable);
   }
+
+	if (*maxmismatches != -1 && no_NM_count > 0) {
+		Rf_warning("%llu reads did not have NM tags; max.mismatches filter was not applied to them.\n", no_NM_count);
+	}
+
 	bam_destroy1(b);
 	bam_hdr_destroy(head);
 	bam_plp_destroy(buf);
