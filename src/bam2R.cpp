@@ -94,10 +94,8 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 
 	bam_plp_t buf = NULL;
 	bam1_t *b = NULL;
-	hts_itr_t *iter = NULL;
 	bam_hdr_t *head = NULL;
 
-	int c = 0;
 	nttable_t nttable;
 	nttable.q = *q; //Base quality cutoff
 	nttable.s = *s; //Strand (2=both)
@@ -162,14 +160,11 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
 			return 1;
 		}
 
-		char *region = NULL;
-		region = (char*) malloc(sizeof(*ref)+sizeof(":")+sizeof("-")+(sizeof(char)*50));
-		sprintf(region,"%s:%d-%d",*ref,nttable.beg,nttable.end);
 		if(*verbose)
-			Rprintf("Reading %s, %s\n", *bamfile, region);
+			Rprintf("Reading %s, %s:%d-%d\n", *bamfile, *ref, nttable.beg+1, nttable.end);
 
 		//Implement a fetch style iterator
-		hts_itr_t *iter = sam_itr_querys(idx, head, region);
+		hts_itr_t *iter = sam_itr_queryi(idx, tid, nttable.beg, nttable.end);
 		int result;
 		while ((result = sam_itr_next(nttable.in, iter, b)) >= 0) {
 			if ((b->core.flag & *mask)==0 && b->core.qual >= *mq && (b->core.flag & *keepflag)==*keepflag && ((paux && bam_aux2i(bam_aux_get(b,"NM")) <= *maxmismatches ) || !paux || *maxmismatches == -1)){
@@ -183,7 +178,6 @@ int bam2R(char** bamfile, char** ref, int* beg, int* end, int* counts, int* q, i
       Rf_error("Error code (%d) encountered reading sam iterator.\n", result);
 			return 1;
     }
-		free(region);
 		sam_itr_destroy(iter);
 		hts_idx_destroy(idx);
 	}
