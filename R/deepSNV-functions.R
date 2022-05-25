@@ -186,6 +186,11 @@ RF <- function(freq, total = FALSE){
 	t(sapply(bases, function(i) colMeans(RF(freq[CV == i,]))))
 }
 
+#' Utility for making unstructured VCF headers (e.g. ##date)
+#' @noRd
+.makeVCFheader <- function(name, value){
+	return(as(splitAsList(DataFrame(Value=value, row.names=name), name), "SimpleDataFrameList"))
+}
 
 #' Significant SNVs.
 #' @noRd
@@ -286,7 +291,7 @@ RF <- function(freq, total = FALSE){
 				exptData = list(header = VCFHeader(
 						reference = reference(headerTemplate),
 						samples = as.character(samples),
-						header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
+						header = append(header(headerTemplate), .makeVCFheader("date", paste(Sys.time()))))),
 				colData = DataFrame(samples=1:length(samples), row.names=samples),
 				collapsed=TRUE
 		)

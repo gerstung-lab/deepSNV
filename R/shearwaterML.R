@@ -166,7 +166,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
       exptData = list(header = VCFHeader(
         reference = reference(headerTemplate),
         samples = as.character(samples),
-        header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
+        header = append(header(headerTemplate), .makeVCFheader("date", paste(Sys.time()))))),
       collapsed = FALSE
     )}else{
       u = !duplicated(w[,-1, drop=FALSE])
@@ -206,7 +206,7 @@ qvals2Vcf <- function(qvals, counts, regions, samples = 1:nrow(counts), err = NU
         exptData = list(header = VCFHeader(
           reference = reference(headerTemplate),
           samples = as.character(samples),
-          header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
+          header = append(header(headerTemplate), .makeVCFheader("date", paste(Sys.time()))))),
         colData = DataFrame(samples=1:length(samples), row.names=samples),
         collapsed = TRUE
       )

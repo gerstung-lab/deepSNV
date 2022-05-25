@@ -149,7 +149,7 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 				exptData = list(header = VCFHeader(
 						reference = reference(headerTemplate),
 						samples = as.character(samples),
-						header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
+						header = append(header(headerTemplate), .makeVCFheader("date", paste(Sys.time()))))),
 				collapsed = FALSE
 		)}else{
 		u = !duplicated(w[,-1, drop=FALSE])
@@ -191,7 +191,7 @@ bf2Vcf <- function(BF, counts, regions, samples = 1:nrow(counts), err = NULL, mu
 				exptData = list(header = VCFHeader(
 						reference = reference(headerTemplate),
 						samples = as.character(samples),
-						header = append(header(headerTemplate), DataFrame(date=paste(Sys.time()))))),
+						header = append(header(headerTemplate), .makeVCFheader("date", paste(Sys.time()))))),
 				colData = DataFrame(samples=1:length(samples), row.names=samples),
 				collapsed = TRUE
 		)
