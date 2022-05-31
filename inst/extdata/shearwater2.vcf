@@ -12,4 +12,4 @@
 ##FORMAT=<ID=BW,Number=1,Type=Integer,Description="Backward variant read count">
 ##FORMAT=<ID=FD,Number=1,Type=Integer,Description="Read Depth forward">
 ##FORMAT=<ID=BD,Number=1,Type=Integer,Description="Read Depth backward">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO

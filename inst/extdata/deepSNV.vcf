@@ -7,4 +7,4 @@
 ##FORMAT=<ID=DBW,Number=1,Type=Integer,Description="Backward read depth">
 ##INFO=<ID=VF,Number=A,Type=Float,Description="Variant frequency">
 ##INFO=<ID=VFV,Number=A,Type=Float,Description="Variant frequency variance">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO

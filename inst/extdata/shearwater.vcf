@@ -8,4 +8,4 @@
 ##INFO=<ID=ER,Number=A,Type=Float,Description="Error rate">
 ##INFO=<ID=BF,Number=A,Type=Float,Description="Bayes factor">
 ##INFO=<ID=PI,Number=A,Type=Float,Description="Prior">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
